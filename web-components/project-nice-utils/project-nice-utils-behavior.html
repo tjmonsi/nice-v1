@@ -75,7 +75,8 @@
         } 
       },
 
-      _catchError: function(error) {
+      _catchError: function(err) {
+        var error = err.detail ? err.detail : err;
         this._showMessage('Error: ' + error.detail && error.detail.message ? error.detail.message : error.message, true);
       },
       
