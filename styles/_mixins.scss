@@ -29,3 +29,156 @@
     @content;
   }
 }
+
+///////// Visibility ////////////
+@mixin hide-on-phone() {
+  .hide-on-phone {
+    @include phone {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-tablet() {
+  .hide-on-tablet {
+    @include tablet {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-smalldesktop() {
+  .hide-on-smalldesktop {
+    @include smalldesktop {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-on-largescreen() {
+  .hide-on-largescreen {
+    @include largescreen {
+      display: none;
+    }
+  }
+}
+
+@mixin hide-screens() {
+  @include hide-on-phone();
+  @include hide-on-tablet();
+  @include hide-on-smalldesktop();
+  @include hide-on-largescreen();
+}
+
+///////// Visible-only //////////
+@mixin phone-only() {
+  .phone-only {
+    @include tablet {
+      display: none;
+    }
+
+    @include smalldesktop {
+      display: none;
+    }
+
+    @include largescreen {
+      display: none;
+    }
+  }
+}
+
+@mixin tablet-only() {
+  .tablet-only {
+    @include phone {
+      display: none;
+    }
+
+    @include smalldesktop {
+      display: none;
+    }
+
+    @include largescreen {
+      display: none;
+    }
+  }
+}
+
+@mixin smalldekstop-only() {
+  .smalldekstop-only {
+    @include phone {
+      display: none;
+    }
+
+    @include tablet {
+      display: none;
+    }
+
+    @include largescreen {
+      display: none;
+    }
+  }
+}
+
+@mixin largescreen-only() {
+  .largescreen-only {
+    @include phone {
+      display: none;
+    }
+
+    @include tablet {
+      display: none;
+    }
+
+    @include smalldekstop {
+      display: none;
+    }
+  }
+}
+
+@mixin smallscreens-only() {
+  .small-screens-only {
+    @include smalldesktop {
+      display: none;
+    }
+
+    @include largescreen {
+      display: none;
+    }
+  }
+}
+
+@mixin desktop-only() {
+  .desktop-only {
+    @include phone {
+      display: none;
+    }
+
+    @include tablet {
+      display: none;
+    }
+  }
+}
+
+@mixin visible-screens() {
+  @include phone-only();
+  @include tablet-only();
+  @include smalldesktop-only();
+  @include largescreen-only();
+  @include smallscreens-only();
+  @include desktop-only();
+}
+
+@mixin flex-wrapper() {
+  .flex-wrapper {
+    width: 100.1%;
+  }
+}
+
+
+//////// Visibility-all /////////
+@mixin visibility() {
+  @include hide-screens();
+  @include visible-screens();
+  @include flex-wrapper();
+}
+
