@@ -61,6 +61,7 @@ Wham! It's all awesome now!
           main-header
           navigation-list="[[navigationList]]"
           scroll-progress="{{scrollProgress}}" 
+          route="[[currentRoute]]"
           user="{{user}}"></project-nice-header>
       <project-nice-drawer 
           main-drawer 
@@ -70,11 +71,12 @@ Wham! It's all awesome now!
 
       <qairoe-app-router
           main-content
+          current-route="{{currentRoute}}"
           parent-tag-name="project-nice-app-shell">
 
         <!-- ROUTER STARTS HERE -->
         <home-page route="/"></home-page>
-        <nice-page route="/page/:id"></nice-page>
+        <nice-page route="/page/:slug"></nice-page>
         <article-page route="/article/:id"></article-page>
         <data-page route="/data/:id"></data-page>
         <dashboard-page route="/dashboard/:id"></dashboard-page>
@@ -100,16 +102,14 @@ Wham! It's all awesome now!
             return [
               {
                 label: 'Home',
-                url: '/'
+                url: '/',
+                route: '/'
               },
               {
-                label: 'View Two',
-                url: '/view-two'
+                label: 'About',
+                url: '/page/about-us',
+                route: '/page/about-us'
               },
-              {
-                label: 'View Three',
-                url: '/view-three'
-              }
             ];
           }
         },
@@ -118,6 +118,9 @@ Wham! It's all awesome now!
         },
         user: {
           type: Object
+        },
+        route: {
+          type: String
         }
       },
 
