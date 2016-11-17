@@ -35,8 +35,10 @@ Wham! It's all awesome now!
   <link rel="lazy-import" href="/pages/nice-page/nice-page.html" group="nice-page">
   <link rel="lazy-import" href="/pages/dashboard-page/dashboard-page.html" group="dashboard-page">
   <link rel="lazy-import" href="/pages/data-page/data-page.html" group="data-page">
+  <link rel="lazy-import" href="/pages/member-page/member-page.html" group="member-page">
   <link rel="lazy-import" href="/pages/not-authorized-page/not-authorized-page.html" group="not-authorized-page">
   <link rel="lazy-import" href="/pages/not-found-page/not-found-page.html" group="not-found-page">
+  
   <!-- LAZY LOADER ENDS HERE -->
 
   <template>
@@ -80,6 +82,8 @@ Wham! It's all awesome now!
         <article-page route="/article/:id"></article-page>
         <data-page route="/data/:id"></data-page>
         <dashboard-page route="/dashboard/:id"></dashboard-page>
+        <!-- ADD member -->
+        <member-page route="/member/:id"></member-page>
         <not-authorized-page route="not-authorized"></not-authorized-page>
         <not-found-page route="not-found"></not-found-page>
         <!-- ROUTER ENDS HERE -->
