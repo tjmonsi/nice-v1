@@ -1,0 +1,165 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior Polymer.ProjectNiceUserBehavior */
+    Polymer.ProjectNiceUserBehaviorImpl = {
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: function() { return null; },
+        },
+        signedIn: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+        roles: {
+          type: Object,
+          notify: true,
+          value: function() { return {}; }
+        },
+        owner: {
+          type: Object,
+          value: function() { return null; }
+        },
+        userPath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._userPath; }
+        },
+        userGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._userGroup; }
+        },
+      },
+
+      observers: [
+        '_getRoles(user.uid)'
+      ],
+
+      get _userGroup() {
+        return 'userGroup';
+      },
+
+      get _userPath() {
+        var options = this._version + '/' + this._userGroup + '/roles';
+        return {
+          profiles: this._version + '/' + this._userGroup + '/profiles',
+          categories: this._version + '/' + this._userGroup + '/categories',
+          profilePicture: this._version + '/' + this._userGroup + '/profile_picture',
+          media: this._version + '/' + this._userGroup + '/media',
+          options: {
+            member: options + '/member',
+            pending: options + '/pending'
+          }
+        };
+      },
+
+      _getRoles: function(uid) {
+        console.log(uid);
+        if (uid && firebase) {
+
+          //member
+          firebase.database().ref(this._userPath.options.member + '/' + uid).on('value', (dataSnapshot) => {
+            var m = dataSnapshot.val();
+            var a1 = m.admin;
+            var e1 = m.editor;
+            var s1 = m.staff;
+            var m1 = m.membershipDate;
+
+            this.set('roles.admin', a1);
+            this.set('roles.editor', e1 || a1);
+            this.set('roles.staff', s1 || e1 || a1);
+            this.set('roles.member', m1 || s1 || e1 || a1);
+            
+            this.fire('roles-changed', this.roles);
+          }, this._catchError.bind(this));
+
+          //pending
+          firebase.database().ref(this._userPath.options.pending + '/' + uid + '/value').on('value', (dataSnapshot) => {
+            this.set('role.pending', dataSnapshot.val())
+          }, this._catchError.bind(this));
+
+        } else if (!firebase) {
+          console.error(new Error('Firebase has not been set'))
+        }
+      },
+      
+      _checkAuthRole: function(user, auth, roles, role, owner) {
+        if (auth) {
+          if (role) {
+            return user && (roles[role] || (owner && owner.owner === user.uid));
+          }
+          return user;
+        }
+        return true;
+      },
+      
+      _checkPermission: function(role, owner) {
+        return this._checkAuthRole(this.user, true, this.roles, role, owner);
+      },
+      
+      _checkProfile: function(user, ref, profile) {
+        if (!profile.val()) {
+          return firebase.database().ref(ref).set({
+            displayName: user.displayName,
+            email: user.email,
+            image: user.photoURL,
+          }).then(function(){
+            window.location.assign('/profile-page/');
+          });
+        }
+      },
+      
+      _displayName: function(user) {
+        if (user) return user.displayName ? user.displayName : user.email;
+      },
+      
+      _loginSuccess: function(result) {
+        var ref = this.userPath.profiles + '/' +  result.user.uid;
+        this._showMessage('Welcome ' + result.user.displayName + '!');
+      
+        if (firebase) {
+          firebase.database().ref(ref).once('value', this._checkProfile.bind(this, result.user, ref));
+        } else {
+          throw new Error('No firebase app connected');
+        }
+      },
+      
+      _logoutSuccess: function(result) {
+        console.log('logout', result);
+        this._showMessage('Goodbye!');        
+      },
+
+      login: function() {
+        if (this.$.auth && this.$.auth.signInWithPopup) {
+          this.$.auth.signInWithPopup().then(this._loginSuccess.bind(this)).catch(this._catchError.bind(this));
+        } else {
+          this._catchError(new Error('no auth component found'));
+        }
+      },
+
+      logout: function() {
+        if (this.user) {
+          if (this.$.auth && this.$.auth.signOut) {
+            this.$.auth.signOut().then(this._logoutSuccess.bind(this)).catch(this._catchError.bind(this));
+          } else {
+            this._catchError(new Error('no auth component found'));
+          }
+        } else {
+          this._showMessage('You are already logged out.');
+        }
+      },
+    };
+    Polymer.ProjectNiceUserBehavior = [
+      Polymer.ProjectNiceUtilsBehavior,
+      Polymer.ProjectNiceUserBehaviorImpl
+    ];
+  })();
+</script>
