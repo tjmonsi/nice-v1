@@ -1,11 +1,34 @@
-:host {
-  display: block;
-}
+@import 'styles/variables';
+@import 'styles/mixins';
+
+@include hide-on-smalldesktop();
+@include hide-on-largescreen();
 
 app-header {
-  color: #fff;
-  background-color: #4285f4;
-}
-app-header paper-icon-button {
-  --paper-icon-button-ink-color: white;
+  background-color: $light;
+  color: $gray-dark;
+  
+  app-toolbar {
+    height: $navigation-header-height;
+    
+    span[main-title] {
+      margin-left: $navigation-header-margin-left;
+
+      img {
+        height: 70px;
+      }
+      
+      @include smalldesktop {
+        margin-left: 10px;
+      }
+      
+      @include phone {
+        margin-left: 10px;
+      }
+      
+      @include tablet {
+        margin-left: 10px;
+      }
+    }
+  }  
 }

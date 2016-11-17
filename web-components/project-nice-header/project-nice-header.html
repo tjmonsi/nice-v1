@@ -2,9 +2,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/fade-background.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../project-nice-icons/project-nice-icons.html">
+<link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
+<link rel="import" href="../../web-components/project-nice-navigation/project-nice-navigation.html">
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-header-style.html">
@@ -18,15 +20,35 @@
     </style>
 
     <!-- then the app-header -->
-    <app-header>
+    <app-header
+        fixed$="[[fixed]]" 
+        sticky$="[[sticky]]" 
+        condenses$="[[condenses]]"
+        disabled$="[[disabled]]" 
+        effects="[[effects]]"
+        effects-config="[[effectsConfig]]"
+        reveals$="[[reveals]]"
+        scroll-target="[[scrollTarget]]"
+        shadow$="[[shadow]]"
+        threshold="[[treshold]]"
+        threshold-triggered="[[tresholdTriggered]]">
+
       <app-toolbar>
+
+        <!-- Drawer button -->
         <paper-icon-button
           icon="default:menu"
+          class$="hide-on-smalldesktop hide-on-largescreen drawer-toggle-button [[[[_scrollProgressChangedForDrawerToggleButton(scrollProgress)]]]]"
           on-tap="_toggleDrawer">
         </paper-icon-button>
+
+        <!-- Logo here -->
         <span main-title>
           <img src="/images/assets/nice-logo.png" >  
         </span>
+
+        <!-- Navigation -->
+        <project-nice-navigation navigation-list="[[navigationList]]" user="{{user}}" route="[[route]]"></project-nice-navigation>
       </app-toolbar>
     </app-header>
   </template>
@@ -35,9 +57,53 @@
     Polymer({
       is: 'project-nice-header',
 
+      properties: {
+        navigationList: {
+          type: Array,
+          value: function() { return []; }
+        },
+        user: {
+          type: Object,
+          notify: true
+        },
+        route: {
+          type: String
+        },
+        fixed: {
+          type: Boolean,
+          value: false
+        },
+        shadow: {
+          type: Boolean,
+          value: false
+        },
+        scrollProgress: {
+          type: Number,
+          observer: '_scrollProgressChanged'
+        },
+        scrollProgressThreshold: {
+          type: Number,
+          value: 0
+        }
+      },
+
       _toggleDrawer: function() {
         this.fire('toggle-drawer');
-      }
+      },
+
+      _scrollProgressChanged: function(scrollProgress) {        
+        var appHeader = this.$$('app-header');
+        var fadeBackgroundEffect = appHeader.createEffect('fade-background');
+        var isCondensed = scrollProgress < this.scrollProgressThreshold;
+        this.shadow = !isCondensed;
+        fadeBackgroundEffect.run(isCondensed ? 1 : 0);
+      },
+      
+      _scrollProgressChangedForDrawerToggleButton: function(scrollProgress) {
+        if (scrollProgress > 0) {
+          return 'drawer-toggle-button-scrolled';
+        }
+      },
     });
   </script>
 </dom-module>
