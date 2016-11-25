@@ -1,0 +1,8 @@
+1. Need to resize the header to make it look like rappler
+2. On phone, the menu for the header will be horizontally tabbed with scroll horizontal 
+3. Add the fallback plus cache runtime on service worker at sw-precache config... follow example from our generator workspace
+4. separate registry of service worker to separate file
+5. Create utils folder for script
+6. Add scripts to sw-precache
+7. Add toast and id to core-app-shell
+8. Use pattern in generator workspace to trigger toast to say we need to update
