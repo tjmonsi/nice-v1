@@ -36,6 +36,7 @@ Wham! It's all awesome now!
   <link rel="lazy-import" href="/pages/dashboard-page/dashboard-page.html" group="dashboard-page">
   <link rel="lazy-import" href="/pages/data-page/data-page.html" group="data-page">
   <link rel="lazy-import" href="/pages/member-page/member-page.html" group="member-page">
+  <link rel="lazy-import" href="/pages/login-page/login-page.html" group="login-page">
   <link rel="lazy-import" href="/pages/not-authorized-page/not-authorized-page.html" group="not-authorized-page">
   <link rel="lazy-import" href="/pages/not-found-page/not-found-page.html" group="not-found-page">
   
@@ -74,7 +75,8 @@ Wham! It's all awesome now!
       <qairoe-app-router
           main-content
           current-route="{{currentRoute}}"
-          parent-tag-name="project-nice-app-shell">
+          parent-tag-name="project-nice-app-shell"
+          on-view-loaded="viewLoaded">
 
         <!-- ROUTER STARTS HERE -->
         <home-page route="/"></home-page>
@@ -84,7 +86,8 @@ Wham! It's all awesome now!
         <dashboard-page route="/dashboard/:id"></dashboard-page>
         <!-- ADD member -->
         <member-page route="/member/:id"></member-page>
-        <member-page route="/profile-page"></member-page>
+        <member-page route="/profile"></member-page>
+        <login-page route="/login"></login-page>
         <not-authorized-page route="not-authorized"></not-authorized-page>
         <not-found-page route="not-found"></not-found-page>
         <!-- ROUTER ENDS HERE -->
@@ -114,7 +117,7 @@ Wham! It's all awesome now!
                 label: 'About',
                 url: '/page/about-us',
                 route: '/page/about-us'
-              },
+              }
             ];
           }
         },
@@ -130,8 +133,58 @@ Wham! It's all awesome now!
       },
 
       ready: function() {
-        this.fire('project-nice-app-shell-ready');
 
+        Polymer.RenderStatus.afterNextRender(this, function () {
+          if (NICEV1 && NICEV1.ServiceWorkerRegistration) {
+            NICEV1.ServiceWorkerRegistration.register();
+          }     
+          this.fire('project-nice-app-shell-ready');         
+        }.bind(this));
+        
+
+      },
+
+      viewLoaded: function() {
+        console.log('loaded')
+        if (NICEV1 && NICEV1.Elements && NICEV1.Elements.Loader) {
+          NICEV1.Elements.Loader.style.cssText = "display: none";
+          
+        }
+
+        if (NICEV1.LoaderTimerShort) {
+          clearTimeout(NICEV1.LoaderTimerShort);
+          NICEV1.LoaderTimerShort = null;
+        }
+
+        if (NICEV1.LoaderTimerShorter) {
+          clearTimeout(NICEV1.LoaderTimerShorter);
+          NICEV1.LoaderTimerShorter = null;
+        }
+
+        if (NICEV1.LoaderTimer) {
+          console.log('clearing timer')
+          clearTimeout(NICEV1.LoaderTimer);
+          NICEV1.LoaderTimer = null;
+        }
+
+        if (NICEV1.LoaderTimerLong) {
+          clearTimeout(NICEV1.LoaderTimerLong);
+          NICEV1.LoaderTimerLong = null;
+        }
+
+        if (NICEV1.LoaderMessagesInterval) {
+          clearInterval(NICEV1.LoaderMessagesInterval);
+          NICEV1.LoaderMessagesInterval = null
+        }
+
+        if (window.slowNetwork) {
+          try {
+            Raven.captureMessage('Slow loading done', {time: (((new Date()).getTime() - window.slowNetwork.getTime())/ 1000)});
+            window.slowNetwork = null;
+          } catch(e) {
+            Raven.captureError(e);
+          }
+        }
       }
     });
   </script>
