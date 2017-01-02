@@ -8,6 +8,8 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-storage-script.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../web-components/project-nice-toast/project-nice-toast.html">
 
 <!-- Custom Element dependencies -->
 
@@ -46,6 +48,11 @@ Wham! It's all awesome now!
     <style is="custom-style">
     </style>
 
+    <iron-media-query id="mq-phone"
+        full
+        query="(max-width:768px)"
+        query-matches="{{app.isPhoneSize}}"></iron-media-query>
+
     <!-- DATABASE APP AUTH HERE -->
     <firebase-app 
         auth-domain="nice-v1.firebaseapp.com"
@@ -53,10 +60,10 @@ Wham! It's all awesome now!
         api-key="AIzaSyDi-X0Jsl7-Lx1p4-aACSULeuw349PhAnI"
         storage-bucket="nice-v1.appspot.com"></firebase-app>
 
-    <template is="dom-if" if="{{user.uid}}">
+    <!--<template is="dom-if" if="{{user.uid}}">
       <firebase-document 
           ></firebase-document>
-    </template>
+    </template>-->
 
     <qairoe-app-layout scroll-progress="{{scrollProgress}}">
 
@@ -87,7 +94,8 @@ Wham! It's all awesome now!
         <!-- ADD member -->
         <member-page route="/member/:id"></member-page>
         <member-page route="/profile"></member-page>
-        <login-page route="/login"></login-page>
+        <!-- LOGIN PAGE -->
+        <login-page route="/login" user="{{user}}"></login-page>
         <not-authorized-page route="not-authorized"></not-authorized-page>
         <not-found-page route="not-found"></not-found-page>
         <!-- ROUTER ENDS HERE -->
@@ -95,6 +103,7 @@ Wham! It's all awesome now!
       </qairoe-app-router>
     </qairoe-app-layout>
 
+    <project-nice-toast id="toast" app="{{app}}"></project-nice-toast>
   </template>
   <script>
     /*global Polymer*/
@@ -108,16 +117,16 @@ Wham! It's all awesome now!
           readOnly: true,
           value: function() {
             return [
-              {
-                label: 'Home',
-                url: '/',
-                route: '/'
-              },
-              {
-                label: 'About',
-                url: '/page/about-us',
-                route: '/page/about-us'
-              }
+              // {
+              //   label: 'Home',
+              //   url: '/',
+              //   route: '/'
+              // },
+              // {
+              //   label: 'About',
+              //   url: '/page/about-us',
+              //   route: '/page/about-us'
+              // }
             ];
           }
         },
@@ -129,7 +138,14 @@ Wham! It's all awesome now!
         },
         route: {
           type: String
-        }
+        },
+        app: {
+          type: Object,
+          notify: true,
+          value: function () {
+            return {};
+          }
+        },
       },
 
       ready: function() {

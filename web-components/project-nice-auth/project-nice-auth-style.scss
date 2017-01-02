@@ -1,1 +1,26 @@
 //
+
+@import 'styles/mixins';
+
+@include hide-on-phone-only();
+
+.project-nice-auth-header {
+  .project-nice-auth-item {
+    color: $gray-dark;
+    text-decoration: none;
+    margin-left: 20px;
+    margin-right: 10px;
+    
+    @include small-screens {
+      font-size: 0.7em;
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+  }
+}
+
+.project-nice-auth-item {
+  &.iron-selected {
+    font-weight: bold;
+  }
+}

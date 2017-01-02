@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNicePageBehavior */
+    NICEV1.ProjectNicePageBehaviorImpl = {
+
+      properties: {
+        
+        pagePath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._pagePath; }
+        },
+        pageGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._pageGroup; }
+        },
+
+        pageNavList: {
+          type: Array,
+          value: function() { return []; }
+        },
+
+        page: {
+          type: Object
+        }
+      },
+
+      get _pageGroup() {
+        return 'pageGroup';
+      },
+
+      get _pagePath() {        
+        return {
+          pages: this._version + '/' + this._pageGroup + '/pages', // this is where the page objects are saved
+          pageMenu: this._version + '/' + this._pageGroup + '/pageMenu', // this is where you put for the menu
+          owner: this._version + '/' + this._pageGroup + '/owner', // this is where you set the owner of the page          
+        };
+      },
+
+      
+    };
+    NICEV1.ProjectNicePageBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNicePageBehaviorImpl
+    ];
+  })();
+</script>

@@ -40,7 +40,7 @@ NICEV1.ServiceWorkerRegistration = (function () {
               switch (installingWorker.state) {
                 case 'installed':
                   if (!navigator.serviceWorker.controller) {
-                    NICEV1.Elements.Template.$.toast.show(
+                    NICEV1.Elements.Template.$.toast.showMessage(
                       'Caching complete! Future visits will work offline.');
                   }
                   break;
@@ -72,8 +72,8 @@ NICEV1.ServiceWorkerRegistration = (function () {
         };
 
         if (NICEV1.Elements && NICEV1.Elements.Template &&
-          NICEV1.Elements.Template.$.toast.show) {
-          NICEV1.Elements.Template.$.toast.show(
+          NICEV1.Elements.Template.$.toast.showMessage) {
+          NICEV1.Elements.Template.$.toast.showMessage(
             'A new version of this app is available.', tapHandler, 'Refresh',
             null, 0); // duration 0 indications shows the toast indefinitely.
         } else {

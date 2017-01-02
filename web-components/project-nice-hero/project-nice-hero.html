@@ -1,0 +1,137 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-box/app-box.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/parallax-background.html">
+
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html"
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-hero-style.html">
+
+<dom-module id="project-nice-hero">
+  <template>
+    <style is="custom-style" include="project-nice-hero-style iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      app-box {
+        --block-section-background: none;
+        --block-section-color-background: #000000;
+        --block-section-parallax: 100%;
+        --app-box-background-front-layer: {
+          background-color: var(--block-section-color-background);
+          background-image: var(--block-section-background);
+          background-repeat: no-repeat;
+          background-attachment: scroll;
+          height: var(--block-section-parallax);
+          background-position: center top;
+          background-size: cover;
+        }
+      }
+    </style>
+
+    <app-box 
+        class="hero-section"
+        effects="parallax-background"
+        effects-config='{"parallax-background": {"scalar": -0.5}}'>
+      <template is="dom-if" if="[[_forceZero(title)]]">
+        <div class="vertical layout hero-content-container">
+          <div class="flex"></div>
+          <div class="horizontal layout">
+            <div class="flex"></div>
+              <div class="hero-content">
+                <h1 class="hero-content-title">
+                  <a href="[[url]]">
+                    [[title]]
+                  </a>
+                </h1>
+                <p class="hero-content-sub-title">
+                  <a href="[[url]]">
+                    [[subTitle]]
+                  </a>
+                </p>
+              </div>
+            <div class="flex"></div>
+          </div>
+          
+          <div class="flex"></div>
+        </div>
+      </template>    
+    </app-box>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-hero',
+
+      behaviors: [
+        NICEV1.ProjectNiceUtilsBehavior
+      ],
+
+      properties: {
+        title: {
+          type: String
+        },
+        subTitle: {
+          type: String
+        },
+        bannerImage: {
+          type: String,
+          observer: '_blockImageChanged'
+        },
+        url: {
+          type: String
+        },
+        parallax: {
+          type: Boolean,
+          value: false,
+          observer: '_parallaxChanged'
+        },
+        height: {
+          type: String,
+          value: '50vh',
+          observer: '_resize'
+        },
+      },
+
+      attached: function() {
+        this._resizeBinded = this._resizeBinded || this._resize.bind(this);
+        window.addEventListener('resize', this._resizeBinded);
+      },
+
+      detached: function() {
+        window.removeEventListener('resize', this._resizeBinded);
+      },
+
+      _resize: function() {
+        this._heightNodeChanged(this.height, this.$$('.hero-section'));
+      },
+
+      resetLayout: function() {
+        this.$$('.hero-section').resetLayout();
+      },
+
+      _blockImageChanged: function(image) {
+        if (image) {
+          var img = new Image();
+          img.onload = () => {
+            // console.log('loaded' + this.articleId)
+            this.$$('.hero-section').customStyle['--block-section-background'] = 'url('+image+')';
+            this.$$('.hero-section').updateStyles();
+            this.$$('.hero-section').resetLayout();
+          };
+          img.src = image;
+        }
+      },
+      
+      _parallaxChanged: function(parallax) {
+        this.$$('.hero-section').customStyle['--block-section-parallax'] = parallax ? '120%' : '100%';
+        this.$$('.hero-section').updateStyles()
+        this.$$('.hero-section').resetLayout();
+      }
+    });
+  </script>
+</dom-module>

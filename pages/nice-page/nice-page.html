@@ -1,28 +1,98 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
+<link rel="import" href="../../web-components/project-nice-article-form/project-nice-article-form.html">
+<link rel="import" href="../../web-components/project-nice-page/project-nice-page-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="nice-page-style.html">
 
 <dom-module id="nice-page">
   <template>
-    <style is="custom-style" include="nice-page-style">
+    <style is="custom-style" include="nice-page-style iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
     </style>
 
-    <div class="card">
-      <div class="circle">3</div>
-      <h1>View Three</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-    </div>
+    <template is="dom-if" if="[[slug]]">
+      <firebase-document 
+          path="[[pagePath.pages]]/[[slug]]"
+          data="{{page}}"></firebase-document>
+
+      <template is="dom-if" if="[[_forceZero(page)]]">
+        <div class="horizontal layout wrap">
+          <template is="dom-if" if="[[edit]]">
+            <project-nice-article-form
+                class="flex"
+                title="{{page.title}}"
+                sub-title="{{page.subTitle}}"
+                banner-image="{{page.bannerImage}}"
+                body="{{page.body}}"
+                images="[[page.images]]"
+                documents="[[page.documents]]"
+                video="{{page.video}}"
+                categories="[[page.categories]]"
+                types="[[page.types]]"></project-nice-article-form>
+          </template>
+          <project-nice-article-view
+              class="flex"
+              title="[[page.title]]"
+              sub-title="[[page.subTitle]]"
+              banner-image="[[page.bannerImage]]"
+              body="[[page.body]]"
+              images="[[page.images]]"
+              documents="[[page.documents]]"
+              video="[[page.video]]"
+              categories="[[page.categories]]"
+              types="[[page.types]]"></project-nice-article-view>
+          
+        </div>
+        
+      </template>
+
+      <template is="dom-if" if="[[!_forceZero(page)]]">
+        Loading
+      </template>
+    </template>
+    
   </template>
 
   <script>
     Polymer({
-      is: 'nice-page'
+      is: 'nice-page',
+
+      behaviors: [
+        NICEV1.ProjectNicePageBehavior
+      ],
+
+      properties: {
+        params: {
+          type: Object
+        },
+        slug: {
+          type: String
+        },
+        edit: {
+          type: String
+        }
+      },
+
+      observers: [
+        '_changeParamsSlug(params.slug)',
+        '_changeQuaryParamsEdit(queryParams.edit)'
+      ],
+
+      _changeParamsSlug: function(e) {
+        this.slug = e
+      },
+
+      _changeQuaryParamsEdit: function(e) {
+        this.edit = e === 'true';
+      }
     });
   </script>
 </dom-module>

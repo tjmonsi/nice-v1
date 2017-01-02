@@ -1,5 +1,7 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-auth-style.html">
@@ -12,13 +14,46 @@
       }
     </style>
 
-    
+    <firebase-auth
+      id="auth"
+      provider="google"
+      user="{{user}}">
+    </firebase-auth>
+
+    <div class="project-nice-auth-header">
+      <template is="dom-if" if="[[!user]]">
+        <a 
+          href="/login"
+          class="project-nice-auth-item">
+          Login
+        </a>
+      </template>
+      <template is="dom-if" if="[[user]]">
+        <a 
+          href="#"
+          class="project-nice-auth-item"
+          on-tap="logout">
+          Logout
+        </a>
+      </template>
+    </div>
     
   </template>
 
   <script>
     Polymer({
-      is: 'project-nice-auth'
+      is: 'project-nice-auth',
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      behaviors: [
+        NICEV1.ProjectNiceUserBehavior
+      ]
     });
   </script>
 </dom-module>

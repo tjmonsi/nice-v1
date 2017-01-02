@@ -8,6 +8,8 @@
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-navigation/project-nice-navigation.html">
 
+<link rel="import" href="../../web-components/project-nice-auth/project-nice-auth.html">
+
 <!-- Style dependency -->
 <link rel="import" href="project-nice-header-style.html">
 
@@ -49,6 +51,9 @@
 
         <!-- Navigation -->
         <project-nice-navigation navigation-list="[[navigationList]]" user="{{user}}" route="[[route]]"></project-nice-navigation>
+
+        <!-- Login Button here -->
+        <project-nice-auth user="{{user}}"></project-nice-auth>
       </app-toolbar>
     </app-header>
   </template>

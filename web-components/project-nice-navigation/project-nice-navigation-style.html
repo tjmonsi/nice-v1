@@ -2,8 +2,8 @@
 <dom-module id="project-nice-navigation-style">
 <template>
 <style>
-@media (max-width: 479px) {
-  .hide-on-phone {
+@media (max-width: 599px) {
+  .hide-on-phone-only {
     display: none; } }
 
 .nice-navigation-header .nice-navigation-item {
@@ -11,7 +11,7 @@
   text-decoration: none;
   margin-left: 10px;
   margin-right: 10px; }
-  @media (min-width: 840px) and (max-width: 1199px) {
+  @media (max-width: 1199px) {
     .nice-navigation-header .nice-navigation-item {
       font-size: 0.7em;
       margin-left: 5px;
@@ -19,6 +19,9 @@
 
 .nice-navigation-item.iron-selected {
   font-weight: bold; }
+
+#about-button {
+  --paper-menu-button-content: { width: 400px; }; }
 
 </style>
 </template>

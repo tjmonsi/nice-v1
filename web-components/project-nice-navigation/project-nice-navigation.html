@@ -1,5 +1,12 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
+<link rel="import" href="../../web-components/project-nice-page/project-nice-page-behavior.html">
+
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-navigation-style.html">
@@ -12,12 +19,32 @@
       }
     </style>
 
+    <firebase-query 
+        path="[[pagePath.pageMenu]]"
+        data="{{pageNavList}}"></firebase-query>
+
     <template is="dom-if" if="[[!drawer]]">
-      <div class="nice-navigation-header hide-on-phone">
+      <div class="nice-navigation-header hide-on-phone-only">
         <iron-selector class="horizontal layout" attr-for-selected="route" selected$="[[route]]">
+          <a route="home" href="/" class="nice-navigation-item" on-tap="_clickNavigationItem">
+            Home
+          </a>  
+          <paper-menu-button route$="page" id="about-button" no-overlap horizontal-align="right" dynamic-align>
+            <a href="#" class="nice-navigation-item dropdown-trigger">
+              About
+            </a>
+            <paper-menu class="dropdown-content" id="about-button-menu">
+              <template is="dom-repeat" items="[[pageNavList]]" as="pageitems">
+                <a href$="/page/[[pageitems.$key]]">
+                  <paper-item >[[pageitems.title]]</paper-item>
+                </a>
+              </template>
+              
+            </paper-menu>
+          </paper-menu-button>
           <template is="dom-repeat" items="[[navigationList]]">
             <!--<template is="dom-if" if="[[_checkAuthRole(user, item.auth, roles, item.role)]]">-->
-              <a route$="[[item.route]]" href$="[[item.url]]" class="nice-navigation-item">
+              <a route$="[[item.route]]" href$="[[item.url]]" class="nice-navigation-item" on-tap="_clickNavigationItem">
                 [[item.label]]
               </a>  
             <!--</template>-->
@@ -45,7 +72,13 @@
 
   <script>
     Polymer({
+      
       is: 'project-nice-navigation',
+
+      behaviors: [
+        NICEV1.ProjectNicePageBehavior,
+        NICEV1.ProjectNiceUserBehavior
+      ],
 
       properties: {
         drawer: {
@@ -67,10 +100,31 @@
           type: Array,
           value: function() { return []; }
         },
+        pageNavListLength: {
+          type: Number,
+          value: 0
+        }
       },
+
+      observers: [
+        '_checkPageNavList(pageNavList.splices)'
+      ],
 
       _toggleDrawer: function() {
         this.fire('toggle-drawer', {});
+      },
+
+      _checkPageNavList: function() {
+        if (this.pageNavListLength === 0) {
+          this.pageNavListLength = this.pageNavList.length;
+          console.log(this.pageNavListLength)
+          this.$$('#about-button').toggle();
+          this.$$('#about-button').toggle();
+        }
+      },
+
+      _clickNavigationItem: function() {
+        this.$$('#about-button-menu').selectIndex(-1);
       }
     });
   </script>

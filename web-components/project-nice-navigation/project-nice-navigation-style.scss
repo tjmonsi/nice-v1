@@ -1,7 +1,7 @@
 //
 
 @import 'styles/mixins';
-@include hide-on-phone();
+@include hide-on-phone-only();
 
 .nice-navigation-header {
   .nice-navigation-item {
@@ -10,7 +10,7 @@
     margin-left: 10px;
     margin-right: 10px;
     
-    @include smalldesktop {
+    @include small-screens {
       font-size: 0.7em;
       margin-left: 5px;
       margin-right: 5px;
@@ -22,4 +22,10 @@
   &.iron-selected {
     font-weight: bold;
   }
+}
+
+#about-button {
+  --paper-menu-button-content: #{'{
+    width: 400px;
+  }'};
 }

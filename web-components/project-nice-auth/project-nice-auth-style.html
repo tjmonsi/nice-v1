@@ -2,6 +2,23 @@
 <dom-module id="project-nice-auth-style">
 <template>
 <style>
+@media (max-width: 599px) {
+  .hide-on-phone-only {
+    display: none; } }
+
+.project-nice-auth-header .project-nice-auth-item {
+  color: #373a3c;
+  text-decoration: none;
+  margin-left: 20px;
+  margin-right: 10px; }
+  @media (max-width: 1199px) {
+    .project-nice-auth-header .project-nice-auth-item {
+      font-size: 0.7em;
+      margin-left: 5px;
+      margin-right: 5px; } }
+
+.project-nice-auth-item.iron-selected {
+  font-weight: bold; }
 
 </style>
 </template>

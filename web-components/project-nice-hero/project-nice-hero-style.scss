@@ -1,0 +1,44 @@
+// nice-hero-section-style
+@import 'styles/mixins';
+
+.hero-section {
+  .hero-content-container {
+    height: 100%;
+  }
+  
+  .hero-content {
+    // margin-top: 50px;
+    background-color: rgba(255, 255, 255, 0.7);
+    width: 50%;
+    padding: 30px;
+    
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    .hero-content-title {
+      margin-top: 0px;
+      font-size: 2em;
+      line-height: 1.2em;
+    }
+    
+    @include phone-only {
+      width: inherit;
+      margin-left: 20px;
+      margin-right: 20px;
+      
+      p {
+        display: none;
+      }
+    }
+
+    @include tablet-only {
+      width: 70%;
+    }
+    
+    // @include tablet {
+    //   width: 70%;
+    // }
+  }
+}

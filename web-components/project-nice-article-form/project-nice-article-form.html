@@ -1,0 +1,78 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-article-form-style.html">
+
+<dom-module id="project-nice-article-form">
+  <template>
+    <style is="custom-style" include="project-nice-article-form-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <!-- permission -->
+    <paper-input id="title" value="{{title}}"></paper-input>
+    
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-article-form',
+
+      properties: {
+        title: {
+          type: String,
+          notify: true
+        },
+        subTitle: {
+          type: String,
+          notify: true
+        },
+        bannerImage: {
+          type: String,
+          notify: true
+        },
+        body: {
+          type: String,
+          notify: true
+        },
+        images: {
+          type: Object
+        },
+        imageArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        documents: {
+          type: Object
+        },
+        documentArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        video: {
+          type: String,
+          notify: true
+        },
+        categories: {
+          type: Object
+        },
+        categoryArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        types: {
+          type: Object
+        },
+        typeArray: {
+          type: Array,
+          value: function() { return []; }
+        }
+      },
+    });
+  </script>
+</dom-module>

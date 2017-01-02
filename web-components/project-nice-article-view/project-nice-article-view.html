@@ -1,0 +1,155 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
+
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-article-view-style.html">
+
+<dom-module id="project-nice-article-view">
+  <template>
+    <style is="custom-style" include="project-nice-article-view-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <project-nice-hero 
+        title="[[title]]"
+        sub-title="[[subTitle]]"
+        banner-image="[[bannerImage]]"></project-nice-hero>
+
+    <div class="horizontal layout">
+      <div class="flex"></div>
+      <div class="flex-4">
+        <!-- byline -->
+
+        <marked-element markdown="[[body]]">
+          <div class="markdown-html"></div>
+        </marked-element>
+
+        <!-- photo-blog -->
+        <div class="horizontal layout wrap">
+          <template is="dom-repeat" items="[[imageArray]]">
+            <paper-material class="photoblog-item flex">
+              <iron-image
+                src="{{item.downloadURL}}"
+                data-caption$="{{item.caption}}"
+                sizing="cover"
+                preload
+                fade
+                on-tap="_openPhotoBlog"
+              ></iron-image>
+            </paper-material>
+          </template>
+        </div>
+
+        <!-- feedback -->
+        <h1 class="">Feedback</h1>
+
+        <!-- feedback form -->
+      </div>
+      <div class="flex"></div>
+    </div>
+    
+    <paper-dialog 
+        id="photoblog-dialog"
+        entry-animation="scale-up-animation"
+        exit-animation="fade-out-animation">
+      <div class="horizontal layout">
+        <div class="flex">
+          <a id="photoblog-dialog-image-full" target="_blank">
+            <iron-image
+              id="photoblog-dialog-image"
+              preload
+              fade
+            ></iron-image>
+          </a>
+          <div class="caption">
+            <marked-element id="photoblog-dialog-caption">
+              <div class="markdown-html"></div>
+            </marked-element>
+          </div>
+        </div>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-article-view',
+
+      properties: {
+        title: {
+          type: String
+        },
+        subTitle: {
+          type: String
+        },
+        bannerImage: {
+          type: String
+        },
+        body: {
+          type: String
+        },
+        images: {
+          type: Object
+        },
+        imageArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        documents: {
+          type: Object
+        },
+        documentArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        video: {
+          type: String
+        },
+        categories: {
+          type: Object
+        },
+        categoryArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        types: {
+          type: Object
+        },
+        typeArray: {
+          type: Array,
+          value: function() { return []; }
+        }
+      },
+
+      observers: [
+        '_changeImages(images)'
+      ],
+
+      _changeImages: function(images) {
+        this.imageArray = [];
+        for (var i in images) {
+          this.push('imageArray', images[i]);
+        }
+      },
+
+      _openPhotoBlog: function(e) {
+        var image = e.target.src;
+        var caption = e.target.getAttribute('data-caption');
+        this.$$('#photoblog-dialog').open();
+        this.$$('#photoblog-dialog-image').src = image;
+        this.$$('#photoblog-dialog-image-full').setAttribute('href', image);
+        this.$$('#photoblog-dialog-image').shadowRoot.querySelector('#img').setAttribute('style' , 'width: 100%; max-width: 500px');
+        this.$$('#photoblog-dialog-caption').markdown = caption;
+      },
+    });
+  </script>
+</dom-module>
