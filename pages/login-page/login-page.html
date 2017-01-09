@@ -1,29 +1,47 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="login-page-style.html">
 
 <dom-module id="login-page">
   <template>
-    <style is="custom-style" include="login-page-style">
+    <style is="custom-style" include="login-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
 
-    <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+    <!-- auth group -->
+    <firebase-auth id="auth" user="{{user}}" on-error="_catchError"></firebase-auth>
+    <!--<firebase-auth id="fauth" user="{{user}}" provider="facebook" on-error="_catchError"></firebase-auth>-->
+
+    <div class="layout horizontal">
+      <div class="flex"></div>
+      <div class="flex-4 login-container">
+        
+        <paper-button class="login-button" raised id="google" on-tap="login">Login via Google</paper-button><br>
+        
+        <paper-button class="login-button" raised id="facebook" on-tap="login">Login via Facebook</paper-button>
+        
+
+      </div>
+      <div class="flex"></div>
     </div>
-    
   </template>
 
   <script>
     Polymer({
-      is: 'login-page'
+      is: 'login-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceUserBehavior
+      ]
     });
   </script>
 </dom-module>

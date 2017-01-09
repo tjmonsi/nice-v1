@@ -68,6 +68,7 @@
           //member
           firebase.database().ref(this._userPath.options.member + '/' + uid).on('value', (dataSnapshot) => {
             var m = dataSnapshot.val();
+            if (!m) return;
             var a1 = m.admin;
             var e1 = m.editor;
             var s1 = m.staff;
@@ -114,6 +115,8 @@
           }).then(function(){
             window.location.assign('/profile-page/');
           });
+        } else {
+          window.location.assign('/');
         }
       },
       
@@ -137,8 +140,11 @@
         this._showMessage('Goodbye!');        
       },
 
-      login: function() {
+      login: function(e) {
         if (this.$.auth && this.$.auth.signInWithPopup) {
+          this.$.auth.provider = e.target.id || "google";
+          console.log(e.target.id)
+
           this.$.auth.signInWithPopup().then(this._loginSuccess.bind(this)).catch(this._catchError.bind(this));
         } else {
           this._catchError(new Error('no auth component found'));
