@@ -23,6 +23,10 @@
           path="[[pagePath.pages]]/[[slug]]"
           data="{{page}}"></firebase-document>
 
+      <firebase-document
+          path="[[pagePath.pageMenu]]/[[slug]]"
+          data="{{pageMenu}}"></firebase-document>
+
       <template is="dom-if" if="[[_forceZero(page)]]">
         <div class="horizontal layout wrap">
           <template is="dom-if" if="[[edit]]">
