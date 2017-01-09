@@ -88,7 +88,7 @@
         }
         
         var error = err.detail ? err.detail : err;
-        this._showMessage('Error: ' + error.detail && error.detail.message ? error.detail.message : error.message, true);
+        this._showMessage('Error: ' +  error.message, true);
       },
       
       _textToUrl: function(text) {
