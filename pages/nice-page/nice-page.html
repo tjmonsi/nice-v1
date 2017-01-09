@@ -26,6 +26,8 @@
       <template is="dom-if" if="[[_forceZero(page)]]">
         <div class="horizontal layout wrap">
           <template is="dom-if" if="[[edit]]">
+
+            <!-- Article-form -->
             <project-nice-article-form
                 class="flex"
                 title="{{page.title}}"
@@ -38,6 +40,8 @@
                 categories="[[page.categories]]"
                 types="[[page.types]]"></project-nice-article-form>
           </template>
+
+          <!-- Article-form -->
           <project-nice-article-view
               class="flex"
               title="[[page.title]]"
