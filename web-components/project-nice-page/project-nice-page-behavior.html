@@ -38,11 +38,17 @@
         return 'pageGroup';
       },
 
-      get _pagePath() {        
+      get _pagePath() {
+        var storage = this._version + '/' + this._pageGroup + '/storage';
         return {
           pages: this._version + '/' + this._pageGroup + '/pages', // this is where the page objects are saved
           pageMenu: this._version + '/' + this._pageGroup + '/pageMenu', // this is where you put for the menu
-          owner: this._version + '/' + this._pageGroup + '/owner', // this is where you set the owner of the page          
+          owner: this._version + '/' + this._pageGroup + '/owner', // this is where you set the owner of the page
+          storage: {
+            bannerImage: storage + '/bannerImage',
+            images: storage + '/images',
+            documents: storage + '/documents'
+          }
         };
       },
 
