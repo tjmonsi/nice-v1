@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/tjmonsi/nice-v1.png?label=ready&title=Ready)](https://waffle.io/tjmonsi/nice-v1)
 # 
 
 ## Table of Contents
