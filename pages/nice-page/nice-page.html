@@ -23,34 +23,49 @@
           path="[[pagePath.pages]]/[[slug]]"
           data="{{page}}"></firebase-document>
 
+      <firebase-document
+          path="[[pagePath.pageMenu]]/[[slug]]"
+          data="{{pageMenu}}"></firebase-document>
+
       <template is="dom-if" if="[[_forceZero(page)]]">
-        <div class="horizontal layout wrap">
+
+        <template is="dom-if" if="[[_checkPublished(pageMenu.published, user)]]">
+          <div class="horizontal layout wrap">
           <template is="dom-if" if="[[edit]]">
-            <project-nice-article-form
+              <!-- Article-form -->
+              <project-nice-article-form
+                  path="[[pagePath.pages]]/[[slug]]"
+                  class="flex"
+                  title="{{page.title}}"
+                  sub-title="{{page.subTitle}}"
+                  banner-image="{{page.bannerImage}}"
+                  banner-image-storage-path="[[pagePath.storage.bannerImage]]/[[slug]]"
+                  body="[[page.body]]"
+                  images-storage-path="[[pagePath.storage.images]]/[[slug]]"
+                  documents-storage-path="[[pagePath.storage.documents]]/[[slug]]"
+                  video="[[page.video]]"
+                  published="[[pageMenu]]"
+                  published-path="[[pagePath.pageMenu]]/[[slug]]"
+                  categories="[[page.categories]]"
+                  types="[[page.types]]"></project-nice-article-form>
+            </template>
+
+            <!-- Article-form -->
+            <project-nice-article-view
                 class="flex"
-                title="{{page.title}}"
-                sub-title="{{page.subTitle}}"
-                banner-image="{{page.bannerImage}}"
-                body="{{page.body}}"
+                title="[[page.title]]"
+                sub-title="[[page.subTitle]]"
+                banner-image="[[page.bannerImage]]"
+                body="[[page.body]]"
                 images="[[page.images]]"
                 documents="[[page.documents]]"
-                video="{{page.video}}"
+                video="[[page.video]]"
                 categories="[[page.categories]]"
-                types="[[page.types]]"></project-nice-article-form>
-          </template>
-          <project-nice-article-view
-              class="flex"
-              title="[[page.title]]"
-              sub-title="[[page.subTitle]]"
-              banner-image="[[page.bannerImage]]"
-              body="[[page.body]]"
-              images="[[page.images]]"
-              documents="[[page.documents]]"
-              video="[[page.video]]"
-              categories="[[page.categories]]"
-              types="[[page.types]]"></project-nice-article-view>
-          
-        </div>
+                types="[[page.types]]"></project-nice-article-view>
+            
+          </div>
+        </template>
+        
         
       </template>
 
@@ -92,6 +107,10 @@
 
       _changeQuaryParamsEdit: function(e) {
         this.edit = e === 'true';
+      },
+
+      _checkPublished: function(published, user) {
+        return published || user;
       }
     });
   </script>

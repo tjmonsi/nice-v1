@@ -1,9 +1,5 @@
 //
 
-:host {
-  padding: 20px;
-}
-
 paper-progress {
   width: 100%;
   --paper-progress-transition-duration: 0.08s;
@@ -11,6 +7,6 @@ paper-progress {
   --paper-progress-transition-transition-delay: 0s;
 }
 
-project-nice-multiple-files-form {
-  margin-bottom: 20px;
+paper-material {
+  padding: 10px;
 }

@@ -35,9 +35,11 @@
             </a>
             <paper-menu class="dropdown-content" id="about-button-menu">
               <template is="dom-repeat" items="[[pageNavList]]" as="pageitems">
-                <a href$="/page/[[pageitems.$key]]">
-                  <paper-item >[[pageitems.title]]</paper-item>
-                </a>
+                <template is="dom-if" if="[[item.published]]">
+                  <a href$="/page/[[pageitems.$key]]">
+                    <paper-item >[[pageitems.title]]</paper-item>
+                  </a>
+                </template>
               </template>
               
             </paper-menu>

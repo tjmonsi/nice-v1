@@ -1,0 +1,142 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-multiple-files-form-style.html">
+
+<dom-module id="project-nice-multiple-files-form">
+  <template>
+    <style is="custom-style" include="project-nice-multiple-files-form-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query path="[[path]]/[[filePath]]" data="{{files}}"></firebase-query>
+
+    <paper-input label="[[label]]" type="file" on-change="_uploadFiles" multiple accept="[[accept]]"></paper-input>
+
+    <template is="dom-repeat" items="[[tasks]]">
+      <template is="dom-if" if="[[item.progress]]">
+      [[item.name]] 
+      <paper-progress value="[[item.progress]]" max="100" min="0" class="transiting"></paper-progress>
+      </template>
+    </template>
+    <template is="dom-repeat" items="{{files}}">
+      <paper-material>
+        <paper-input value="{{item.name}}" label="Name"></paper-input>
+        <paper-input value="{{item.description}}" label="Caption"></paper-input>
+        Download: 
+        <a href="[[item.downloadURL]]" target="_blank">
+          <paper-icon-button icon="default:file-download"></paper-icon-button>
+        </a> <br/>
+        Delete: 
+        <paper-icon-button icon="default:delete" on-tap="_deleteFile" database-path="[[path]]/[[filePath]]/[[item.$key]]" storage-path="[[item.storagePath]]"></paper-icon-button>  
+      </paper-material>
+      
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-multiple-files-form',
+
+      behaviors: [
+        NICEV1.ProjectNiceUtilsBehavior
+      ],
+
+      properties: {
+        filePath: {
+          type: String
+        },
+        path: {
+          type: String
+        },
+        label: {
+          type: String
+        },
+        accept: {
+          type: String
+        },
+        files: {
+          type: Array
+        },
+        fileStoragePath: {
+          type: String
+        },
+        tasks: {
+          type: Object,
+          value: function() { return []; }
+        },
+      },
+
+      _uploadFiles: function(e) {
+        var el = e.target.inputElement;
+        if (el.files.length) {
+          var files = el.files;
+
+          if (firebase) {
+            this.tasks = [];
+            for (var i=0; i < files.length; i++) {
+              var file = files[i];
+              var progressPath = 'tasks.' + i + '.progress';
+              var key = firebase.database().ref(this.path + '/' + this.filePath).push().key;
+              var task = firebase.storage().ref(this.fileStoragePath).child(key + '--' + file.name).put(file)
+              this.push('tasks', {
+                task: task,
+                name: file.name,
+                progress: 1
+              });              
+              task.on(
+                firebase.storage.TaskEvent.STATE_CHANGED,
+                this._uploadTask.bind(this, progressPath),
+                this._catchError.bind(this),
+                function(t, p, k, j) {
+                  this.set(p, 99.99);
+                  firebase.database().ref(this.path + '/'+ this.filePath +'/' + k).set({
+                    downloadURL: t.snapshot.downloadURL,
+                    storagePath: t.snapshot.ref.fullPath,
+                    name: file.name
+                  });
+                  setTimeout(() => {
+                    this.set(p, 0)
+                  }, 100);
+                  if (j === files.length - 1) {
+                    el.value = null;
+                  }
+                }.bind(this, task, progressPath, key, i)
+              )
+            }
+          }
+        }
+      },
+
+      _uploadTask: function(progressPath, snapshot) {
+        var val = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        this.set(progressPath, val ? val : 0.01);
+      },
+
+      _deleteFile: function(e) {
+        var databasePath = e.target.databasePath
+        var storagePath = e.target.storagePath
+        var promises = [];        
+        if (firebase) {
+          promises.push(firebase.database().ref(databasePath).remove());
+          promises.push(firebase.storage().ref(storagePath).delete())
+          Promise.all(promises).then(() => {
+            console.log('deleted')
+          }).catch(this._catchError.bind(this))
+        }
+      }
+    });
+  </script>
+</dom-module>

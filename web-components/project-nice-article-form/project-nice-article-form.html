@@ -1,6 +1,12 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<!--<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">-->
+<link rel="import" href="../../web-components/project-nice-multiple-files-form/project-nice-multiple-files-form.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-article-form-style.html">
@@ -13,15 +19,56 @@
       }
     </style>
 
+    <!--<firebase-document
+          path="[[publishedPath]]"
+          data="{{pageMenu}}"></firebase-document>-->
+
     <!-- permission -->
-    <paper-input id="title" value="{{title}}"></paper-input>
+    <h4>Title and Short Description</h4>
+    <paper-input id="title" value="{{title}}" label="Title"></paper-input>
+    <paper-textarea id="sub-title" value="{{subTitle}}" label="Description"></paper-textarea>
+    <hr>
+    <h4>Banner Image and Video</h4>
+    <paper-input id="banner-image" value="{{bannerImage}}" label="Banner Image"></paper-input>
+    <paper-input id="banner-image-file" label="Upload Banner Image" type="file" on-change="_uploadBannerImage" accept="image/*"></paper-input>
     
+    <template is="dom-if" if="[[bannerImageProgress]]">
+      <paper-progress value="[[bannerImageProgress]]" max="100" min="0" class="transiting"></paper-progress>
+    </template>
     
+    <paper-input id="banner-video" value="{{video}}" label="Youtube Video URL"></paper-input> 
+    <hr>
+    <h4>Article Body</h4>
+    <paper-textarea id="body" value="{{body}}" label="Article Body"></paper-textarea>
+    <hr>
+    <h4>Publishing and other options</h4>
+    Publish: <paper-toggle-button id="publish-toggle" on-change="_changePublishToggle"></paper-toggle-button>
+    <content></content>
+    <hr>
+    <h4>Photo Album</h4>
+    <project-nice-multiple-files-form 
+        label="Upload Photos"
+        path="[[path]]"
+        file-path="images"
+        file-storage-path="[[imagesStoragePath]]"
+        accept="image/*"></project-nice-multiple-files-form>
+    <hr>
+    <h4>Documents</h4>
+    <project-nice-multiple-files-form 
+        label="Upload Additional Documents"
+        path="[[path]]"
+        file-path="documents"
+        file-storage-path="[[documentsStoragePath]]"></project-nice-multiple-files-form>
+
   </template>
 
   <script>
     Polymer({
       is: 'project-nice-article-form',
+
+      behaviors: [
+        NICEV1.ProjectNiceUtilsBehavior
+      ],
 
       properties: {
         title: {
@@ -36,23 +83,31 @@
           type: String,
           notify: true
         },
+        bannerImageStoragePath: {
+          type: String
+        },
+        bannerImageProgress: {
+          type: Number,
+          value: 0
+        },
         body: {
           type: String,
           notify: true
         },
         images: {
+          type: Array
+        },
+        imagesStoragePath: {
+          type: String
+        },
+        documentsStoragePath: {
+          type: String
+        },
+        published: {
           type: Object
         },
-        imageArray: {
-          type: Array,
-          value: function() { return []; }
-        },
-        documents: {
-          type: Object
-        },
-        documentArray: {
-          type: Array,
-          value: function() { return []; }
+        publishedPath: {
+          type: String
         },
         video: {
           type: String,
@@ -73,6 +128,56 @@
           value: function() { return []; }
         }
       },
+
+      observers: [
+        '_changePublished(published.published)',
+      ],
+
+      _bannerImageTask: null,
+
+      _changePublished: function(e) {
+        this.$$('#publish-toggle').checked = !!e;
+      },
+
+      _changePublishToggle: function(e) {
+        if (firebase) {
+          var timestamp = firebase.database.ServerValue.TIMESTAMP;
+          var checked = e.target.checked;
+          var updates = {};
+          updates[this.publishedPath + '/published'] = checked ? timestamp : false;
+          updates[this.publishedPath + '/draft'] = checked ? false : timestamp;
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage((checked ? 'Published' : 'Drafted'))
+          }).catch(this._catchError.bind(this));
+        }
+      },
+
+      _uploadBannerImage: function(e) {
+        if (e.target.inputElement.files.length) {
+          var file = e.target.inputElement.files[0];
+
+          if (firebase) {
+            this._bannerImageTask = firebase.storage().ref(this.bannerImageStoragePath).child(file.name).put(file);
+            this._bannerImageTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED, 
+              this._uploadTask.bind(this, 'bannerImageProgress'),
+              this._catchError.bind(this),
+              () => {
+                this.set('bannerImageProgress', 99.99);
+                this.set('bannerImage', this._bannerImageTask.snapshot.downloadURL);
+                setTimeout(() => {
+                  this.set('bannerImageProgress', 0)
+                }, 100);
+              } 
+            )
+          }
+        }
+      },
+
+      _uploadTask: function(progressPath, snapshot) {
+        var val = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        this.set(progressPath, val ? val : 0.01);
+      }
     });
   </script>
 </dom-module>
