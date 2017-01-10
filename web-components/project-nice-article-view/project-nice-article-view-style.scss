@@ -16,6 +16,14 @@
   }
 }
 
+.document-item-anchor {
+  text-decoration: none;
+  
+  .document-item {
+    padding: 10px;
+  }
+}
+
 
 #photoblog-dialog {
   width: 70%;
