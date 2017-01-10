@@ -37,6 +37,7 @@ Wham! It's all awesome now!
   <link rel="lazy-import" href="/pages/nice-page/nice-page.html" group="nice-page">
   <link rel="lazy-import" href="/pages/dashboard-page/dashboard-page.html" group="dashboard-page">
   <link rel="lazy-import" href="/pages/data-page/data-page.html" group="data-page">
+  <link rel="lazy-import" href="/pages/message-page/message-page.html" group="member-page">
   <link rel="lazy-import" href="/pages/member-page/member-page.html" group="member-page">
   <link rel="lazy-import" href="/pages/login-page/login-page.html" group="login-page">
   <link rel="lazy-import" href="/pages/not-authorized-page/not-authorized-page.html" group="not-authorized-page">
@@ -95,8 +96,12 @@ Wham! It's all awesome now!
         <dashboard-page route="/dashboard" user="{{user}}"></dashboard-page>
         <dashboard-page route="/dashboard/:page" user="{{user}}"></dashboard-page>
         <!-- ADD member -->
+        <member-page route="/member" user="{{user}}"></member-page>
         <member-page route="/member/:id" user="{{user}}"></member-page>
         <member-page route="/profile" user="{{user}}"></member-page>
+        <!-- Message here -->
+        <message-page route="/message" user="{{user}}"></message-page>
+        <message-page route="/message/:id" user="{{user}}"></message-page>
         <!-- LOGIN PAGE -->
         <login-page route="/login" user="{{user}}"></login-page>
         <not-authorized-page route="not-authorized"></not-authorized-page>
