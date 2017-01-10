@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
@@ -59,6 +60,10 @@
         path="[[path]]"
         file-path="documents"
         file-storage-path="[[documentsStoragePath]]"></project-nice-multiple-files-form>
+    <hr>
+    <a href="[[url]]">
+      <paper-button raised>Close Edit</paper-button>
+    </a>
 
   </template>
 

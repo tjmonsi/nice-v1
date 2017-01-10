@@ -75,9 +75,16 @@
         </template>
 
         <template is="dom-if" if="[[_checkEdit(url, user)]]">
-          <a href="[[url]]?edit=true">
-            <paper-button raised>Edit</paper-button>
-          </a>
+          <template is="dom-if" if="[[!edit]]">
+            <a href="[[url]]?edit=true">
+              <paper-button raised>Edit</paper-button>
+            </a>
+          </template>
+          <template is="dom-if" if="[[edit]]">
+            <a href="[[url]]">
+              <paper-button raised>Close Edit</paper-button>
+            </a>
+          </template>
         </template>
 
         <!-- feedback -->
@@ -165,6 +172,10 @@
         url: {
           type: String,
           value: ''
+        },
+        edit: {
+          type: Boolean,
+          value: false
         }
       },
 

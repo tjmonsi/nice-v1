@@ -45,7 +45,8 @@
                   documents-storage-path="[[pagePath.storage.documents]]/[[slug]]"
                   video="{{page.video}}"
                   published-path="[[pagePath.list.published]]/[[slug]]"
-                  draft-path="[[pagePath.list.draft]]/[[slug]]"></project-nice-article-form>
+                  draft-path="[[pagePath.list.draft]]/[[slug]]"
+                  url="/page/[[slug]]"></project-nice-article-form>
             </template>
 
             <!-- Article-form -->
@@ -60,7 +61,9 @@
                 video="[[page.video]]"
                 categories="[[page.categories]]"
                 types="[[page.types]]"
-                user="[[user]]"></project-nice-article-view>
+                user="[[user]]"
+                url="/page/[[slug]]"
+                edit="[[edit]]"></project-nice-article-view>
             
           </div>
         </template>
@@ -91,7 +94,7 @@
           type: String
         },
         edit: {
-          type: String
+          type: Boolean
         }
       },
 
