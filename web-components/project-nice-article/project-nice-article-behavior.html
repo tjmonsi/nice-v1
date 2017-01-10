@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNiceArticleBehavior */
+    NICEV1.ProjectNiceArticleBehaviorImpl = {
+
+      properties: {
+        
+        articlePath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._articlePath; }
+        },
+        articleGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._articleGroup; }
+        },
+
+        // articleNavList: {
+        //   type: Array,
+        //   value: function() { return []; }
+        // },
+
+        article: {
+          type: Object
+        },
+
+        // articleMenu: {
+        //   type: Object
+        // }
+      },
+
+      get _articleGroup() {
+        return 'articleGroup';
+      },
+
+      get _articlePath() {
+        var storage = this._version + '/' + this._articleGroup + '/storage';
+        var list = this._version + '/' + this._articleGroup + '/list';
+        return {
+          articles: this._version + '/' + this._articleGroup + '/articles', // this is where the article objects are saved
+          owner: this._version + '/' + this._articleGroup + '/owner', // this is where you set the owner of the article
+          list: {
+            published: list + '/published'
+          },
+          storage: {
+            bannerImage: storage + '/bannerImage',
+            images: storage + '/images',
+            documents: storage + '/documents'
+          }
+        };
+      },
+
+      // observers: [
+      //   '_changeArticleTitle(article.title)'
+      // ],
+
+      // _changeArticleTitle: function(e) {
+      //   this.set('articleMenu.title', e);
+      // }
+    };
+    NICEV1.ProjectNiceArticleBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceArticleBehaviorImpl
+    ];
+  })();
+</script>
