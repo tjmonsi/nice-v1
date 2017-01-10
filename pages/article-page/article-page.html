@@ -1,29 +1,116 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
+<link rel="import" href="../../web-components/project-nice-article-form/project-nice-article-form.html">
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="article-page-style.html">
 
 <dom-module id="article-page">
   <template>
-    <style is="custom-style" include="article-page-style">
+    <style is="custom-style" include="article-page-style iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
     </style>
     
-    <div class="card">
-      <div class="circle">2</div>
-      <h1>View Two</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-    </div>
+    <template is="dom-if" if="[[id]]">
+      <firebase-document 
+          path="[[articlePath.articles]]/[[id]]"
+          data="{{article}}"></firebase-document>
+
+      <firebase-document
+          path="[[articlePath.list.published]]/[[id]]"
+          data="{{articlePublished}}"></firebase-document>
+
+      <template is="dom-if" if="[[_forceZero(article)]]">
+        <!-- _checkPublished(articlePublished.published, user) -->
+        <template is="dom-if" if="[[user]]">
+          <div class="horizontal layout wrap">
+          <template is="dom-if" if="[[edit]]">
+              <!-- Article-form -->
+              <project-nice-article-form
+                  path="[[articlePath.articles]]/[[id]]"
+                  class="flex"
+                  title="{{article.title}}"
+                  sub-title="{{article.subTitle}}"
+                  banner-image="{{article.bannerImage}}"
+                  banner-image-storage-path="[[articlePath.storage.bannerImage]]/[[id]]"
+                  body="{{article.body}}"
+                  images-storage-path="[[articlePath.storage.images]]/[[id]]"
+                  documents-storage-path="[[articlePath.storage.documents]]/[[id]]"
+                  video="{{article.video}}"
+                  published="[[articlePublished]]"
+                  published-path="[[articlePath.list.published]]/[[id]]"></project-nice-article-form>
+            </template>
+
+            <!-- Article-form -->
+            <project-nice-article-view
+                class="flex"
+                title="[[article.title]]"
+                sub-title="[[article.subTitle]]"
+                banner-image="[[article.bannerImage]]"
+                body="[[article.body]]"
+                images="[[article.images]]"
+                documents="[[article.documents]]"
+                video="[[article.video]]"
+                categories="[[article.categories]]"
+                types="[[article.types]]"></project-nice-article-view>
+            
+          </div>
+        </template>
+        
+        
+      </template>
+
+      <template is="dom-if" if="[[!_forceZero(article)]]">
+        Loading
+      </template>
+    </template>
+
   </template>
 
   <script>
     Polymer({
-      is: 'article-page'
+      is: 'article-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceArticleBehavior
+      ],
+
+      properties: {
+        params: {
+          type: Object
+        },
+        id: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: String
+        }
+      },
+
+      observers: [
+        '_changeParamsId(params.id)',
+        '_changeQuaryParamsEdit(queryParams.edit)'
+      ],
+
+      _changeParamsId: function(e) {
+        this.id = e
+      },
+
+      _changeQuaryParamsEdit: function(e) {
+        this.edit = e === 'true';
+      },
+
+      _checkPublished: function(published, user) {
+        return published || user;
+      }
     });
   </script>
 </dom-module>
