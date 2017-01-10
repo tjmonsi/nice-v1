@@ -3,8 +3,12 @@
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
 
 
@@ -34,20 +38,40 @@
         </marked-element>
 
         <!-- photo-blog -->
-        <div class="horizontal layout wrap">
-          <template is="dom-repeat" items="[[imageArray]]">
-            <paper-material class="photoblog-item flex">
-              <iron-image
-                src="{{item.downloadURL}}"
-                data-caption$="{{item.caption}}"
-                sizing="cover"
-                preload
-                fade
-                on-tap="_openPhotoBlog"
-              ></iron-image>
-            </paper-material>
+        <template is="dom-if" if="[[imageArray.length]]">
+          <h3 class="">Photos</h3>
+          <div class="horizontal layout wrap">
+            <template is="dom-repeat" items="[[imageArray]]">
+              
+              <paper-material class="photoblog-item flex">
+                <iron-image
+                  src="[[item.downloadURL]]"
+                  data-caption$="[[item.description]]"
+                  sizing="cover"
+                  preload
+                  fade
+                  on-tap="_openPhotoBlog"
+                ></iron-image>
+              </paper-material>
+            </template>
+          </div>
+        </template>
+        
+        <template is="dom-if" if="[[documentArray.length]]">
+          <h3 class="">Files</h3>
+          <template is="dom-repeat" items="[[documentArray]]">
+            <a href="[[item.downloadURL]]" class="document-item-anchor">
+              <paper-material class="document-item horizontal layout center">
+                
+                <paper-icon-button icon="default:file-download"></paper-icon-button>
+                <div class="flex">
+                  [[item.name]]<br/>
+                  [[item.description]]
+                </div>
+              </paper-material>
+            </a>
           </template>
-        </div>
+        </template>
 
         <!-- feedback -->
         <h1 class="">Feedback</h1>
@@ -57,6 +81,7 @@
       <div class="flex"></div>
     </div>
     
+    <!-- photoblog dialog -->
     <paper-dialog 
         id="photoblog-dialog"
         entry-animation="scale-up-animation"
@@ -78,6 +103,8 @@
         </div>
       </div>
     </paper-dialog>
+
+    <!-- video dialog -->
   </template>
 
   <script>
@@ -131,13 +158,21 @@
       },
 
       observers: [
-        '_changeImages(images)'
+        '_changeImages(images)',
+        '_changeDocuments(documents)'
       ],
 
       _changeImages: function(images) {
         this.imageArray = [];
         for (var i in images) {
           this.push('imageArray', images[i]);
+        }
+      },
+
+      _changeDocuments: function(documents) {
+        this.documentArray = [];
+        for (var i in documents) {
+          this.push('documentArray', documents[i])
         }
       },
 
