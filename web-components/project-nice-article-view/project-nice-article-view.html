@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -71,6 +72,12 @@
               </paper-material>
             </a>
           </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkEdit(url, user)]]">
+          <a href="[[url]]?edit=true">
+            <paper-button raised>Edit</paper-button>
+          </a>
         </template>
 
         <!-- feedback -->
@@ -154,6 +161,10 @@
         typeArray: {
           type: Array,
           value: function() { return []; }
+        },
+        url: {
+          type: String,
+          value: ''
         }
       },
 
@@ -185,6 +196,10 @@
         this.$$('#photoblog-dialog-image').shadowRoot.querySelector('#img').setAttribute('style' , 'width: 100%; max-width: 500px');
         this.$$('#photoblog-dialog-caption').markdown = caption;
       },
+
+      _checkEdit: function(url, user) {
+        return url && user
+      }
     });
   </script>
 </dom-module>
