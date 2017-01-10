@@ -2,9 +2,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<!--<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">-->
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../web-components/project-nice-multiple-files-form/project-nice-multiple-files-form.html">
 <link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
 
@@ -19,9 +20,9 @@
       }
     </style>
 
-    <!--<firebase-document
+    <firebase-document
           path="[[publishedPath]]"
-          data="{{pageMenu}}"></firebase-document>-->
+          data="{{published}}"></firebase-document>
 
     <!-- permission -->
     <h4>Title and Short Description</h4>
@@ -59,6 +60,10 @@
         path="[[path]]"
         file-path="documents"
         file-storage-path="[[documentsStoragePath]]"></project-nice-multiple-files-form>
+    <hr>
+    <a href="[[url]]">
+      <paper-button raised>Close Edit</paper-button>
+    </a>
 
   </template>
 
@@ -109,6 +114,9 @@
         publishedPath: {
           type: String
         },
+        draftPath: {
+          type: String
+        },
         video: {
           type: String,
           notify: true
@@ -130,22 +138,24 @@
       },
 
       observers: [
-        '_changePublished(published.published)',
+        '_changePublished(published)',
       ],
 
       _bannerImageTask: null,
 
       _changePublished: function(e) {
-        this.$$('#publish-toggle').checked = !!e;
+        this.$$('#publish-toggle').checked = this._forceZero(e);
       },
 
       _changePublishToggle: function(e) {
         if (firebase) {
-          var timestamp = firebase.database.ServerValue.TIMESTAMP;
+          var timestamp = {
+            date: firebase.database.ServerValue.TIMESTAMP
+          }
           var checked = e.target.checked;
           var updates = {};
-          updates[this.publishedPath + '/published'] = checked ? timestamp : false;
-          updates[this.publishedPath + '/draft'] = checked ? false : timestamp;
+          updates[this.publishedPath] = checked ? timestamp : null;
+          updates[this.draftPath] = checked ? null : timestamp;
           firebase.database().ref().update(updates).then(() => {
             this._showMessage((checked ? 'Published' : 'Drafted'))
           }).catch(this._catchError.bind(this));

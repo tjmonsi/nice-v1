@@ -1,8 +1,10 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
 <link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
 <link rel="import" href="../../web-components/project-nice-article-form/project-nice-article-form.html">
 <link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
@@ -12,11 +14,36 @@
 
 <dom-module id="article-page">
   <template>
-    <style is="custom-style" include="article-page-style iron-flex iron-flex-alignment">
+    <style is="custom-style" include="article-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
+
+    <template is="dom-if" if="[[!id]]">
+      <firebase-query
+          path="[[articlePath.list.published]]"
+          data="{{articles}}"></firebase-query>
+
+      <div class="padder">
+        <div class="horizontal layout wrap">
+          <div class="flex-5 main-content">
+            <h1 class="">Photoblog</h1>
+            <h1 class="">News</h1>
+            <h1 class="">Articles</h1>
+
+            <template is="dom-repeat" items="[[articles]]">
+              <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
+            </template>
+          </div>
+          <div class="flex-2">
+            <h1 class="">Trending</h1>
+          </div>
+        </div>
+        
+      </div>
+      
+    </template>
     
     <template is="dom-if" if="[[id]]">
       <firebase-document 
@@ -44,8 +71,9 @@
                   images-storage-path="[[articlePath.storage.images]]/[[id]]"
                   documents-storage-path="[[articlePath.storage.documents]]/[[id]]"
                   video="{{article.video}}"
-                  published="[[articlePublished]]"
-                  published-path="[[articlePath.list.published]]/[[id]]"></project-nice-article-form>
+                  published-path="[[articlePath.list.published]]/[[id]]"
+                  draft-path="[[articlePath.list.draft]]/[[id]]"
+                  url="/page/[[slug]]"></project-nice-article-form>
             </template>
 
             <!-- Article-form -->
@@ -59,7 +87,10 @@
                 documents="[[article.documents]]"
                 video="[[article.video]]"
                 categories="[[article.categories]]"
-                types="[[article.types]]"></project-nice-article-view>
+                types="[[article.types]]"
+                user="[[user]]"
+                url="/article/[[id]]"
+                edit="[[edit]]"></project-nice-article-view>
             
           </div>
         </template>
@@ -91,7 +122,7 @@
           value: ''
         },
         edit: {
-          type: String
+          type: Boolean
         }
       },
 
@@ -101,7 +132,7 @@
       ],
 
       _changeParamsId: function(e) {
-        this.id = e
+        this.id = e || ''
       },
 
       _changeQuaryParamsEdit: function(e) {

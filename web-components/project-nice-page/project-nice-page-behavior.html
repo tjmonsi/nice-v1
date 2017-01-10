@@ -20,17 +20,13 @@
           value: function() { return this._pageGroup; }
         },
 
-        pageNavList: {
-          type: Array,
-          value: function() { return []; }
-        },
-
         page: {
           type: Object
         },
 
-        pageMenu: {
-          type: Object
+        pages: {
+          type: Array,
+          value: function() { return []; }
         }
       },
 
@@ -40,10 +36,14 @@
 
       get _pagePath() {
         var storage = this._version + '/' + this._pageGroup + '/storage';
+        var list = this._version + '/' + this._pageGroup + '/list';
         return {
           pages: this._version + '/' + this._pageGroup + '/pages', // this is where the page objects are saved
-          pageMenu: this._version + '/' + this._pageGroup + '/pageMenu', // this is where you put for the menu
           owner: this._version + '/' + this._pageGroup + '/owner', // this is where you set the owner of the page
+          list: {
+            published: list + '/published',
+            draft: list + '/draft'
+          },
           storage: {
             bannerImage: storage + '/bannerImage',
             images: storage + '/images',

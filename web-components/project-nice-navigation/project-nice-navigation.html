@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 <link rel="import" href="../../web-components/project-nice-page/project-nice-page-behavior.html">
 
@@ -20,8 +21,8 @@
     </style>
 
     <firebase-query 
-        path="[[pagePath.pageMenu]]"
-        data="{{pageNavList}}"></firebase-query>
+        path="[[pagePath.list.published]]"
+        data="{{pages}}"></firebase-query>
 
     <template is="dom-if" if="[[!drawer]]">
       <div class="nice-navigation-header hide-on-phone-only">
@@ -34,12 +35,13 @@
               About
             </a>
             <paper-menu class="dropdown-content" id="about-button-menu">
-              <template is="dom-repeat" items="[[pageNavList]]" as="pageitems">
-                <template is="dom-if" if="[[item.published]]">
+              <template is="dom-repeat" items="[[pages]]" as="pageitems">
+                <firebase-document path="[[pagePath.pages]]/[[pageitems.$key]]/title" data="{{pageitems.title}}"></firebase-document>
+                
                   <a href$="/page/[[pageitems.$key]]">
                     <paper-item >[[pageitems.title]]</paper-item>
                   </a>
-                </template>
+
               </template>
               
             </paper-menu>
@@ -109,7 +111,7 @@
       },
 
       observers: [
-        '_checkPageNavList(pageNavList.splices)'
+        '_checkPageNavList(pages.splices)'
       ],
 
       _toggleDrawer: function() {
@@ -118,8 +120,8 @@
 
       _checkPageNavList: function() {
         if (this.pageNavListLength === 0) {
-          this.pageNavListLength = this.pageNavList.length;
-          console.log(this.pageNavListLength)
+          this.pageNavListLength = this.pages.length;
+          // console.log(this.pageNavListLength)
           this.$$('#about-button').toggle();
           this.$$('#about-button').toggle();
         }

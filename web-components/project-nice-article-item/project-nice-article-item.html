@@ -1,0 +1,59 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-article-item-style.html">
+
+<dom-module id="project-nice-article-item">
+  <template>
+    <style is="custom-style" include="project-nice-article-item-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document
+        path="[[articlePath.articles]]/[[id]]/title"
+        data="{{title}}"></firebase-document>
+    <firebase-document
+        path="[[articlePath.articles]]/[[id]]/bannerImage"
+        data="{{bannerImage}}"></firebase-document>
+
+    <a href="/article/[[id]]">
+      <paper-material class="horizontal layout wrap">
+        <iron-image class="flex" src$="[[bannerImage]]" sizing="cover" fade preload></iron-image>
+        <div class="flex-4 main-content">
+          <h4>
+            [[_trimText(title)]]
+          </h4>
+          <p>
+            Last Published: [[_renderDate(datePublished)]]
+          </p>
+        </div>  
+      </paper-material>
+    </a>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-article-item',
+
+      behaviors: [
+        NICEV1.ProjectNiceArticleBehavior
+      ],
+
+      properties: {
+        id: {
+          type: String
+        }
+      }
+    });
+  </script>
+</dom-module>
