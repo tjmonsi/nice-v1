@@ -24,12 +24,12 @@
           data="{{page}}"></firebase-document>
 
       <firebase-document
-          path="[[pagePath.pageMenu]]/[[slug]]"
-          data="{{pageMenu}}"></firebase-document>
+          path="[[pagePath.list.published]]/[[slug]]"
+          data="{{published}}"></firebase-document>
 
       <template is="dom-if" if="[[_forceZero(page)]]">
 
-        <template is="dom-if" if="[[_checkPublished(pageMenu.published, user)]]">
+        <template is="dom-if" if="[[_checkPublished(_forceZero(published), user)]]">
           <div class="horizontal layout wrap">
           <template is="dom-if" if="[[edit]]">
               <!-- Article-form -->
@@ -44,8 +44,8 @@
                   images-storage-path="[[pagePath.storage.images]]/[[slug]]"
                   documents-storage-path="[[pagePath.storage.documents]]/[[slug]]"
                   video="{{page.video}}"
-                  published="[[pageMenu]]"
-                  published-path="[[pagePath.pageMenu]]/[[slug]]"></project-nice-article-form>
+                  published-path="[[pagePath.list.published]]/[[slug]]"
+                  draft-path="[[pagePath.list.draft]]/[[slug]]"></project-nice-article-form>
             </template>
 
             <!-- Article-form -->
