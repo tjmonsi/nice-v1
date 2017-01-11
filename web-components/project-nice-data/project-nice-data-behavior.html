@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNiceDataBehavior */
+    NICEV1.ProjectNiceDataBehaviorImpl = {
+
+      properties: {
+        
+        dataPath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._dataPath; }
+        },
+        dataGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._dataGroup; }
+        },
+
+        data: {
+          type: Object
+        },
+
+        datas: {
+          type: Array,
+          value: function() { return []; }
+        }
+      },
+
+      get _dataGroup() {
+        return 'dataGroup';
+      },
+
+      get _dataPath() {
+        var storage = this._version + '/' + this._dataGroup + '/storage';
+        var list = this._version + '/' + this._dataGroup + '/list';
+        return {
+          data: this._version + '/' + this._dataGroup + '/data', // this is where the data objects are saved
+          owner: this._version + '/' + this._dataGroup + '/owner', // this is where you set the owner of the data
+          listOptions: list,
+          list: {
+            published: list + '/published'
+          },
+          storage: {
+            bannerImage: storage + '/bannerImage',
+            images: storage + '/images',
+            documents: storage + '/documents'
+          }
+        };
+      },
+
+      // observers: [
+      //   '_changeDataTitle(data.title)'
+      // ],
+
+      // _changeDataTitle: function(e) {
+      //   this.set('dataMenu.title', e);
+      // }
+    };
+    NICEV1.ProjectNiceDataBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceDataBehaviorImpl
+    ];
+  })();
+</script>
