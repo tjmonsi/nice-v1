@@ -1,0 +1,133 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../web-components/project-nice-multiple-files-form/project-nice-multiple-files-form.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-data-form-style.html">
+
+<dom-module id="project-nice-data-form">
+  <template>
+    <style is="custom-style" include="project-nice-data-form-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document
+          path="[[publishedPath]]"
+          data="{{published}}"></firebase-document>
+
+    <!-- permission -->
+    <h4>Title and Short Description</h4>
+    <paper-input id="title" value="{{title}}" label="Title"></paper-input>
+    <paper-textarea id="sub-title" value="{{subTitle}}" label="Description"></paper-textarea>
+    <hr>
+
+    <h4>Article Body</h4>
+    <paper-textarea id="body" value="{{body}}" label="Article Body"></paper-textarea>
+    <hr>
+    
+    <h4>Publishing and other options</h4>
+    Publish: <paper-toggle-button id="publish-toggle" on-change="_changePublishToggle"></paper-toggle-button>
+    <content></content>
+    <hr>
+    
+    <h4>Documents</h4>
+    <project-nice-multiple-files-form 
+        category
+        label="Upload Additional Documents"
+        file-storage-path="[[documentsStoragePath]]"
+        category-set="{{categories}}"></project-nice-multiple-files-form>
+    <hr>
+    <a href="[[url]]">
+      <paper-button raised>Close Edit</paper-button>
+    </a>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-data-form',
+
+      behaviors: [
+        NICEV1.ProjectNiceUtilsBehavior
+      ],
+
+      properties: {
+        title: {
+          type: String,
+          notify: true
+        },
+        subTitle: {
+          type: String,
+          notify: true
+        },
+        
+        body: {
+          type: String,
+          notify: true
+        },
+        documentsStoragePath: {
+          type: String
+        },
+        published: {
+          type: Object
+        },
+        publishedPath: {
+          type: String
+        },
+        draftPath: {
+          type: String
+        },
+        categories: {
+          type: Object,
+          notify: true
+        },
+        categoryArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        types: {
+          type: Object
+        },
+        typeArray: {
+          type: Array,
+          value: function() { return []; }
+        }
+      },
+
+      observers: [
+        '_changePublished(published)',
+      ],
+
+      _bannerImageTask: null,
+
+      _changePublished: function(e) {
+        this.$$('#publish-toggle').checked = this._forceZero(e);
+      },
+
+      _changePublishToggle: function(e) {
+        if (firebase) {
+          var timestamp = {
+            date: firebase.database.ServerValue.TIMESTAMP
+          }
+          var checked = e.target.checked;
+          var updates = {};
+          updates[this.publishedPath] = checked ? timestamp : null;
+          updates[this.draftPath] = checked ? null : timestamp;
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage((checked ? 'Published' : 'Drafted'))
+          }).catch(this._catchError.bind(this));
+        }
+      },
+
+
+    });
+  </script>
+</dom-module>
