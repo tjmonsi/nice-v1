@@ -39,6 +39,22 @@
         },
       },
 
+      _memberListener: null,
+
+      _pendingListener: null,
+
+      detached: function() {
+        if (this._memberListener && this.user) {
+          firebase.database().ref(this._userPath.options.member + '/' + this.user.uid).off('value', this._memberListener);
+          this._memberListener = null;
+        }
+
+        if (this._pendingListener && this.user) {
+          firebase.database().ref(this._userPath.options.pending + '/' + this.user.uid + '/value').off('value', this._pendingListener);
+          this._pendingListener = null;
+        }
+      },
+
       observers: [
         '_getRoles(user.uid)'
       ],
@@ -66,13 +82,13 @@
         if (uid && firebase) {
 
           //member
-          firebase.database().ref(this._userPath.options.member + '/' + uid).on('value', (dataSnapshot) => {
+          this._memberListener = firebase.database().ref(this._userPath.options.member + '/' + uid).on('value', (dataSnapshot) => {
             var m = dataSnapshot.val();
             if (!m) return;
             var a1 = m.admin;
             var e1 = m.editor;
             var s1 = m.staff;
-            var m1 = m.membershipDate;
+            var m1 = m.member;
 
             this.set('roles.admin', a1);
             this.set('roles.editor', e1 || a1);
@@ -83,8 +99,8 @@
           }, this._catchError.bind(this));
 
           //pending
-          firebase.database().ref(this._userPath.options.pending + '/' + uid + '/value').on('value', (dataSnapshot) => {
-            this.set('role.pending', dataSnapshot.val())
+          this._pendingListener = firebase.database().ref(this._userPath.options.pending + '/' + uid + '/value').on('value', (dataSnapshot) => {
+            this.set('roles.pending', dataSnapshot.val())
           }, this._catchError.bind(this));
 
         } else if (!firebase) {
