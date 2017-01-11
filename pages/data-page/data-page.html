@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<!--<link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">-->
+<link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">
 <link rel="import" href="../../web-components/project-nice-data-view/project-nice-data-view.html">
 <link rel="import" href="../../web-components/project-nice-data-form/project-nice-data-form.html">
 <link rel="import" href="../../web-components/project-nice-data/project-nice-data-behavior.html">
@@ -19,6 +19,29 @@
         display: block;
       }
     </style>
+
+    <template is="dom-if" if="[[!id]]">
+      <firebase-query
+          path="[[dataPath.list.published]]"
+          data="{{dataList}}"></firebase-query>
+
+      <div class="padder">
+        <div class="horizontal layout wrap">
+          <div class="flex-5 main-content">
+            <h1 class="">Open Data</h1>
+
+            <template is="dom-repeat" items="[[dataList]]">
+              <project-nice-data-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-data-item>          
+            </template>
+          </div>
+          <div class="flex-2">
+            <h1 class="">Trending</h1>
+          </div>
+        </div>
+        
+      </div>
+      
+    </template>
 
     <template is="dom-if" if="[[id]]">
       <firebase-document 
@@ -40,6 +63,7 @@
           <template is="dom-if" if="[[edit]]">
               <!-- data-form -->
               <project-nice-data-form
+                  data-id="[[id]]"
                   path="[[dataPath.data]]/[[id]]"
                   class="flex"
                   title="{{data.title}}"
@@ -47,6 +71,7 @@
                   body="{{data.body}}"
                   documents-storage-path="[[dataPath.storage.documents]]/[[id]]"                  
                   video="{{data.video}}"
+                  list-path="[[dataPath.listOptions]]"
                   published-path="[[dataPath.list.published]]/[[id]]"
                   draft-path="[[dataPath.list.draft]]/[[id]]"
                   categories="{{data.categories}}"

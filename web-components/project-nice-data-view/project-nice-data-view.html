@@ -37,7 +37,6 @@
           <div class="markdown-html"></div>
         </marked-element>
 
-        
         <template is="dom-if" if="[[documents.length]]">
           <h3 class="">Files</h3>
           <template is="dom-repeat" items="[[documents]]">
@@ -50,19 +49,25 @@
                   [[item.description]]
                   <div class="horizontal layout wrap">
                     <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">
-                    <template is="dom-if" if="[[_categoryIcon(item.categories, categoryitem.$key)]]">
-                      <div style="position: relative">
-                        <iron-icon style="margin-left: 10px" id="[[item.$key]]-[[categoryitem.$key]]" src="[[categoryitem.icon]]"></iron-icon>
-                        <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
-                      </div>
+                      <template is="dom-if" if="[[_categoryIcon(item.categories, categoryitem.$key)]]">
+                        <div style="position: relative">
+                          <iron-icon style="margin-left: 10px" id="[[item.$key]]-[[categoryitem.$key]]" src="[[categoryitem.icon]]"></iron-icon>
+                          <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
+                        </div>
+                      </template>
                     </template>
-                  </template>
                   </div>
                 </div>
               </paper-material>
             </a>
           </template>
         </template>
+
+        <hr>
+
+        <a href="/data">
+          <paper-button raised>Go back</paper-button>
+        </a>
 
         <template is="dom-if" if="[[_checkEdit(url, user)]]">
           <template is="dom-if" if="[[!edit]]">

@@ -187,6 +187,8 @@
         var id = e.target.categoryId;
         var fileId = e.target.fileId;
         var active = e.target.active;
+
+        console.log(id)
         
         var updates = {};
         updates[this.fileStoragePath + '/' + fileId + '/categories/' + id] = active ? {value: true} : null;

@@ -42,7 +42,8 @@
           owner: this._version + '/' + this._articleGroup + '/owner', // this is where you set the owner of the article
           listOptions: list,
           list: {
-            published: list + '/published'
+            published: list + '/published',
+            draft: list + '/draft'
           },
           storage: {
             bannerImage: storage + '/bannerImage',
@@ -52,13 +53,32 @@
         };
       },
 
-      // observers: [
-      //   '_changeArticleTitle(article.title)'
-      // ],
+      _addArticle: function() {
+        var el = this.$$('#new-article');
+        var key = firebase.database().ref(this.articlePath.articles).push({
+          title: 'New Article'
+        }).key;
+        el.href = '/article/' + key + '?edit=true';
+      },
 
-      // _changeArticleTitle: function(e) {
-      //   this.set('articleMenu.title', e);
-      // }
+      observers: [
+        '_changeArticle(article.*)'
+      ],
+
+      _changeArticle: function() {
+        if (this.id && this._forceZero(this.article)) {
+          var timestamp = {
+            date: firebase.database.ServerValue.TIMESTAMP
+          }
+          var updates = {};
+          var checked = this._forceZero(this.articlePublished);
+          
+          updates[this.articlePath.list.published + '/' + this.id] = checked ? timestamp : null;
+          updates[this.articlePath.list.draft + '/' + this.id] = checked ? null : timestamp;
+
+          firebase.database().ref().update(updates).catch(this._catchError.bind(this));
+        }       
+      },
     };
     NICEV1.ProjectNiceArticleBehavior = [
       NICEV1.ProjectNiceUtilsBehavior,

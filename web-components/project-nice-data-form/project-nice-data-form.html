@@ -3,10 +3,13 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../web-components/project-nice-multiple-files-form/project-nice-multiple-files-form.html">
 <link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-data-form-style.html">
@@ -23,13 +26,17 @@
           path="[[publishedPath]]"
           data="{{published}}"></firebase-document>
 
+    <firebase-query 
+          path="[[categoryPath.article]]" 
+          data="{{categoryList}}"></firebase-query>
+
     <!-- permission -->
     <h4>Title and Short Description</h4>
     <paper-input id="title" value="{{title}}" label="Title"></paper-input>
     <paper-textarea id="sub-title" value="{{subTitle}}" label="Description"></paper-textarea>
     <hr>
 
-    <h4>Article Body</h4>
+    <h4>Data Body</h4>
     <paper-textarea id="body" value="{{body}}" label="Article Body"></paper-textarea>
     <hr>
     
@@ -45,9 +52,20 @@
         file-storage-path="[[documentsStoragePath]]"
         category-set="{{categories}}"></project-nice-multiple-files-form>
     <hr>
+
+    <paper-button raised on-tap="_openDeleteItemDialog">Delete</paper-button>
+
     <a href="[[url]]">
       <paper-button raised>Close Edit</paper-button>
     </a>
+
+    <paper-dialog id="delete-dialog">
+      <p>
+        Are you sure you want to delete it?
+      </p>
+      <paper-button on-tap="_deleteItem">Delete</paper-button>
+      <paper-button on-tap="_closeDeleteItemDialog">Cancel</paper-button>
+    </paper-dialog>
 
   </template>
 
@@ -56,7 +74,8 @@
       is: 'project-nice-data-form',
 
       behaviors: [
-        NICEV1.ProjectNiceUtilsBehavior
+        NICEV1.ProjectNiceUtilsBehavior,
+        NICEV1.ProjectNiceCategoryBehavior
       ],
 
       properties: {
@@ -104,6 +123,7 @@
 
       observers: [
         '_changePublished(published)',
+        '_changeCategories(categories.*, categoryList.splices)'
       ],
 
       _bannerImageTask: null,
@@ -125,6 +145,46 @@
             this._showMessage((checked ? 'Published' : 'Drafted'))
           }).catch(this._catchError.bind(this));
         }
+      },
+
+      _changeCategories: function() {
+        var updates = {};
+        for (var i in this.categoryList) {
+          var active = this.categories[this.categoryList[i].$key];
+          updates[this.listPath + '/' + this.categoryList[i].$key + '/' + this.dataId] = active ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
+        }
+        firebase.database().ref().update(updates);
+      },
+
+      _openDeleteItemDialog: function () {
+        this.$$('#delete-dialog').open();
+      },
+
+      _closeDeleteItemDialog: function() {
+        this.$$('#delete-dialog').cancel();
+      },
+
+      _deleteItem: function() {
+        var promises = [];        
+        promises.push(firebase.database().ref(this.path).remove());
+        promises.push(firebase.database().ref(this.publishedPath).remove());
+        promises.push(firebase.database().ref(this.draftPath).remove());
+
+        // delete all options
+        for (var i in this.categories) {   
+          promises.push(firebase.database().ref(this.listPath + '/' + i + '/' + this.dataId).remove());
+        }
+
+        // delete all files
+        promises.push(firebase.database().ref(this.documentsStoragePath).remove());
+
+        Promise.all(promises).then(() => {
+          this._showMessage('Deleted');
+          setTimeout(() => {
+            window.location.href = "/"
+          }, 1000)
+          // 
+        }).catch(this._catchError.bind(this));
       },
 
 

@@ -9,8 +9,10 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
 
 
 <!-- Style dependency -->
@@ -24,6 +26,12 @@
       }
     </style>
 
+    <template is="dom-if" if="[[category]]">
+      <firebase-query 
+          path="[[categoryPath.article]]" 
+          data="{{categoryList}}"></firebase-query>
+    </template>
+
     <project-nice-hero 
         title="[[title]]"
         sub-title="[[subTitle]]"
@@ -33,6 +41,20 @@
       <div class="flex"></div>
       <div class="flex-4">
         <!-- byline -->
+        <template is="dom-if" if="[[category]]">
+          <div class="horizontal layout center wrap">
+            <h4 class="category-title">Categories:</h4>
+            <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">
+              <template is="dom-if" if="[[_categoryIcon(categories, categoryitem.$key)]]">
+                <div style="position: relative">
+                  <iron-icon style="margin-left: 10px" id="[[item.$key]]-[[categoryitem.$key]]" src="[[categoryitem.icon]]"></iron-icon>
+                  <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
+                </div>
+              </template>
+            </template>
+          </div>
+        </template>
+        <hr>
 
         <marked-element markdown="[[body]]">
           <div class="markdown-html"></div>
@@ -72,6 +94,10 @@
             </a>
           </template>
         </template>
+
+        <a href="/article">
+          <paper-button raised>Go back</paper-button>
+        </a>
 
         <template is="dom-if" if="[[_checkEdit(url, user)]]">
           <template is="dom-if" if="[[!edit]]">
@@ -124,7 +150,19 @@
     Polymer({
       is: 'project-nice-article-view',
 
+      behaviors: [
+        NICEV1.ProjectNiceCategoryBehavior
+      ],
+
       properties: {
+        category: {
+          type: Boolean,
+          value: false
+        },
+        type: {
+          type: Boolean,
+          value: false
+        },
         title: {
           type: String
         },
