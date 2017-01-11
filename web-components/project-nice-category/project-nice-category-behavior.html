@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNiceCategoryBehavior */
+    NICEV1.ProjectNiceCategoryBehaviorImpl = {
+
+      properties: {
+        
+        categoryPath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._categoryPath; }
+        },
+        categoryGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._categoryGroup; }
+        },
+      },
+
+      get _categoryGroup() {
+        return 'categoryGroup';
+      },
+
+      get _categoryPath() {
+        return {
+          article: this._version + '/' + this._categoryGroup + '/articleCategory', // this is where the category objects are saved
+          user: this._version + '/' + this._categoryGroup + '/userCategory', // this is where you set the owner of the category
+        };
+      },
+
+      _categoryIcon: function(categories, key) {
+        console.log(categories, key)
+        return categories[key];        
+      },
+
+      _categoryName: function(categories, key) {
+        if (categories[key]) {
+          return categories[key].name
+        }
+      },
+    };
+    NICEV1.ProjectNiceCategoryBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceCategoryBehaviorImpl
+    ];
+  })();
+</script>
