@@ -1,0 +1,26 @@
+{
+    "consumer" : {
+        "name" : "Consumer"
+    },
+    "csa" : {
+        "name" : "Member of Community Supported Agriculture (NGO)"
+    },
+    "farmer" : {
+        "name" : "Farmer"
+    },
+    "input_supplier" : {
+        "name" : "Input Supplier"
+    },
+    "processor" : {
+        "name" : "Processor"
+    },
+    "researcher" : {
+        "name" : "Researcher"
+    },
+    "service_provider" : {
+        "name" : "Service Provider (e.g. transport service, milling, water services, etc...)"
+    },
+    "student" : {
+        "name" : "Student"
+    }
+}

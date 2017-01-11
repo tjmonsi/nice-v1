@@ -1,0 +1,58 @@
+{
+    "agroforestry" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fforest.png?alt=media&token=c0ebb657-cc69-406a-a96e-0ad888ecd7fc",
+        "name" : "Agroforestry"
+    },
+    "cereal" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fwheat.png?alt=media&token=249336bb-63bf-4e75-bfcd-1aa06964533a",
+        "name" : "Cereal"
+    },
+    "cultural" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fscythe.png?alt=media&token=84313622-2da3-40d3-9c36-1539e5bb36ab",
+        "name" : "Cultural practices"
+    },
+    "fertilizers" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Ffertillizer.png?alt=media&token=b48cca7e-5a74-4c3f-9efa-092b99965f57",
+        "name" : "Fertilizers and Innoculants"
+    },
+    "fruits" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Ffruit.png?alt=media&token=56c01ab8-111c-440d-af91-e3920a2a3d44",
+        "name" : "Fruits"
+    },
+    "industrial" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fhamac-on-trees.png?alt=media&token=1f55de1e-7a91-4cd3-afc6-849d0bbad082",
+        "name" : "Industrial crops"
+    },
+    "legumes" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fpeanut.png?alt=media&token=ded47983-7b16-4eab-9b2c-23ce2daa2655",
+        "name" : "Legumes"
+    },
+    "postharvest" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fharvest.png?alt=media&token=cef5ded1-36b1-472c-9021-cdf6e9c7e0a6",
+        "name" : "Post-harvest and post-processing"
+    },
+    "rootcrops" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fpotatoes.png?alt=media&token=ad94a650-c0db-49d2-8b40-27000f65b722",
+        "name" : "Rootcrops"
+    },
+    "sidevelopment" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Frecycle-symbol-of-three-leaves.png?alt=media&token=0a3340a2-b33f-48fe-9475-bd102ffd9197",
+        "name" : "Sustainable and Inclusive Development"
+    },
+    "socioeconomics" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fnetwork.png?alt=media&token=f5270509-8b87-41d4-8872-a350d0e4ecd4",
+        "name" : "Socio-economics, policies, and entrepreneurship"
+    },
+    "swpmanagement" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fgrass.png?alt=media&token=a975faac-f5e2-4eff-82f6-bb4ed9b6fcc6",
+        "name" : "Soil, Water, and Pest Management"
+    },
+    "training" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fseo-training.png?alt=media&token=9ae7e039-96c5-4f5a-93a8-26e93311964e",
+        "name" : "Training and Extension"
+    },
+    "vegetables" : {
+        "icon" : "https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fsalad.png?alt=media&token=a1d358df-84dd-4edd-8cb2-83a1d6a33ee2",
+        "name" : "Vegetables"
+    }
+    }
