@@ -1,0 +1,148 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
+
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-data-view-style.html">
+
+<dom-module id="project-nice-data-view">
+  <template>
+    <style is="custom-style" include="project-nice-data-view-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query path="[[categoryPath.article]]" data="{{categoryList}}"></firebase-query>
+
+    <div class="horizontal layout">
+      <div class="flex"></div>
+      <div class="flex-4">
+        <h1>[[title]]</h1>
+
+        <p class="sub-title">[[subTitle]]</p>
+        <!-- byline -->
+
+        <marked-element markdown="[[body]]">
+          <div class="markdown-html"></div>
+        </marked-element>
+
+        
+        <template is="dom-if" if="[[documents.length]]">
+          <h3 class="">Files</h3>
+          <template is="dom-repeat" items="[[documents]]">
+            <a href="[[item.downloadURL]]" target="_blank" class="document-item-anchor">
+              <paper-material class="document-item horizontal layout center">
+                
+                <paper-icon-button icon="default:file-download"></paper-icon-button>
+                <div class="flex">
+                  [[item.name]]<br/>
+                  [[item.description]]
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">
+                    <template is="dom-if" if="[[_categoryIcon(item.categories, categoryitem.$key)]]">
+                      <div style="position: relative">
+                        <iron-icon style="margin-left: 10px" id="[[item.$key]]-[[categoryitem.$key]]" src="[[categoryitem.icon]]"></iron-icon>
+                        <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
+                      </div>
+                    </template>
+                  </template>
+                  </div>
+                </div>
+              </paper-material>
+            </a>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkEdit(url, user)]]">
+          <template is="dom-if" if="[[!edit]]">
+            <a href="[[url]]?edit=true">
+              <paper-button raised>Edit</paper-button>
+            </a>
+          </template>
+          <template is="dom-if" if="[[edit]]">
+            <a href="[[url]]">
+              <paper-button raised>Close Edit</paper-button>
+            </a>
+          </template>
+        </template>
+
+        <!-- feedback -->
+        <h1 class="">Feedback</h1>
+
+        <!-- feedback form -->
+      </div>
+      <div class="flex"></div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-data-view',
+
+      behaviors: [
+        NICEV1.ProjectNiceCategoryBehavior
+      ],
+
+      properties: {
+        title: {
+          type: String
+        },
+        subTitle: {
+          type: String
+        },
+        bannerImage: {
+          type: String
+        },
+        body: {
+          type: String
+        },
+
+        documents: {
+          type: Array,
+          value: function() { return []; }
+        },
+        video: {
+          type: String
+        },
+        categories: {
+          type: Object
+        },
+        categoryArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        types: {
+          type: Object
+        },
+        typeArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        url: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _checkEdit: function(url, user) {
+        return url && user
+      }
+    });
+  </script>
+</dom-module>
