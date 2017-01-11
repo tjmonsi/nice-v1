@@ -54,6 +54,14 @@
           path="[[articlePath.list.published]]/[[id]]"
           data="{{articlePublished}}"></firebase-document>
 
+      <firebase-query
+          path="[[articlePath.storage.images]]/[[id]]"
+          data="{{images}}"></firebase-query>
+
+      <firebase-query
+          path="[[articlePath.storage.documents]]/[[id]]"
+          data="{{documents}}"></firebase-query>
+
       <template is="dom-if" if="[[_forceZero(article)]]">
         <!-- _checkPublished(articlePublished.published, user) -->
         <template is="dom-if" if="[[user]]">
@@ -83,8 +91,8 @@
                 sub-title="[[article.subTitle]]"
                 banner-image="[[article.bannerImage]]"
                 body="[[article.body]]"
-                images="[[article.images]]"
-                documents="[[article.documents]]"
+                images="[[images]]"
+                documents="[[documents]]"
                 video="[[article.video]]"
                 categories="[[article.categories]]"
                 types="[[article.types]]"

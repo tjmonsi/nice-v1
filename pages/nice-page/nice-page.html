@@ -1,6 +1,7 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
@@ -26,6 +27,14 @@
       <firebase-document
           path="[[pagePath.list.published]]/[[slug]]"
           data="{{published}}"></firebase-document>
+
+      <firebase-query
+          path="[[pagePath.storage.images]]/[[slug]]"
+          data="{{images}}"></firebase-query>
+
+      <firebase-query
+          path="[[pagePath.storage.documents]]/[[slug]]"
+          data="{{documents}}"></firebase-query>
 
       <template is="dom-if" if="[[_forceZero(page)]]">
 
@@ -56,8 +65,8 @@
                 sub-title="[[page.subTitle]]"
                 banner-image="[[page.bannerImage]]"
                 body="[[page.body]]"
-                images="[[page.images]]"
-                documents="[[page.documents]]"
+                images="[[images]]"
+                documents="[[documents]]"
                 video="[[page.video]]"
                 categories="[[page.categories]]"
                 types="[[page.types]]"

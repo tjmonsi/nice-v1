@@ -39,11 +39,10 @@
         </marked-element>
 
         <!-- photo-blog -->
-        <template is="dom-if" if="[[imageArray.length]]">
+        <template is="dom-if" if="[[images.length]]">
           <h3 class="">Photos</h3>
           <div class="horizontal layout wrap">
-            <template is="dom-repeat" items="[[imageArray]]">
-              
+            <template is="dom-repeat" items="[[images]]">        
               <paper-material class="photoblog-item flex">
                 <iron-image
                   src="[[item.downloadURL]]"
@@ -58,10 +57,10 @@
           </div>
         </template>
         
-        <template is="dom-if" if="[[documentArray.length]]">
+        <template is="dom-if" if="[[documents.length]]">
           <h3 class="">Files</h3>
-          <template is="dom-repeat" items="[[documentArray]]">
-            <a href="[[item.downloadURL]]" class="document-item-anchor">
+          <template is="dom-repeat" items="[[documents]]">
+            <a href="[[item.downloadURL]]" target="_blank" class="document-item-anchor">
               <paper-material class="document-item horizontal layout center">
                 
                 <paper-icon-button icon="default:file-download"></paper-icon-button>
@@ -139,16 +138,10 @@
           type: String
         },
         images: {
-          type: Object
-        },
-        imageArray: {
           type: Array,
           value: function() { return []; }
         },
         documents: {
-          type: Object
-        },
-        documentArray: {
           type: Array,
           value: function() { return []; }
         },
@@ -176,25 +169,6 @@
         edit: {
           type: Boolean,
           value: false
-        }
-      },
-
-      observers: [
-        '_changeImages(images)',
-        '_changeDocuments(documents)'
-      ],
-
-      _changeImages: function(images) {
-        this.imageArray = [];
-        for (var i in images) {
-          this.push('imageArray', images[i]);
-        }
-      },
-
-      _changeDocuments: function(documents) {
-        this.documentArray = [];
-        for (var i in documents) {
-          this.push('documentArray', documents[i])
         }
       },
 

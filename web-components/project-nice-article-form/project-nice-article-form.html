@@ -39,26 +39,26 @@
     
     <paper-input id="banner-video" value="{{video}}" label="Youtube Video URL"></paper-input> 
     <hr>
+
     <h4>Article Body</h4>
     <paper-textarea id="body" value="{{body}}" label="Article Body"></paper-textarea>
     <hr>
+    
     <h4>Publishing and other options</h4>
     Publish: <paper-toggle-button id="publish-toggle" on-change="_changePublishToggle"></paper-toggle-button>
     <content></content>
     <hr>
+
     <h4>Photo Album</h4>
     <project-nice-multiple-files-form 
         label="Upload Photos"
-        path="[[path]]"
-        file-path="images"
         file-storage-path="[[imagesStoragePath]]"
         accept="image/*"></project-nice-multiple-files-form>
     <hr>
+
     <h4>Documents</h4>
     <project-nice-multiple-files-form 
         label="Upload Additional Documents"
-        path="[[path]]"
-        file-path="documents"
         file-storage-path="[[documentsStoragePath]]"></project-nice-multiple-files-form>
     <hr>
     <a href="[[url]]">
