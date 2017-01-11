@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
@@ -48,10 +49,12 @@
                   toggles 
                   active$="[[_checkCategories(item.categories, categoryitem.$key)]]" 
                   on-tap="_tapCategory" 
-                  id="[[categoryitem.$key]]"
+                  id="[[item.$key]]-[[categoryitem.$key]]"
+                  category-id="[[categoryitem.$key]]"
                   file-id="[[item.$key]]"
                   src="[[categoryitem.icon]]"
                   class="category-icon"></paper-icon-button>
+              <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
             </template>
           </div>
         </template>
@@ -119,7 +122,9 @@
               var file = files[i];
               var progressPath = 'tasks.' + i + '.progress';
               var key = firebase.database().ref(this.fileStoragePath).push().key;
-              var task = firebase.storage().ref(this.fileStoragePath).child(key + '--' + file.name).put(file)
+              var task = firebase.storage().ref(this.fileStoragePath).child(key + '--' + file.name).put(file, {
+                cacheControl: 'no-cache'
+              })
               this.push('tasks', {
                 task: task,
                 name: file.name,
@@ -131,10 +136,17 @@
                 this._catchError.bind(this),
                 function(t, p, k, j, n) {
                   this.set(p, 99.99);
+                  // var metadata = m ? m : {};
+                  // console.log(t.snapshot.metadata)
+                  var metadata = {
+                    cacheControl: t.snapshot.metadata.cacheControl,
+                    contentType: t.snapshot.metadata.contentType
+                  }
                   firebase.database().ref(this.fileStoragePath +'/' + k).set({
                     downloadURL: t.snapshot.downloadURL,
                     storagePath: t.snapshot.ref.fullPath,
-                    name: n
+                    name: n,
+                    metadata: metadata
                   });
                   setTimeout(() => {
                     this.set(p, 0)
@@ -172,7 +184,7 @@
       },
 
       _tapCategory: function(e) {
-        var id = e.target.id;
+        var id = e.target.categoryId;
         var fileId = e.target.fileId;
         var active = e.target.active;
         
