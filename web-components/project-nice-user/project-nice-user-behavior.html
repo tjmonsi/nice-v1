@@ -45,7 +45,7 @@
 
       detached: function() {
         if (this._memberListener && this.user) {
-          firebase.database().ref(this._userPath.options.member + '/' + this.user.uid).off('value', this._memberListener);
+          firebase.database().ref(this._userPath.options.members + '/' + this.user.uid).off('value', this._memberListener);
           this._memberListener = null;
         }
 
@@ -71,7 +71,7 @@
           profilePicture: this._version + '/' + this._userGroup + '/profile_picture',
           media: this._version + '/' + this._userGroup + '/media',
           options: {
-            member: options + '/member',
+            members: options + '/members',
             pending: options + '/pending'
           }
         };
@@ -82,7 +82,7 @@
         if (uid && firebase) {
 
           //member
-          this._memberListener = firebase.database().ref(this._userPath.options.member + '/' + uid).on('value', (dataSnapshot) => {
+          this._memberListener = firebase.database().ref(this._userPath.options.members + '/' + uid).on('value', (dataSnapshot) => {
             var m = dataSnapshot.val();
             if (!m) return;
             var a1 = m.admin;
