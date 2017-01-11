@@ -1,29 +1,145 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">
+<link rel="import" href="../../web-components/project-nice-data-view/project-nice-data-view.html">
+<link rel="import" href="../../web-components/project-nice-data-form/project-nice-data-form.html">
+<link rel="import" href="../../web-components/project-nice-data/project-nice-data-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="data-page-style.html">
 
 <dom-module id="data-page">
   <template>
-    <style is="custom-style" include="data-page-style">
+    <style is="custom-style" include="data-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
 
-    <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-    </div>
+    <template is="dom-if" if="[[!id]]">
+      <firebase-query
+          path="[[dataPath.list.published]]"
+          data="{{dataList}}"></firebase-query>
+
+      <div class="padder">
+        <div class="horizontal layout wrap">
+          <div class="flex-5 main-content">
+            <h1 class="">Open Data</h1>
+
+            <template is="dom-repeat" items="[[dataList]]">
+              <project-nice-data-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-data-item>          
+            </template>
+          </div>
+          <div class="flex-2">
+            <h1 class="">Trending</h1>
+          </div>
+        </div>
+        
+      </div>
+      
+    </template>
+
+    <template is="dom-if" if="[[id]]">
+      <firebase-document 
+          path="[[dataPath.data]]/[[id]]"
+          data="{{data}}"></firebase-document>
+
+      <firebase-document
+          path="[[dataPath.list.published]]/[[id]]"
+          data="{{dataPublished}}"></firebase-document>
+
+      <firebase-query
+          path="[[dataPath.storage.documents]]/[[id]]"
+          data="{{documents}}"></firebase-query>
+
+      <template is="dom-if" if="[[_forceZero(data)]]">
+        <!-- _checkPublished(dataPublished.published, user) -->
+        <template is="dom-if" if="[[user]]">
+          <div class="horizontal layout wrap">
+          <template is="dom-if" if="[[edit]]">
+              <!-- data-form -->
+              <project-nice-data-form
+                  data-id="[[id]]"
+                  path="[[dataPath.data]]/[[id]]"
+                  class="flex"
+                  title="{{data.title}}"
+                  sub-title="{{data.subTitle}}"
+                  body="{{data.body}}"
+                  documents-storage-path="[[dataPath.storage.documents]]/[[id]]"                  
+                  video="{{data.video}}"
+                  list-path="[[dataPath.listOptions]]"
+                  published-path="[[dataPath.list.published]]/[[id]]"
+                  draft-path="[[dataPath.list.draft]]/[[id]]"
+                  categories="{{data.categories}}"
+                  url="/page/[[slug]]"></project-nice-data-form>
+            </template>
+
+            <!-- data-form -->
+            <project-nice-data-view
+                class="flex"
+                title="[[data.title]]"
+                sub-title="[[data.subTitle]]"
+                body="[[data.body]]"
+                documents="[[documents]]"
+                categories="[[data.categories]]"
+                types="[[data.types]]"
+                user="[[user]]"
+                url="/data/[[id]]"
+                edit="[[edit]]"></project-nice-data-view>
+            
+          </div>
+        </template>
+        
+        
+      </template>
+
+      <template is="dom-if" if="[[!_forceZero(data)]]">
+        Loading
+      </template>
+    </template>
     
   </template>
 
   <script>
     Polymer({
-      is: 'data-page'
+      is: 'data-page',
+      behaviors: [
+        NICEV1.ProjectNiceDataBehavior
+      ],
+
+      properties: {
+        params: {
+          type: Object
+        },
+        id: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: Boolean
+        }
+      },
+
+      observers: [
+        '_changeParamsId(params.id)',
+        '_changeQuaryParamsEdit(queryParams.edit)'
+      ],
+
+      _changeParamsId: function(e) {
+        this.id = e || ''
+      },
+
+      _changeQuaryParamsEdit: function(e) {
+        this.edit = e === 'true';
+      },
+
+      _checkPublished: function(published, user) {
+        return published || user;
+      }
     });
   </script>
 </dom-module>

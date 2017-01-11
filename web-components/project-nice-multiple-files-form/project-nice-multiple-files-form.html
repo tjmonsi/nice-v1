@@ -5,22 +5,29 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-multiple-files-form-style.html">
 
 <dom-module id="project-nice-multiple-files-form">
   <template>
-    <style is="custom-style" include="project-nice-multiple-files-form-style">
+    <style is="custom-style" include="project-nice-multiple-files-form-style iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
     </style>
 
-    <firebase-query path="[[path]]/[[filePath]]" data="{{files}}"></firebase-query>
+    <firebase-query path="[[fileStoragePath]]" data="{{files}}"></firebase-query>
+
+    <template is="dom-if" if="[[category]]">
+      <firebase-query path="[[categoryPath.article]]" data="{{categoryList}}"></firebase-query>
+    </template>
 
     <paper-input label="[[label]]" type="file" on-change="_uploadFiles" multiple accept="[[accept]]"></paper-input>
 
@@ -34,12 +41,30 @@
       <paper-material>
         <paper-input value="{{item.name}}" label="Name"></paper-input>
         <paper-input value="{{item.description}}" label="Caption"></paper-input>
+        <template is="dom-if" if="[[category]]">
+          <h5>Category</h5>
+          <div class="horizontal layout wrap">
+            <template is="dom-repeat" items="[[categoryList]]" as="categoryitem">
+              <paper-icon-button 
+                  toggles 
+                  active$="[[_checkCategories(item.categories, categoryitem.$key)]]" 
+                  on-tap="_tapCategory" 
+                  id="[[item.$key]]-[[categoryitem.$key]]"
+                  category-id="[[categoryitem.$key]]"
+                  file-id="[[item.$key]]"
+                  src="[[categoryitem.icon]]"
+                  class="category-icon"></paper-icon-button>
+              <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
+            </template>
+          </div>
+        </template>
+        
         Download: 
         <a href="[[item.downloadURL]]" target="_blank">
           <paper-icon-button icon="default:file-download"></paper-icon-button>
         </a> <br/>
         Delete: 
-        <paper-icon-button icon="default:delete" on-tap="_deleteFile" database-path="[[path]]/[[filePath]]/[[item.$key]]" storage-path="[[item.storagePath]]"></paper-icon-button>  
+        <paper-icon-button icon="default:delete" on-tap="_deleteFile" database-path="[[fileStoragePath]]/[[item.$key]]" storage-path="[[item.storagePath]]"></paper-icon-button>  
       </paper-material>
       
     </template>
@@ -51,15 +76,22 @@
       is: 'project-nice-multiple-files-form',
 
       behaviors: [
-        NICEV1.ProjectNiceUtilsBehavior
+        NICEV1.ProjectNiceUtilsBehavior,
+        NICEV1.ProjectNiceCategoryBehavior
       ],
 
       properties: {
-        filePath: {
-          type: String
+        category: {
+          type: Boolean,
+          value: false
         },
-        path: {
-          type: String
+        categoryList: {
+          type: Array
+        },
+        categorySet: {
+          type: Object,
+          notify: true,
+          value: function() { return {}; }
         },
         label: {
           type: String
@@ -89,8 +121,10 @@
             for (var i=0; i < files.length; i++) {
               var file = files[i];
               var progressPath = 'tasks.' + i + '.progress';
-              var key = firebase.database().ref(this.path + '/' + this.filePath).push().key;
-              var task = firebase.storage().ref(this.fileStoragePath).child(key + '--' + file.name).put(file)
+              var key = firebase.database().ref(this.fileStoragePath).push().key;
+              var task = firebase.storage().ref(this.fileStoragePath).child(key + '--' + file.name).put(file, {
+                cacheControl: 'no-cache'
+              })
               this.push('tasks', {
                 task: task,
                 name: file.name,
@@ -100,12 +134,19 @@
                 firebase.storage.TaskEvent.STATE_CHANGED,
                 this._uploadTask.bind(this, progressPath),
                 this._catchError.bind(this),
-                function(t, p, k, j) {
+                function(t, p, k, j, n) {
                   this.set(p, 99.99);
-                  firebase.database().ref(this.path + '/'+ this.filePath +'/' + k).set({
+                  // var metadata = m ? m : {};
+                  // console.log(t.snapshot.metadata)
+                  var metadata = {
+                    cacheControl: t.snapshot.metadata.cacheControl,
+                    contentType: t.snapshot.metadata.contentType
+                  }
+                  firebase.database().ref(this.fileStoragePath +'/' + k).set({
                     downloadURL: t.snapshot.downloadURL,
                     storagePath: t.snapshot.ref.fullPath,
-                    name: file.name
+                    name: n,
+                    metadata: metadata
                   });
                   setTimeout(() => {
                     this.set(p, 0)
@@ -113,7 +154,7 @@
                   if (j === files.length - 1) {
                     el.value = null;
                   }
-                }.bind(this, task, progressPath, key, i)
+                }.bind(this, task, progressPath, key, i, file.name)
               )
             }
           }
@@ -136,6 +177,34 @@
             console.log('deleted')
           }).catch(this._catchError.bind(this))
         }
+      },
+
+      _checkCategories: function(categories, key) {
+        return categories[key] && categories[key].value;
+      },
+
+      _tapCategory: function(e) {
+        var id = e.target.categoryId;
+        var fileId = e.target.fileId;
+        var active = e.target.active;
+
+        console.log(id)
+        
+        var updates = {};
+        updates[this.fileStoragePath + '/' + fileId + '/categories/' + id] = active ? {value: true} : null;
+
+        firebase.database().ref().update(updates).then(() => {
+          var categorySet = {}
+          for (var i in this.files) {
+            var file = this.files[i];
+            if (file.categories) {
+              for (var j in file.categories) {
+                categorySet[j] = {value: true}
+              }
+            }
+          }
+          this.categorySet = categorySet;
+        });
       }
     });
   </script>

@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 
 <link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
 <link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
@@ -39,10 +41,12 @@
           <div class="flex-2">
             <h1 class="">Trending</h1>
           </div>
-        </div>
-        
+        </div>   
       </div>
       
+      <a href="#" id="new-article" class="new-button" on-tap="_addArticle">
+        <paper-fab icon="default:add"></paper-fab>
+      </a>
     </template>
     
     <template is="dom-if" if="[[id]]">
@@ -54,6 +58,14 @@
           path="[[articlePath.list.published]]/[[id]]"
           data="{{articlePublished}}"></firebase-document>
 
+      <firebase-query
+          path="[[articlePath.storage.images]]/[[id]]"
+          data="{{images}}"></firebase-query>
+
+      <firebase-query
+          path="[[articlePath.storage.documents]]/[[id]]"
+          data="{{documents}}"></firebase-query>
+
       <template is="dom-if" if="[[_forceZero(article)]]">
         <!-- _checkPublished(articlePublished.published, user) -->
         <template is="dom-if" if="[[user]]">
@@ -61,6 +73,9 @@
           <template is="dom-if" if="[[edit]]">
               <!-- Article-form -->
               <project-nice-article-form
+                  category
+                  type
+                  article-id="[[id]]"                  
                   path="[[articlePath.articles]]/[[id]]"
                   class="flex"
                   title="{{article.title}}"
@@ -71,20 +86,25 @@
                   images-storage-path="[[articlePath.storage.images]]/[[id]]"
                   documents-storage-path="[[articlePath.storage.documents]]/[[id]]"
                   video="{{article.video}}"
+                  list-path="[[articlePath.listOptions]]"
                   published-path="[[articlePath.list.published]]/[[id]]"
                   draft-path="[[articlePath.list.draft]]/[[id]]"
+                  categories="[[article.categories]]"
+                  types="[[article.types]]"
                   url="/page/[[slug]]"></project-nice-article-form>
             </template>
 
-            <!-- Article-form -->
+            <!-- Article-view -->
             <project-nice-article-view
+                category
+                type
                 class="flex"
                 title="[[article.title]]"
                 sub-title="[[article.subTitle]]"
                 banner-image="[[article.bannerImage]]"
                 body="[[article.body]]"
-                images="[[article.images]]"
-                documents="[[article.documents]]"
+                images="[[images]]"
+                documents="[[documents]]"
                 video="[[article.video]]"
                 categories="[[article.categories]]"
                 types="[[article.types]]"
@@ -128,7 +148,7 @@
 
       observers: [
         '_changeParamsId(params.id)',
-        '_changeQuaryParamsEdit(queryParams.edit)'
+        '_changeQuaryParamsEdit(queryParams.edit)',
       ],
 
       _changeParamsId: function(e) {

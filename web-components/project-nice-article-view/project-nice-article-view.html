@@ -9,8 +9,10 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
 
 
 <!-- Style dependency -->
@@ -24,6 +26,12 @@
       }
     </style>
 
+    <template is="dom-if" if="[[category]]">
+      <firebase-query 
+          path="[[categoryPath.article]]" 
+          data="{{categoryList}}"></firebase-query>
+    </template>
+
     <project-nice-hero 
         title="[[title]]"
         sub-title="[[subTitle]]"
@@ -33,17 +41,30 @@
       <div class="flex"></div>
       <div class="flex-4">
         <!-- byline -->
+        <template is="dom-if" if="[[category]]">
+          <div class="horizontal layout center wrap">
+            <h4 class="category-title">Categories:</h4>
+            <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">
+              <template is="dom-if" if="[[_categoryIcon(categories, categoryitem.$key)]]">
+                <div style="position: relative">
+                  <iron-icon style="margin-left: 10px" id="[[item.$key]]-[[categoryitem.$key]]" src="[[categoryitem.icon]]"></iron-icon>
+                  <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
+                </div>
+              </template>
+            </template>
+          </div>
+        </template>
+        <hr>
 
         <marked-element markdown="[[body]]">
           <div class="markdown-html"></div>
         </marked-element>
 
         <!-- photo-blog -->
-        <template is="dom-if" if="[[imageArray.length]]">
+        <template is="dom-if" if="[[images.length]]">
           <h3 class="">Photos</h3>
           <div class="horizontal layout wrap">
-            <template is="dom-repeat" items="[[imageArray]]">
-              
+            <template is="dom-repeat" items="[[images]]">        
               <paper-material class="photoblog-item flex">
                 <iron-image
                   src="[[item.downloadURL]]"
@@ -58,10 +79,10 @@
           </div>
         </template>
         
-        <template is="dom-if" if="[[documentArray.length]]">
+        <template is="dom-if" if="[[documents.length]]">
           <h3 class="">Files</h3>
-          <template is="dom-repeat" items="[[documentArray]]">
-            <a href="[[item.downloadURL]]" class="document-item-anchor">
+          <template is="dom-repeat" items="[[documents]]">
+            <a href="[[item.downloadURL]]" target="_blank" class="document-item-anchor">
               <paper-material class="document-item horizontal layout center">
                 
                 <paper-icon-button icon="default:file-download"></paper-icon-button>
@@ -73,6 +94,10 @@
             </a>
           </template>
         </template>
+
+        <a href="/article">
+          <paper-button raised>Go back</paper-button>
+        </a>
 
         <template is="dom-if" if="[[_checkEdit(url, user)]]">
           <template is="dom-if" if="[[!edit]]">
@@ -125,7 +150,19 @@
     Polymer({
       is: 'project-nice-article-view',
 
+      behaviors: [
+        NICEV1.ProjectNiceCategoryBehavior
+      ],
+
       properties: {
+        category: {
+          type: Boolean,
+          value: false
+        },
+        type: {
+          type: Boolean,
+          value: false
+        },
         title: {
           type: String
         },
@@ -139,16 +176,10 @@
           type: String
         },
         images: {
-          type: Object
-        },
-        imageArray: {
           type: Array,
           value: function() { return []; }
         },
         documents: {
-          type: Object
-        },
-        documentArray: {
           type: Array,
           value: function() { return []; }
         },
@@ -176,25 +207,6 @@
         edit: {
           type: Boolean,
           value: false
-        }
-      },
-
-      observers: [
-        '_changeImages(images)',
-        '_changeDocuments(documents)'
-      ],
-
-      _changeImages: function(images) {
-        this.imageArray = [];
-        for (var i in images) {
-          this.push('imageArray', images[i]);
-        }
-      },
-
-      _changeDocuments: function(documents) {
-        this.documentArray = [];
-        for (var i in documents) {
-          this.push('documentArray', documents[i])
         }
       },
 

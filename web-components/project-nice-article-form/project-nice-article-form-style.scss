@@ -14,3 +14,12 @@ paper-progress {
 project-nice-multiple-files-form {
   margin-bottom: 20px;
 }
+
+.category-icon[active] {
+  background-color: var(--paper-green-500);
+  color: white;
+}
+
+#delete-dialog {
+  padding: 20px;
+}
