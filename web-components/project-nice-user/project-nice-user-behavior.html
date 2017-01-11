@@ -37,6 +37,9 @@
           readOnly: true,
           value: function() { return this._userGroup; }
         },
+        profile: {
+          type: Object
+        }
       },
 
       _memberListener: null,
@@ -64,15 +67,22 @@
       },
 
       get _userPath() {
+        var storage = this._version + '/' + this._userGroup + '/storage';
         var options = this._version + '/' + this._userGroup + '/roles';
+        var list = this._version + '/' + this._userGroup + '/list';
         return {
           profiles: this._version + '/' + this._userGroup + '/profiles',
           categories: this._version + '/' + this._userGroup + '/categories',
           profilePicture: this._version + '/' + this._userGroup + '/profile_picture',
           media: this._version + '/' + this._userGroup + '/media',
+          listOptions: list,
           options: {
             members: options + '/members',
             pending: options + '/pending'
+          },
+          storage: {
+            avatar: storage + '/avatar',
+            images: storage + '/images'
           }
         };
       },
@@ -84,54 +94,93 @@
           //member
           this._memberListener = firebase.database().ref(this._userPath.options.members + '/' + uid).on('value', (dataSnapshot) => {
             var m = dataSnapshot.val();
-            if (!m) return;
-            var a1 = m.admin;
-            var e1 = m.editor;
-            var s1 = m.staff;
-            var m1 = m.member;
+            var roles = {};            
+            if (m) {
+              var a1 = m.admin;
+              var e1 = m.editor;
+              var s1 = m.staff;
+              var m1 = m.member;
 
-            this.set('roles.admin', a1);
-            this.set('roles.editor', e1 || a1);
-            this.set('roles.staff', s1 || e1 || a1);
-            this.set('roles.member', m1 || s1 || e1 || a1);
+              
+              roles.admin = a1;
+              roles.editor = e1 || a1;
+              roles.staff = s1 || e1 || a1;
+              roles.member = m1 || s1 || e1 || a1;              
+            }
+
+            this.roles = roles;
             
-            this.fire('roles-changed', this.roles);
-
-            console.log(this.roles)
           }, this._catchError.bind(this));
 
           //pending
           this._pendingListener = firebase.database().ref(this._userPath.options.pending + '/' + uid + '/value').on('value', (dataSnapshot) => {
-            this.set('roles.pending', dataSnapshot.val())
+            var roles = {}            
+            if (dataSnapshot.val()) {
+              roles = {};
+              roles.pending = dataSnapshot.val();
+              this.roles = roles;
+            } else if (!this.roles.member) {
+              this.roles = roles;
+            }            
           }, this._catchError.bind(this));
-
         } else if (!firebase) {
           console.error(new Error('Firebase has not been set'))
         }
       },
       
-      _checkAuthRole: function(user, auth, roles, role, owner) {
+      _checkAuthRole: function(user, auth, roles, role, owner, flag) {
         if (auth) {
           if (role) {
-            return user && (roles[role] || (owner && owner.owner === user.uid));
+            if (flag) {
+              return user && (roles[role] && (owner && owner.uid === user.uid));
+            }
+            return user && (roles[role] || (owner && owner.uid === user.uid));
           }
           return user;
         }
         return true;
       },
       
-      _checkPermission: function(role, owner) {
-        return this._checkAuthRole(this.user, true, this.roles, role, owner);
+      _checkPermission: function(role, owner, flag) {
+        return this._checkAuthRole(this.user, true, this.roles, role, owner, flag);
+      },
+
+      _checkPermissionWithoutOwner: function(role) {
+        return this._checkAuthRole(this.user, true, this.roles, role);
+      },
+
+      _checkPending: function(id) {
+        return this.user.uid === id && this._checkPermissionWithoutOwner('pending');
+      },
+
+      _checkNonMember: function(id) {
+        return this.user.uid === id && !(this._checkPermissionWithoutOwner('pending') || this._checkPermissionWithoutOwner('member'))
+      },
+
+      _checkOwner: function(owner, user) {
+        return owner.uid === user.uid
       },
       
       _checkProfile: function(user, ref, profile) {
         if (!profile.val()) {
-          return firebase.database().ref(ref).set({
+          var obj = {
             displayName: user.displayName,
             email: user.email,
             image: user.photoURL,
-          }).then(function(){
-            window.location.assign('/profile-page/');
+          };
+
+          if (user.displayName) {
+            var array = user.displayName.trim().split(' ');
+            obj.lastName = array.pop();
+            obj.firstName = array.join(' ');
+          }
+
+          var updates = {};
+          updates[ref] = obj;
+          // updates[this.userPath.options.pending + '/' + user.uid] = {value: firebase.database.ServerValue.TIMESTAMP}
+          
+          return firebase.database().ref().update(updates).then(function(){
+            window.location.assign('/profile?edit=true');
           });
         } else {
           window.location.assign('/');
@@ -140,6 +189,36 @@
       
       _displayName: function(user) {
         if (user) return user.displayName ? user.displayName : user.email;
+      },
+
+      _requestMembership: function() {
+        if (this.user) {
+          var updates = {};        
+          updates[this.userPath.options.pending + '/' + this.user.uid] = {value: firebase.database.ServerValue.TIMESTAMP}
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage('Request for Membership Sent');
+          }).catch(this._catchError.bind(this))
+        }
+      },
+
+      _retractRequestMembership: function() {
+        if (this.user) {
+          var updates = {};        
+          updates[this.userPath.options.pending + '/' + this.user.uid] = null;
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage('Membership Request Deleted');
+          }).catch(this._catchError.bind(this))
+        }
+      },
+
+      _retractMembership: function() {
+        if (this.user) {
+          var updates = {};        
+          updates[this.userPath.options.member + '/' + this.user.uid] = null;
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage('Membership Request Deleted');
+          }).catch(this._catchError.bind(this))
+        }
       },
       
       _loginSuccess: function(result) {
@@ -154,14 +233,17 @@
       },
       
       _logoutSuccess: function(result) {
-        console.log('logout', result);
-        this._showMessage('Goodbye!');        
+        // console.log('logout', result);
+        this._showMessage('Goodbye!');    
+        setTimeout(() => {
+          window.location.href="/"
+        }, 1000)    
       },
 
       login: function(e) {
         if (this.$.auth && this.$.auth.signInWithPopup) {
           this.$.auth.provider = e.target.id || "google";
-          console.log(e.target.id)
+          // console.log(e.target.id)
 
           this.$.auth.signInWithPopup().then(this._loginSuccess.bind(this)).catch(this._catchError.bind(this));
         } else {

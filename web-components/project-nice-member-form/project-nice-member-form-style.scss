@@ -1,0 +1,25 @@
+//
+
+:host {
+  padding: 20px;
+}
+
+paper-progress {
+  width: 100%;
+  --paper-progress-transition-duration: 0.08s;
+  --paper-progress-transition-timing-function: ease;
+  --paper-progress-transition-transition-delay: 0s;
+}
+
+project-nice-multiple-files-form {
+  margin-bottom: 20px;
+}
+
+.category-icon[active] {
+  background-color: var(--paper-green-500);
+  color: white;
+}
+
+// #delete-dialog {
+//   padding: 20px;
+// }

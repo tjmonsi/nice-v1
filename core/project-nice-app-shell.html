@@ -98,7 +98,7 @@ Wham! It's all awesome now!
         <!-- ADD member -->
         <member-page route="/member" user="{{user}}"></member-page>
         <member-page route="/member/:id" user="{{user}}"></member-page>
-        <member-page route="/profile" user="{{user}}"></member-page>
+        <member-page route="/profile" user="{{user}}" id="[[user.uid]]"></member-page>
         <!-- Message here -->
         <message-page route="/message" user="{{user}}"></message-page>
         <message-page route="/message/:id" user="{{user}}"></message-page>
@@ -128,13 +128,31 @@ Wham! It's all awesome now!
               {
                 label: 'Features',
                 url: '/article',
-                route: '/article'
+                route: '/article',
+                role: null,
+                auth: false
               },
               {
                 label: 'Data',
                 url: '/data',
-                route: '/data'
+                route: '/data',
+                role: null,
+                auth: false
               },
+              {
+                label: 'Members',
+                url: '/member',
+                route: '/member',
+                role: 'member',
+                auth: true
+              },
+              {
+                label: 'Profile',
+                url: '/profile',
+                route: '/profile',
+                role: null,
+                auth: true
+              }
               // {
               //   label: 'About',
               //   url: '/page/about-us',

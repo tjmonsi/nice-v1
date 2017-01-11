@@ -47,11 +47,11 @@
             </paper-menu>
           </paper-menu-button>
           <template is="dom-repeat" items="[[navigationList]]">
-            <!--<template is="dom-if" if="[[_checkAuthRole(user, item.auth, roles, item.role)]]">-->
+            <template is="dom-if" if="[[_checkAuthRole(user, item.auth, roles, item.role)]]">
               <a route$="[[item.route]]" href$="[[item.url]]" class="nice-navigation-item" on-tap="_clickNavigationItem">
                 [[item.label]]
               </a>  
-            <!--</template>-->
+            </template>
           </template>
         </iron-selector>  
       </div>

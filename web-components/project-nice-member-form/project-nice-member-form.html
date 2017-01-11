@@ -1,0 +1,236 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../web-components/project-nice-multiple-files-form/project-nice-multiple-files-form.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-member-form-style.html">
+
+<dom-module id="project-nice-member-form">
+  <template>
+    <style is="custom-style" include="project-nice-member-form-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query path="[[categoryPath.user]]" data="{{categoryList}}"></firebase-query>
+
+
+    <h2>Profile Editor</h2>
+    <!-- permission -->
+    <h4>Name and Contact Information</h4>
+    <paper-input id="first-name" value="{{firstName}}" label="First Name"></paper-input>
+    <paper-input id="last-name" value="{{lastName}}" label="Last Name"></paper-input>
+    <paper-input id="contact" value="{{contact}}" label="Contact Number"></paper-input>
+    <paper-textarea id="address" value="{{address}}" label="Address"></paper-textarea>
+    <hr>
+    
+    <h4>Avatar Image</h4>
+    <paper-input id="avatar-image" value="{{image}}" label="Avatar Image"></paper-input>
+    <paper-input id="avatar-image-file" label="Upload Avatar Image" type="file" on-change="_uploadAvatarImage" accept="image/*"></paper-input>
+    
+    <template is="dom-if" if="[[avatarImageProgress]]">
+      <paper-progress value="[[avatarImageProgress]]" max="100" min="0" class="transiting"></paper-progress>
+    </template>
+    
+    <!--<paper-input id="avatar-video" value="{{video}}" label="Youtube Video URL"></paper-input> -->
+    <hr>
+    <!--<template is="dom-if" if="[[category]]">-->
+    <h4>Category</h4>
+    <div class="horizontal layout wrap">
+      <template is="dom-repeat" items="[[categoryList]]" as="categoryitem">
+        
+        <paper-button 
+            toggles
+            active$="[[_checkCategories(categories, categoryitem.$key)]]" 
+            on-tap="_tapCategory"
+            id="[[item.$key]]-[[categoryitem.$key]]"
+            category-id="[[categoryitem.$key]]"
+            file-id="[[item.$key]]"
+            class="category-icon">
+          [[categoryitem.name]]
+        </paper-button>
+        
+        <!--<paper-icon-button 
+            toggles 
+            active$="[[_checkCategories(categories, categoryitem.$key)]]" 
+            on-tap="_tapCategory" 
+            id="[[item.$key]]-[[categoryitem.$key]]"
+            category-id="[[categoryitem.$key]]"
+            file-id="[[item.$key]]"
+            src="[[categoryitem.icon]]"
+            class="category-icon"></paper-icon-button>
+        <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>-->
+      </template>
+    </div>
+    <!--</template>-->
+    <hr>
+    <paper-textarea id="body" value="{{body}}" label="About Me"></paper-textarea>
+    <hr>
+    
+    <hr>
+
+    <h4>Photo Album</h4>
+    <project-nice-multiple-files-form 
+        label="Upload Photos"
+        file-storage-path="[[imagesStoragePath]]"
+        accept="image/*"></project-nice-multiple-files-form>
+    
+    <a href="[[url]]">
+      <paper-button raised>Close Edit</paper-button>
+    </a>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-member-form',
+
+      behaviors: [
+        NICEV1.ProjectNiceUtilsBehavior,
+        NICEV1.ProjectNiceCategoryBehavior
+      ],
+
+      properties: {
+        firstName: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        lastName: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        contact: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        address: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        displayName: {
+          type: String,
+          notify: true
+        },
+        image: {
+          type: String,
+          notify: true
+        },
+        avatarImageStoragePath: {
+          type: String
+        },
+        avatarImageProgress: {
+          type: Number,
+          value: 0
+        },
+        body: {
+          type: String,
+          notify: true
+        },
+        images: {
+          type: Array
+        },
+        imagesStoragePath: {
+          type: String
+        },
+        listPath: {
+          type: String
+        },        
+        categories: {
+          type: Object,
+          value: {}
+        },
+      },
+
+      observers: [
+        '_changeFirstLastName(firstName, lastName)'
+      ],
+
+      _changeFirstLastName: function(firstName, lastName) {
+        this.displayName = firstName || lastName ? (firstName + ' ' + lastName) : this.displayName;
+      },
+
+      _avatarImageTask: null,
+
+      // _changePublishToggle: function(e) {
+      //   if (firebase) {
+      //     var timestamp = {
+      //       date: firebase.database.ServerValue.TIMESTAMP
+      //     }
+      //     var checked = e.target.checked;
+      //     var updates = {};
+      //     updates[this.publishedPath] = checked ? timestamp : null;
+      //     updates[this.draftPath] = checked ? null : timestamp;
+          
+      //     for (var i in this.categories) {
+      //       updates[this.listPath + '/' + i + '/' + this.memberId] = checked ? {date: timestamp} : null;
+      //     }
+
+      //     for (var j in this.types) {
+      //       updates[this.listPath + '/' + j + '/' + this.memberId] = checked ? {date: timestamp} : null;
+      //     }
+          
+      //     firebase.database().ref().update(updates).then(() => {
+      //       this._showMessage((checked ? 'Published' : 'Drafted'))
+      //     }).catch(this._catchError.bind(this));
+      //   }
+      // },
+
+      _uploadAvatarImage: function(e) {
+        if (e.target.inputElement.files.length) {
+          var file = e.target.inputElement.files[0];
+
+          if (firebase) {
+            this._avatarImageTask = firebase.storage().ref(this.avatarImageStoragePath).child(file.name).put(file);
+            this._avatarImageTask.on(
+              firebase.storage.TaskEvent.STATE_CHANGED, 
+              this._uploadTask.bind(this, 'avatarImageProgress'),
+              this._catchError.bind(this),
+              () => {
+                this.set('avatarImageProgress', 99.99);
+                this.set('image', this._avatarImageTask.snapshot.downloadURL);
+                setTimeout(() => {
+                  this.set('avatarImageProgress', 0)
+                }, 100);
+              } 
+            )
+          }
+        }
+      },
+
+      _uploadTask: function(progressPath, snapshot) {
+        var val = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        this.set(progressPath, val ? val : 0.01);
+      },
+
+      _checkCategories: function(categories, key) {
+        return categories[key] && categories[key].value;
+      },
+
+      _tapCategory: function(e) {
+        var id = e.target.categoryId;
+        var active = e.target.active;
+        
+        var updates = {};
+        updates[this.path + '/categories/' + id] = active ? {value: true} : null;
+        updates[this.listPath + '/' + id + '/' + this.memberId] = active && this._forceZero(this.published) ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
+
+        firebase.database().ref().update(updates);
+      },
+    });
+  </script>
+</dom-module>

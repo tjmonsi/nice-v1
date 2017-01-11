@@ -120,7 +120,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       window.loadRaven = function() {
-        Raven.config('https://b66cf339b7c14b67b4dd6d4af9f99e2b@sentry.io/119738').install();
+        Raven.config('https://b66cf339b7c14b67b4dd6d4af9f99e2b@sentry.io/119738', {
+          autoBreadcrumbs: {
+            console: false
+          }
+        }).install();
         setTimeout(sendRavenMessages, 10);
       }
     </script>

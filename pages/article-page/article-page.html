@@ -70,7 +70,7 @@
         <!-- _checkPublished(articlePublished.published, user) -->
         <template is="dom-if" if="[[user]]">
           <div class="horizontal layout wrap">
-          <template is="dom-if" if="[[edit]]">
+            <template is="dom-if" if="[[edit]]">
               <!-- Article-form -->
               <project-nice-article-form
                   category
@@ -91,7 +91,7 @@
                   draft-path="[[articlePath.list.draft]]/[[id]]"
                   categories="[[article.categories]]"
                   types="[[article.types]]"
-                  url="/page/[[slug]]"></project-nice-article-form>
+                  url="/article/[[id]]"></project-nice-article-form>
             </template>
 
             <!-- Article-view -->
