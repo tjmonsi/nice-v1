@@ -96,6 +96,8 @@
             this.set('roles.member', m1 || s1 || e1 || a1);
             
             this.fire('roles-changed', this.roles);
+
+            console.log(this.roles)
           }, this._catchError.bind(this));
 
           //pending
