@@ -1,0 +1,71 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- Polymer Elements dependencies -->
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- Component dependencies -->
+<!-- RC-Layout dependencies -->
+
+
+<!-- Behvaior dependencies -->
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+
+
+<!-- Style dependencies -->
+<link rel="import" href="project-nice-article-headline-style.html">
+
+<dom-module id="project-nice-article-headline">
+  <template>
+    <style is="custom-style" include="project-nice-article-headline-style">
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <firebase-document
+      path="[[articlePath.articles]]/[[id]]/title"
+      data="{{articleTitle}}">
+    </firebase-document>
+    <firebase-document
+      path="[[articlePath.articles]]/[[id]]/bannerImage"
+      data="{{articleImage}}">
+    </firebase-document>
+    <firebase-document
+      path="[[articlePath.articles]]/[[id]]/body"
+      data="{{articleBody}}">
+    </firebase-document>
+    
+    <a href="/article/[[articleId]]" class="header-image-anchor">
+      <iron-image class="header-image" src$="[[articleImage]]" sizing="cover" fade preload></iron-image>
+    </a>
+    <div class="content">
+      <a href="/article/[[articleId]]" class="article-title">
+        <h2>
+          [[_trimText(articleTitle)]]
+        </h2>  
+      </a>
+      <p class="by-line">
+        Last Published: [[_renderDate(datePublished)]]
+      </p>
+      <p class="body">
+        [[_trimText(articleBody, 200)]]
+      </p>
+    </div>
+    
+    
+    
+  </template>
+  <script>
+    Polymer({
+      is: 'project-nice-article-headline',
+      
+      behaviors: [
+        NICEV1.ProjectNiceArticleBehavior  
+      ]
+    })
+  </script>
+</dom-module>

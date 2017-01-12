@@ -1,0 +1,55 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- Polymer Elements dependencies -->
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<!-- Behvaior dependencies -->
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+
+
+<!-- Style dependencies -->
+<link rel="import" href="project-nice-article-image-style.html">
+
+<dom-module id="project-nice-article-image">
+  <template>
+    <style is="custom-style" include="project-nice-article-image-style">
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <firebase-document
+      path="[[articlePath.articles]]/[[articleId]]/title"
+      data="{{articleTitle}}">
+    </firebase-document>
+    <firebase-document
+      path="[[articlePath.articles]]/[[articleId]]/bannerImage"
+      data="{{articleImage}}">
+    </firebase-document>
+    
+    <a href="/article/[[articleId]]">
+      <iron-image class="background" src$="[[articleImage]]" sizing="cover" fade preload></iron-image>
+      <div class="frontground">
+        <h2>
+          [[_trimText(articleTitle)]]
+        </h2>
+        <p>
+          Last Published: [[_renderDate(datePublished)]]
+        </p>
+      </div>
+    </a>
+    
+    
+  </template>
+  <script>
+    Polymer({
+      is: 'project-nice-article-image',
+      
+      behaviors: [
+        NICEV1.ProjectNiceArticleBehavior
+      ]
+    })
+  </script>
+</dom-module>

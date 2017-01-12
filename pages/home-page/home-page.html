@@ -1,25 +1,125 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../web-components/project-nice-weather/project-nice-weather.html">
+<link rel="import" href="../../web-components/project-nice-carousel/project-nice-carousel.html">
+<link rel="import" href="../../web-components/project-nice-article-image/project-nice-article-image.html">
+<link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
+<link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
 
 <!-- Style dependency -->
 <link rel="import" href="home-page-style.html">
 
 <dom-module id="home-page">
   <template>
-    <style is="custom-style" include="home-page-style">
+    <style is="custom-style" include="home-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
 
-    <div style="height: 100vh">
+    <firebase-query
+        path="[[articlePath.listOptions]]/front"
+        data="{{frontArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
 
+    <firebase-query
+        path="[[articlePath.listOptions]]/sap"
+        data="{{sapArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[articlePath.listOptions]]/media"
+        data="{{mediaArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <iron-ajax
+      auto
+      url="https://api.wunderground.com/api/598588d0da7f5d62/conditions/forecast/q/autoip.json"
+      handle-as="json"
+      on-response="handleResponse"
+      debounce-duration="300"></iron-ajax>
+
+    <project-nice-carousel height="65vh" carousel-interval="10000">
+      <template is="dom-repeat" items="[[frontArticles]]">
+        
+        <project-nice-hero title="[[item.title]]" sub-title="[[item.subTitle]]" banner-image="[[item.bannerImage]]" data-index$="[[index]]" url="/article/[[item.$key]]">
+          <firebase-document path="[[articlePath.articles]]/[[item.$key]]/title" data="{{item.title}}"></firebase-document>
+          <firebase-document path="[[articlePath.articles]]/[[item.$key]]/subTitle" data="{{item.subTitle}}"></firebase-document>
+          <firebase-document path="[[articlePath.articles]]/[[item.$key]]/bannerImage" data="{{item.bannerImage}}"></firebase-document>
+        </project-nice-hero>
+      </template>
+    </project-nice-carousel>
+
+    <!-- Add category list-->
+    <div class="horizontal layout wrap home-video-features-weather">
+      <div class="flex-5 home-video-features">
+        <h1 class="title">
+          Videos / Photoblog features
+        </h1>
+        <div class="horizontal layout wrap">
+          <div class="flex-5 home-video-features-highlight">
+            <template is="dom-repeat" items="[[mediaArticles]]">
+              
+              <template is="dom-if" if="[[!index]]">
+                <project-nice-article-image article-id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-image>
+                <!--<nice-summary-image-content 
+                  article-id="[[item.$key]]"></nice-summary-image-content>  -->
+              </template>
+            </template>
+          </div>
+          <div class="flex-2 home-video-features-list">
+            <template is="dom-repeat" items="[[mediaArticles]]">
+              <template is="dom-if" if="[[index]]">
+                <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+                <!--<nice-summary-side-content article-id="[[item.$key]]"></nice-summary-side-content>  -->
+              </template>
+              
+            </template>
+          </div>
+        </div>
+      </div> 
+      <div class="flex-2 home-weather">
+        <project-nice-weather id="weather-component"></project-nice-weather>
       </div>
+    </div>
+
+    <div class="horizontal layout wrap">
+      <div class="flex"></div>
+      <div class="flex-2 article-list-section">
+        <h1>People</h1>
+      </div>
+      <div class="flex-2 article-list-section">
+        <h1>SAP</h1>
+      </div>
+      <div class="flex-2 article-list-section">
+        <h1>News</h1>
+      </div>
+      <div class="flex"></div>
+    </div>
   </template>
 
   <script>
     Polymer({
-      is: 'home-page'
+      is: 'home-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceArticleBehavior
+      ],
+
+      handleResponse: function(res) {
+        this.$$('#weather-component').setData(res.detail.response);
+      }
     });
   </script>
 </dom-module>
