@@ -129,6 +129,7 @@
       },
       
       _checkAuthRole: function(user, auth, roles, role, owner, flag) {
+        
         if (auth) {
           if (role) {
             if (flag) {
@@ -159,6 +160,19 @@
 
       _checkOwner: function(owner, user) {
         return owner.uid === user.uid
+      },
+
+      _checkProfileMember: function(m) {
+        var a1 = m.admin;
+        var e1 = m.editor;
+        var s1 = m.staff;
+        var m1 = m.member;
+
+        return m1 || s1 || e1 || a1
+      },
+
+      _checkProfilePendingMember: function(m) {
+        return m.pending;
       },
       
       _checkProfile: function(user, ref, profile) {
@@ -219,6 +233,16 @@
             this._showMessage('Membership Request Deleted');
           }).catch(this._catchError.bind(this))
         }
+      },
+
+      _acceptMembership: function(e) {
+        var uid = e.target.uid;
+        var updates = {};
+        updates[this.userPath.options.pending + '/' + uid] = null;
+        updates[this.userPath.options.members + '/' + uid] = {member: firebase.database.ServerValue.TIMESTAMP};
+        firebase.database().ref().update(updates).then(() => {
+          this._showMessage('Membership Accepted');
+        }).catch(this._catchError.bind(this))
       },
       
       _loginSuccess: function(result) {

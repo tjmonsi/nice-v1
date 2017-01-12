@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<!--<link rel="import" href="../../web-components/project-nice-member-item/project-nice-member-item.html">-->
+<link rel="import" href="../../web-components/project-nice-member-item/project-nice-member-item.html">
 <link rel="import" href="../../web-components/project-nice-member-view/project-nice-member-view.html">
 <link rel="import" href="../../web-components/project-nice-member-form/project-nice-member-form.html">
 <link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
@@ -14,11 +14,29 @@
 
 <dom-module id="member-page">
   <template>
-    <style is="custom-style" include="member-page-style iron-flex iron-flex-alignment">
+    <style is="custom-style" include="member-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
+
+    <template is="dom-if" if="[[!id]]">
+      <firebase-query
+          path="[[userPath.options.members]]"
+          data="{{members}}"></firebase-query>
+
+      <div class="padder">
+        <div class="horizontal layout wrap">
+          <div class="flex main-content">
+            <h1 class="">Members</h1>
+
+            <template is="dom-repeat" items="[[members]]">
+              <project-nice-member-item profile-id="[[item.$key]]" user="[[user]]"></project-nice-member-item>          
+            </template>
+          </div>
+        </div>   
+      </div>
+    </template> 
 
     <template is="dom-if" if="[[id]]">
       <firebase-document 
@@ -32,7 +50,7 @@
       <template is="dom-if" if="[[_forceZero(profile)]]">
         
         <div class="horizontal layout wrap">
-          <template is="dom-if" if="[[_checkEdit(edit, 'admin')]]">
+          <template is="dom-if" if="[[_checkEdit(edit, 'admin', user, roles)]]">
             <project-nice-member-form 
                 class="flex"
                 path="[[userPath.profiles]]/[[id]]"
@@ -93,11 +111,15 @@
         _owner: {
           type: Object,
           computed: '_computeOwner(id)'
+        },
+        currentRoute: {
+          type: Object,
+          value: {}
         }
       },
 
       observers: [
-        '_changeParamsId(params.id)',
+        '_changeParamsId(params.id, currentRoute)',
         '_changeQuaryParamsEdit(queryParams.edit)',
       ],
 
@@ -107,8 +129,17 @@
         }
       },
 
-      _changeParamsId: function(e) {
-        this.id = e || this.id
+      _changeParamsId: function(e, f) {
+        console.log(e, f)
+        if (f === '/profile') {
+          this.id = this.user.uid
+        } else if (f === '/member') {
+          this.id = '';
+        } else {
+          this.id = e || ''
+        }
+        console.log(this.id, e)
+        
       },
 
       _changeQuaryParamsEdit: function(e) {
