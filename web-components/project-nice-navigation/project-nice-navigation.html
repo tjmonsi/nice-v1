@@ -122,8 +122,11 @@
         if (this.pageNavListLength === 0) {
           this.pageNavListLength = this.pages.length;
           // console.log(this.pageNavListLength)
-          this.$$('#about-button').toggle();
-          this.$$('#about-button').toggle();
+          if (this.$$('#about-button')) {
+            this.$$('#about-button').toggle();
+            this.$$('#about-button').toggle();
+          }
+          
         }
       },
 

@@ -1,0 +1,16 @@
+//
+
+// nice-summary-small-article-style
+
+a {
+  color: inherit;
+  text-decoration: none;
+  
+  &.header-image-anchor {
+    .header-image {
+      width: 100%;
+      height: 160px;
+    }
+  }
+}
+

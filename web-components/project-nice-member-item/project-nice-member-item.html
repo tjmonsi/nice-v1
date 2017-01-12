@@ -103,6 +103,14 @@
                   <paper-button raised>View Profile</paper-button>
                 </a>
 
+                
+                <template is="dom-if" if="[[!_checkOwner(owner, user)]]">
+                  <a href="#" on-tap="_sendMessage">
+                    <paper-button raised>Send Messagea</paper-button>
+                  </a>
+                </template>
+                
+
               </div>
 
             </div>

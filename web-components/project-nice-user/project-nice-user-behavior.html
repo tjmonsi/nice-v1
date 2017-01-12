@@ -159,7 +159,9 @@
       },
 
       _checkOwner: function(owner, user) {
-        return owner.uid === user.uid
+        if (owner && user) {
+          return owner.uid === user.uid
+        } 
       },
 
       _checkProfileMember: function(m) {
