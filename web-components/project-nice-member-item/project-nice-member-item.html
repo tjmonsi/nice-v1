@@ -1,0 +1,274 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
+<link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
+<link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
+
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-member-item-style.html">
+
+<dom-module id="project-nice-member-item">
+  <template>
+    <style is="custom-style" include="project-nice-member-item-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query 
+        path="[[categoryPath.user]]" 
+        data="{{categoryList}}"></firebase-query>
+
+    <firebase-document path="[[userPath.profiles]]/[[profileId]]/image" data="{{image}}"></firebase-document>
+    <firebase-document path="[[userPath.profiles]]/[[profileId]]/displayName" data="{{displayName}}"></firebase-document>
+    <firebase-document path="[[userPath.profiles]]/[[profileId]]/categories" data="{{categories}}"></firebase-document>
+
+    <firebase-document path="[[userPath.options.members]]/[[profileId]]" data="{{profileRole}}"></firebase-document>
+    <firebase-document path="[[userPath.options.pending]]/[[profileId]]" data="{{pendingProfileRole}}"></firebase-document>
+
+    <paper-material style="margin-bottom: 5px">
+      <div class="profile-header-container">
+        <div class="profile-header">
+          <div class="horizontal layout center">
+            <iron-image
+              class="profile-picture"
+              sizing="cover"
+              src="{{image}}"
+              preload
+              fade
+            >
+            </iron-image>
+            <div class="flex">
+              <a class="profile-name" href="/member/{{profileId}}">{{displayName}}</a>
+              <hr>
+              <div class="by-line">
+                <div class="horizontal layout center wrap">
+                  <span class="category">Categories: </span>
+                  <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">
+                    <template is="dom-if" if="[[_categoryIcon(categories, categoryitem.$key)]]">
+                      <span class="category">[[categoryitem.name]];</span>
+                    </template>
+                  </template>
+                </div>
+              </div>
+              <hr>
+
+              <div class="horizontal layout center">
+
+                <div class="form-container">
+                  <template is="dom-if" if="[[_checkProfileMemberWithRole(profileRole, user, roles)]]">
+                    <paper-dropdown-menu id="role-selector" label="Select Special Membership Status:">
+                      <paper-listbox class="dropdown-content" attr-for-selected="role-id">
+                        <template is="dom-if" if="[[_checkPermissionWithoutOwner('admin', user, roles)]]">
+                          <paper-item  role-id="admin" on-tap="_selectRole">Admin</paper-item>
+                        </template>
+                        <paper-item  role-id="editor" on-tap="_selectRole">Editor</paper-item>
+                        <paper-item role-id="staff" on-tap="_selectRole">Contributor</paper-item>
+                        <paper-item role-id="member" on-tap="_selectRole">Member</paper-item>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>     
+                  <template is="dom-if" if="[[_checkProfilePendingMemberWithRole(pendingProfileRole, user, roles)]]">
+                    <paper-button on-tap="_acceptMembership" uid="[[profileId]]">Accept Membership</paper-button>
+                  </template>
+                </div>
+
+                <template is="dom-if" if="[[_checkPermission('admin', _owner, 0, user, roles)]]">
+                  <paper-button raised on-tap="_retractMembership">Remove Membership</paper-button>
+                </template>
+
+                <template is="dom-if" if="[[_checkEdit(1, roles, user, _owner)]]">
+                  <a href="/member/[[profileId]]?edit=true">
+                    <paper-button raised>Edit</paper-button>
+                  </a>
+                </template>
+
+                <a href="/member/[[profileId]]">
+                  <paper-button raised>View Profile</paper-button>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </paper-material>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-member-item',
+
+      behaviors: [
+        NICEV1.ProjectNiceCategoryBehavior,
+        NICEV1.ProjectNiceUserBehavior
+      ],
+
+      properties: {
+        image: {
+          type: String
+        },
+        category: {
+          type: Boolean,
+          value: false
+        },
+        type: {
+          type: Boolean,
+          value: false
+        },
+        title: {
+          type: String
+        },
+        subTitle: {
+          type: String
+        },
+        bannerImage: {
+          type: String
+        },
+        body: {
+          type: String
+        },
+        images: {
+          type: Array,
+          value: function() { return []; }
+        },
+        documents: {
+          type: Array,
+          value: function() { return []; }
+        },
+        video: {
+          type: String
+        },
+        categories: {
+          type: Object,
+          value: {}
+        },
+        categoryArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        types: {
+          type: Object
+        },
+        typeArray: {
+          type: Array,
+          value: function() { return []; }
+        },
+        url: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: Boolean,
+          value: false
+        },
+        profileId: {
+          type: String,
+          value: ''
+        },
+        _owner: {
+          type: Object,
+          computed: '_computeOwner(profileId)'
+        }
+      },
+
+      observers: [
+        '_checkRoleMembership(profileRole, user, roles)'
+      ],
+
+      _checkRoleMembership: function(m) {
+        Polymer.RenderStatus.afterNextRender(this, () => {
+          var a1 = m.admin;
+          var e1 = m.editor;
+          var s1 = m.staff;
+          var m1 = m.member;
+          
+          if (this.$$('#role-selector')) {
+            if (a1) {            
+              this.$$('#role-selector').contentElement.select('admin');
+            } else if (e1) {
+              this.$$('#role-selector').contentElement.select('editor');
+            } else if (s1) {
+              this.$$('#role-selector').contentElement.select('staff');
+            } else {
+              this.$$('#role-selector').contentElement.select('member');
+            }
+          }
+          
+        })
+        
+      },
+
+      _computeOwner: function(id) {
+        return {
+          uid: id
+        }
+      },
+
+      _openPhotoBlog: function(e) {
+        var image = e.target.src;
+        var caption = e.target.getAttribute('data-caption');
+        this.$$('#photoblog-dialog').open();
+        this.$$('#photoblog-dialog-image').src = image;
+        this.$$('#photoblog-dialog-image-full').setAttribute('href', image);
+        this.$$('#photoblog-dialog-image').shadowRoot.querySelector('#img').setAttribute('style' , 'width: 100%; max-width: 500px');
+        this.$$('#photoblog-dialog-caption').markdown = caption;
+      },
+
+      _checkEdit: function(url) {
+        
+        // console.log(this._owner.uid, this.user.uid)
+        return url && this._checkPermission('admin', this._owner)
+      },
+
+      _selectRole: function(e) {
+        var roleId = e.target.getAttribute('role-id');
+        
+        var updates = {};
+        if (roleId === 'member') {
+          updates[this.userPath.options.members + '/' + this.profileId + '/admin'] = null;
+          updates[this.userPath.options.members + '/' + this.profileId + '/editor'] = null;
+          updates[this.userPath.options.members + '/' + this.profileId + '/staff'] = null;
+        } else if (roleId === 'staff') {
+          updates[this.userPath.options.members + '/' + this.profileId + '/admin'] = null;
+          updates[this.userPath.options.members + '/' + this.profileId + '/editor'] = null;
+        } else if (roleId === 'editor') {
+          updates[this.userPath.options.members + '/' + this.profileId + '/admin'] = null;
+        }
+
+        updates[this.userPath.options.members + '/' + this.profileId + '/' + roleId] = firebase.database.ServerValue.TIMESTAMP;
+        firebase.database().ref().update(updates).then(() => {
+          this._showMessage('Roles Changed')
+        }).catch(this._catchError.bind(this));
+        
+      },
+
+      _checkProfileMemberWithRole: function(profileRole) {
+        return this._checkProfileMember(profileRole) && this._checkPermissionWithoutOwner('editor')
+      },
+
+      _checkProfilePendingMemberWithRole: function(pendingRole) {
+        return pendingRole.value && this._checkPermissionWithoutOwner('admin')
+      }
+      
+    });
+  </script>
+</dom-module>

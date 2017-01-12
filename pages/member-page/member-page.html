@@ -1,0 +1,158 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../web-components/project-nice-member-item/project-nice-member-item.html">
+<link rel="import" href="../../web-components/project-nice-member-view/project-nice-member-view.html">
+<link rel="import" href="../../web-components/project-nice-member-form/project-nice-member-form.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="member-page-style.html">
+
+<dom-module id="member-page">
+  <template>
+    <style is="custom-style" include="member-page-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template is="dom-if" if="[[!id]]">
+      <firebase-query
+          path="[[userPath.options.members]]"
+          data="{{members}}"></firebase-query>
+
+      <div class="padder">
+        <div class="horizontal layout wrap">
+          <div class="flex main-content">
+            <h1 class="">Members</h1>
+
+            <template is="dom-repeat" items="[[members]]">
+              <project-nice-member-item profile-id="[[item.$key]]" user="[[user]]"></project-nice-member-item>          
+            </template>
+          </div>
+        </div>   
+      </div>
+    </template> 
+
+    <template is="dom-if" if="[[id]]">
+      <firebase-document 
+          path="[[userPath.profiles]]/[[id]]"
+          data="{{profile}}"></firebase-document>
+
+      <firebase-query
+          path="[[userPath.storage.images]]/[[id]]"
+          data="{{images}}"></firebase-query>
+
+      <template is="dom-if" if="[[_forceZero(profile)]]">
+        
+        <div class="horizontal layout wrap">
+          <template is="dom-if" if="[[_checkEdit(edit, 'admin', user, roles)]]">
+            <project-nice-member-form 
+                class="flex"
+                path="[[userPath.profiles]]/[[id]]"
+                display-name="{{profile.displayName}}"
+                first-name="{{profile.firstName}}"
+                last-name="{{profile.lastName}}"
+                address="{{profile.address}}"
+                image="{{profile.image}}"
+                contact="{{profile.contact}}"
+                body="{{profile.body}}"
+                avatar-image-storage-path="[[articlePath.storage.avatar]]/[[id]]"
+                images-storage-path="[[userPath.storage.images]]/[[id]]"
+                list-path="[[userPath.listOptions]]"
+                categories="[[profile.categories]]"
+                user="[[user]]"
+                url="/member/[[id]]"></project-nice-member-form>
+          </template>
+          <!-- Article-view -->
+          <project-nice-member-view
+              class="flex"
+              profile-id="[[id]]"
+              display-name="[[profile.displayName]]"
+              first-name="[[profile.firstName]]"
+              last-name="[[profile.lastName]]"
+              image="[[profile.image]]"
+              email="[[profile.email]]"
+              contact="[[profile.contact]]"
+              body="[[profile.body]]"
+              address="[[profile.address]]"
+              images="[[images]]"
+              user="[[user]]"
+              categories="[[profile.categories]]"
+              url="/member/[[id]]"
+              edit="[[_checkEdit(edit, 'admin')]]"></project-nice-member-view>
+        </div>
+        
+      </template>
+    </template>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'member-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceUserBehavior
+      ],
+
+      properties: {
+        id: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: Boolean
+        },
+        _owner: {
+          type: Object,
+          computed: '_computeOwner(id)'
+        },
+        currentRoute: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      observers: [
+        '_changeParamsId(params.id, currentRoute)',
+        '_changeQuaryParamsEdit(queryParams.edit)',
+      ],
+
+      _computeOwner: function(id) {
+        return {
+          uid: id
+        }
+      },
+
+      _changeParamsId: function(e, f) {
+        console.log(e, f)
+        if (f === '/profile') {
+          this.id = this.user.uid
+        } else if (f === '/member') {
+          this.id = '';
+        } else {
+          this.id = e || ''
+        }
+        console.log(this.id, e)
+        
+      },
+
+      _changeQuaryParamsEdit: function(e) {
+        this.edit = e === 'true';
+      },
+
+      _checkPublished: function(published, user) {
+        return published || user;
+      },
+
+      _checkEdit: function(edit, role) {
+        return edit && this._checkPermission(role, this._owner)
+      }
+    });
+  </script>
+</dom-module>
