@@ -5,6 +5,8 @@
     "pages/home-page/home-page.html",
     "pages/article-page/article-page.html",
     "pages/dashboard-page/dashboard-page.html",
+    "pages/message-page/message-page.html",
+    "pages/member-page/member-page.html",
     "pages/data-page/data-page.html",
     "pages/login-page/login-page.html",
     "pages/nice-page/nice-page.html",
