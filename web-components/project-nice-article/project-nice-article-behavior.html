@@ -62,10 +62,10 @@
       },
 
       observers: [
-        '_changeArticle(article.*)'
+        // '_changeArticle(article.body)'
       ],
 
-      _changeArticle: function() {
+      _changeArticle: function(a) {
         if (this.id && this._forceZero(this.article)) {
           var timestamp = {
             date: firebase.database.ServerValue.TIMESTAMP

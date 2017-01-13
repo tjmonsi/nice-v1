@@ -49,7 +49,7 @@
             </template>
             <h1 class="">Articles</h1>
 
-            <template is="dom-repeat" items="[[articles]]" id="article-repeater">
+            <template is="dom-repeat" items="[[articles]]" id="article-repeater" sort="_sorter">
               <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
             </template>
           </div>
@@ -164,7 +164,7 @@
       observers: [
         '_changeParamsId(params.id)',
         '_changeQuaryParamsEdit(queryParams.edit)',
-        '_deferArticles(articles.splices)'
+        // '_deferArticles(articles.splices)'
       ],
 
       _changeParamsId: function(e) {
@@ -180,24 +180,24 @@
       },
 
       _sorter: function(a, b) {
-        return a.date < b.date
+        return new Date(b.date) - new Date(a.date)
       },
 
-      _deferArticles: function() {
-        this.debounce('defer-articles', () => {
-          console.log('defer')
-          this.articles.sort((a, b) => {
-            console.log(a.date, b.date, a.date - b.date, a.date < b.date)
-            return new Date(b.date) - new Date(a.date)
-          });
-          console.log(this.articles);
-          setTimeout(() => {
-            console.log('render')
-            this.$$('#article-repeater').render();
-          }, 1000)
+      // _deferArticles: function() {
+      //   this.debounce('defer-articles', () => {
+      //     console.log('defer')
+      //     this.articles.sort((a, b) => {
+      //       // console.log(a.date, b.date, a.date - b.date, a.date < b.date)
+      //       return new Date(b.date) - new Date(a.date)
+      //     });
+      //     console.log(this.articles);
+      //     setTimeout(() => {
+      //       console.log('render')
+      //       this.$$('#article-repeater').render();
+      //     }, 1000)
           
-        }, 500)
-      }
+      //   }, 500)
+      // }
     });
   </script>
 </dom-module>

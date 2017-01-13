@@ -7,6 +7,7 @@
 <link rel="import" href="../../web-components/project-nice-weather/project-nice-weather.html">
 <link rel="import" href="../../web-components/project-nice-carousel/project-nice-carousel.html">
 <link rel="import" href="../../web-components/project-nice-article-image/project-nice-article-image.html">
+<link rel="import" href="../../web-components/project-nice-article-headline/project-nice-article-headline.html">
 <link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
 <link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
 <link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
@@ -43,6 +44,20 @@
         limit-to-last="5">
     </firebase-query>
 
+    <firebase-query
+        path="[[articlePath.listOptions]]/people"
+        data="{{peopleArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[articlePath.listOptions]]/press"
+        data="{{pressArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
     <iron-ajax
       auto
       url="https://api.wunderground.com/api/598588d0da7f5d62/conditions/forecast/q/autoip.json"
@@ -69,20 +84,16 @@
         </h1>
         <div class="horizontal layout wrap">
           <div class="flex-5 home-video-features-highlight">
-            <template is="dom-repeat" items="[[mediaArticles]]">
-              
+            <template is="dom-repeat" items="[[mediaArticles]]" sort="_sorter">
               <template is="dom-if" if="[[!index]]">
                 <project-nice-article-image article-id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-image>
-                <!--<nice-summary-image-content 
-                  article-id="[[item.$key]]"></nice-summary-image-content>  -->
               </template>
             </template>
           </div>
           <div class="flex-2 home-video-features-list">
-            <template is="dom-repeat" items="[[mediaArticles]]">
+            <template is="dom-repeat" items="[[mediaArticles]]" sort="_sorter">
               <template is="dom-if" if="[[index]]">
                 <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
-                <!--<nice-summary-side-content article-id="[[item.$key]]"></nice-summary-side-content>  -->
               </template>
               
             </template>
@@ -98,12 +109,42 @@
       <div class="flex"></div>
       <div class="flex-2 article-list-section">
         <h1>People</h1>
+        <template is="dom-repeat" items="[[peopleArticles]]" sort="_sorter">           
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[peopleArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
+          </template>          
+        </template>
       </div>
       <div class="flex-2 article-list-section">
         <h1>SAP</h1>
+        <template is="dom-repeat" items="[[sapArticles]]" sort="_sorter">           
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[sapArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
+          </template>          
+        </template>
       </div>
       <div class="flex-2 article-list-section">
         <h1>News</h1>
+        <template is="dom-repeat" items="[[pressArticles]]" sort="_sorter">           
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[pressArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
+          </template>          
+        </template>
       </div>
       <div class="flex"></div>
     </div>
@@ -119,7 +160,11 @@
 
       handleResponse: function(res) {
         this.$$('#weather-component').setData(res.detail.response);
-      }
+      },
+
+      _sorter: function(a, b) {
+        return new Date(b.date) - new Date(a.date);
+      },
     });
   </script>
 </dom-module>
