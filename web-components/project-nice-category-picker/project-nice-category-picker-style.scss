@@ -1,0 +1,26 @@
+//
+
+// nice-category-list-style
+
+:host {
+  padding: 20px;
+}
+
+.category {
+  text-align: center;
+  min-width: 50px;
+  text-decoration: none;
+  // padding-bottom: 10px;
+  color: inherit;
+  font-size: 0.5em;
+  padding: 10px;
+  img {
+    width: 30px;
+  }
+}
+
+.category-picked {
+  background-color: green;
+  color: white;
+  
+}

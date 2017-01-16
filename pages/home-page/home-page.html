@@ -11,6 +11,7 @@
 <link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
 <link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
 <link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+<link rel="import" href="../../web-components/project-nice-category-picker/project-nice-category-picker.html">
 
 <!-- Style dependency -->
 <link rel="import" href="home-page-style.html">
@@ -24,35 +25,35 @@
     </style>
 
     <firebase-query
-        path="[[articlePath.listOptions]]/front"
+        path="[[articlePath.listOptions]]/front[[categoryString]]"
         data="{{frontArticles}}"
         order-by-child="date"
         limit-to-last="5">
     </firebase-query>
 
     <firebase-query
-        path="[[articlePath.listOptions]]/sap"
+        path="[[articlePath.listOptions]]/sap[[categoryString]]"
         data="{{sapArticles}}"
         order-by-child="date"
         limit-to-last="5">
     </firebase-query>
 
     <firebase-query
-        path="[[articlePath.listOptions]]/media"
+        path="[[articlePath.listOptions]]/media[[categoryString]]"
         data="{{mediaArticles}}"
         order-by-child="date"
         limit-to-last="5">
     </firebase-query>
 
     <firebase-query
-        path="[[articlePath.listOptions]]/people"
+        path="[[articlePath.listOptions]]/people[[categoryString]]"
         data="{{peopleArticles}}"
         order-by-child="date"
         limit-to-last="5">
     </firebase-query>
 
     <firebase-query
-        path="[[articlePath.listOptions]]/press"
+        path="[[articlePath.listOptions]]/press[[categoryString]]"
         data="{{pressArticles}}"
         order-by-child="date"
         limit-to-last="5">
@@ -75,6 +76,8 @@
         </project-nice-hero>
       </template>
     </project-nice-carousel>
+
+    <project-nice-category-picker url="/" category-string="[[categoryString]]"></project-nice-category-picker>
 
     <!-- Add category list-->
     <div class="horizontal layout wrap home-video-features-weather">
@@ -154,6 +157,17 @@
     Polymer({
       is: 'home-page',
 
+      properties: {
+        categoryString: {
+          type: String,
+          value: ''
+        },
+      },
+
+      observers: [
+        '_setCategory(queryParams.cat)'
+      ],
+
       behaviors: [
         NICEV1.ProjectNiceArticleBehavior
       ],
@@ -165,6 +179,11 @@
       _sorter: function(a, b) {
         return new Date(b.date) - new Date(a.date);
       },
+
+      _setCategory: function(cat) {
+        console.log(cat);
+        this.categoryString = cat || ''
+      }
     });
   </script>
 </dom-module>
