@@ -1,0 +1,62 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../web-components/project-nice-message/project-nice-message-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-message-form-style.html">
+
+<dom-module id="project-nice-message-form">
+  <template>
+    <style is="custom-style" include="project-nice-message-form-style iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document path="[[userPath.profiles]]/[[profileId]]/image" data="{{image}}"></firebase-document>
+    
+    <paper-material elevation="1">
+      <div class="horizontal layout center">
+        <iron-image
+          class="profile-picture"
+          sizing="cover"
+          src="{{image}}"
+          preload
+          fade
+        >
+        </iron-image>
+        <div class="flex message-box">
+          <paper-textarea label="Type message here" id="message"></paper-textarea>
+          <paper-button on-tap="_sendMessage">
+            Send Message
+          </paper-button>
+        </div>
+      </div>
+    </paper-material>
+    
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-message-form',
+
+      behaviors: [
+        NICEV1.ProjectNiceUserBehavior,
+        NICEV1.ProjectNiceMessageBehavior
+      ],
+
+      _sendMessage: function() {
+        var message = this.$$('#message').value;
+        // firebase.database().
+      }
+    });
+  </script>
+</dom-module>

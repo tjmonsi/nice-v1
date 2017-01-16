@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNiceMessageBehavior */
+    NICEV1.ProjectNiceMessageBehaviorImpl = {
+
+      properties: {
+        messageId: {
+          type: String
+        },
+        messagePath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._messagePath; }
+        },
+        messageGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._messageGroup; }
+        },
+
+        message: {
+          type: Object
+        },
+
+        messages: {
+          type: Array,
+          value: function() { return []; }
+        }
+      },
+
+      get _messageGroup() {
+        return 'messageGroup';
+      },
+
+      get _messagePath() {
+        var storage = this._version + '/' + this._messageGroup + '/storage';
+        var list = this._version + '/' + this._messageGroup + '/list';
+        return {
+          threads: this._version + '/' + this._messageGroup + '/threads', // this is where the message objects are saved
+          owner: this._version + '/' + this._messageGroup + '/owner', // this is where you set the owner of the message
+          // listOptions: list,
+          list: {
+            threads: list + '/threads',
+            users: list + '/users'
+          },
+          // storage: {
+          //   bannerImage: storage + '/bannerImage',
+          //   images: storage + '/images',
+          //   documents: storage + '/documents'
+          // }
+        };
+      },
+
+      observers: [
+        '_getMessageId(messageProfileId, user.uid)'
+      ],
+
+      _getMessageId: function(messageProfileId, uid) {
+        this.messageId = '';
+        if (messageProfileId && uid) {
+          var path = this.messagePath.list.users + '/' + uid + '/' + messageProfileId;
+          firebase.database().ref(path).once('value', (snapshot) => {
+            if (snapshot.val() && snapshot.val().messageId) {
+              this.messageId = snapshot.val().messageId;
+            } else {
+              var updates = {};
+              var obj = {
+                date: firebase.database.ServerValue.TIMESTAMP,
+                members: {}
+              };
+              obj.members[uid] = {value: true};
+              obj.members[messageProfileId] = {value: true}; 
+              var key = firebase.database().ref(this.messagePath.threads).push().key;
+              updates[this.messagePath.threads + '/' + key] = obj;
+              updates[path] = {
+                messageId: key
+              };
+              updates[this.messagePath.list.users + '/' + messageProfileId + '/' + uid] = {
+                messageId: key
+              }
+              firebase.database().ref().update(updates).then(() => {
+                this.messageId = key;
+              }).catch(this._catchError.bind(this));
+            }
+          })
+        }
+        
+      }
+      // attached: function() {
+
+      // },
+
+      // detached: function() {
+
+      // },
+
+      // _addMessage: function() {
+      //   var el = this.$$('#new-message');
+      //   var key = firebase.database().ref(this.messagePath.messages).push({
+      //     title: 'New Message'
+      //   }).key;
+      //   el.href = '/message/' + key + '?edit=true';
+      // },
+
+
+    };
+    NICEV1.ProjectNiceMessageBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceMessageBehaviorImpl
+    ];
+  })();
+</script>

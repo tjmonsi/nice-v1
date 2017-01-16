@@ -1,29 +1,78 @@
 <!-- Polymer dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../web-components/project-nice-message-form/project-nice-message-form.html">
+
+<link rel="import" href="../../web-components/project-nice-message/project-nice-message-behavior.html">
+
 
 <!-- Style dependency -->
 <link rel="import" href="message-page-style.html">
 
 <dom-module id="message-page">
   <template>
-    <style is="custom-style" include="message-page-style">
+    <style is="custom-style" include="message-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
 
-    <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-    </div>
+    <template is="dom-if" if="[[messageProfileId]]">
+      <template is="dom-if" if="[[messageId]]">
+        <firebase-query 
+            path="[[messagePath.threads]]/[[messageId]]/messages"
+            data="{{messages}}"></firebase-query>
+        <div class="horizontal layout">
+          <div class="flex"></div>
+          <div class="flex-4">
+            <template is="dom-repeat" items="[[messages]]">
+
+            </template>
+
+            <project-nice-message-form profile-id="[[user.uid]]"></project-nice-message-form>
+          </div>
+          <div class="flex"></div>
+        </div>
+        
+      </template>
+
+    </template>
     
   </template>
 
   <script>
     Polymer({
-      is: 'message-page'
+      is: 'message-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceMessageBehavior
+      ],
+
+      properties: {
+        params: {
+          type: Object
+        },
+        messageProfileId: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: Boolean
+        }
+      },
+
+      observers: [
+        '_changeParamsId(params.id)',
+      ],
+
+      _changeParamsId: function(e) {
+        this.messageProfileId = e || ''
+      },
+
+      _sorter: function(a, b) {
+        return new Date(b.date) - new Date(a.date)
+      },
     });
   </script>
 </dom-module>

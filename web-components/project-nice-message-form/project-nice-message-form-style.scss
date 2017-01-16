@@ -1,0 +1,16 @@
+//
+
+.message-box {
+  padding: 20px;
+  background-color: grey;
+
+  paper-textarea {
+    background-color: white;
+    padding: 10px;
+  }
+
+  paper-button {
+    margin-top: 10px;
+    background-color: white;
+  }
+}
