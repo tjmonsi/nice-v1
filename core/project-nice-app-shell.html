@@ -88,20 +88,27 @@ Wham! It's all awesome now!
 
         <!-- ROUTER STARTS HERE -->
         <home-page route="/"></home-page>
+        
         <nice-page route="/page/:slug" user="{{user}}"></nice-page>
+        
         <article-page route="/article" user="{{user}}"></article-page>
         <article-page route="/article/:id" user="{{user}}"></article-page>
+
         <data-page route="/data" user="{{user}}"></data-page>
         <data-page route="/data/:id" user="{{user}}"></data-page>
+
         <dashboard-page route="/dashboard" user="{{user}}"></dashboard-page>
         <dashboard-page route="/dashboard/:page" user="{{user}}"></dashboard-page>
+        
         <!-- ADD member -->
         <member-page route="/member" user="{{user}}" current-route="[[currentRoute]]"></member-page>
         <member-page route="/member/:id" user="{{user}}" current-route="[[currentRoute]]"></member-page>
         <member-page route="/profile" user="{{user}}" id="[[user.uid]]" current-route="[[currentRoute]]"></member-page>
+        
         <!-- Message here -->
         <message-page route="/message" user="{{user}}"></message-page>
         <message-page route="/message/:id" user="{{user}}"></message-page>
+        
         <!-- LOGIN PAGE -->
         <login-page route="/login" user="{{user}}"></login-page>
         <not-authorized-page route="not-authorized"></not-authorized-page>
