@@ -217,6 +217,9 @@
 
           for (var j in this.types) {
             updates[this.listPath + '/' + j + '/' + this.articleId] = checked ? {date: timestamp} : null;
+            for (var k in this.categories) {
+              updates[this.listPath + '/' + j + k + '/' + this.articleId] = checked ? {date: timestamp} : null;
+            }
           }
           
           firebase.database().ref().update(updates).then(() => {
@@ -314,7 +317,12 @@
         var updates = {};
         updates[this.path + '/categories/' + id] = active ? {value: true} : null;
         updates[this.listPath + '/' + id + '/' + this.articleId] = active && this._forceZero(this.published) ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
-
+        for (var i in this.types) {
+          updates[this.listPath + '/' + i + id + '/' + this.articleId] = active && this._forceZero(this.published) ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
+          // for (var j in this.categories) {
+          //   updates[this.listPath + '/' + i + j + '/' + this.articleId] = {date: firebase.database.ServerValue.TIMESTAMP};
+          // }
+        }
         firebase.database().ref().update(updates);
       },
 
@@ -324,6 +332,15 @@
         var updates = {};
         updates[this.path + '/types/' + id] = active ? {value: true} : null;
         updates[this.listPath + '/' + id + '/' + this.articleId] = active && this._forceZero(this.published) ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
+
+        for (var i in this.categories) {
+          updates[this.listPath + '/' + id + i + '/' + this.articleId] = active && this._forceZero(this.published) ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
+
+          // for (var j in this.types) {
+          //   updates[this.listPath + '/' + j + i + '/' + this.articleId] = {date: firebase.database.ServerValue.TIMESTAMP};
+          // }
+        }
+
         firebase.database().ref().update(updates);
       }
     });
