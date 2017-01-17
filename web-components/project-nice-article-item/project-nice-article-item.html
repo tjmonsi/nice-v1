@@ -32,9 +32,11 @@
           <h4>
             [[_trimText(title)]]
           </h4>
-          <p>
-            Last Published: [[_renderDate(datePublished)]]
-          </p>
+          <template is="dom-if" if="[[datePublished]]">
+            <p>
+              Last Published: [[_renderDate(datePublished)]]
+            </p>
+          </template>
         </div>  
       </paper-material>
     </a>

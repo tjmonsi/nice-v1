@@ -3,6 +3,7 @@
   "shell": "core/project-nice-app-shell.html",
   "fragments": [
     "pages/home-page/home-page.html",
+    "pages/search-page/search-page.html",
     "pages/article-page/article-page.html",
     "pages/dashboard-page/dashboard-page.html",
     "pages/message-page/message-page.html",

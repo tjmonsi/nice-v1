@@ -1,0 +1,129 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../web-components/project-nice-member-item/project-nice-member-item.html">
+<link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">
+<link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
+<link rel="import" href="../../web-components/project-nice-search/project-nice-search-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="search-page-style.html">
+
+<dom-module id="search-page">
+  <template>
+    <style is="custom-style" include="search-page-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template is="dom-if" if="[[searchKey]]">
+      <firebase-query path="[[searchPath.response]]/[[searchKey]]/hits/hits" data="{{searchResults}}"></firebase-query>
+    </template>
+
+    <div class="horizontal layout">
+      <div class="flex">
+      </div>
+      <div class="flex-4 search-box">
+        <div class="horizontal layout center">
+          <paper-input label="Search" id="query" class="flex" on-change="_searchDebounce"></paper-input>
+          <paper-button raised on-tap="_search">Search</paper-button>
+        </div>
+     
+        <iron-selector class="horizontal layout" attr-for-selected="query-type" selected="{{queryType}}" on-iron-select="_searchDebounce">
+          <paper-button query-type="article" raised class="flex">Article</paper-button>
+          <paper-button query-type="data" raised class="flex">Data</paper-button>
+          <!--<paper-button query-type="page" raised class="flex">Page</paper-button>-->
+          <paper-button query-type="profile" raised class="flex">Members</paper-button>
+        </iron-selector>
+
+        <hr>
+
+        <!--<template is="dom-if" if="[[_forceZero(searchResults)]]">-->
+          <template is="dom-repeat" items="[[searchResults]]">
+            
+            <template is="dom-if" if="[[_checkType(item._type, 'profile')]]">
+              <project-nice-member-item profile-id="[[item._id]]" user="[[user]]"></project-nice-member-item>
+            </template>
+
+            <template is="dom-if" if="[[_checkType(item._type, 'data')]]">
+              <project-nice-data-item id="[[item._id]]"></project-nice-data-item>
+            </template>
+
+            <template is="dom-if" if="[[_checkType(item._type, 'article')]]">
+              <project-nice-article-item id="[[item._id]]"></project-nice-article-item>
+            </template>
+            
+            
+          </template>
+        <!--</template>-->
+      </div>
+      <div class="flex">
+      </div>
+    </div>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'search-page',
+
+      properties: {
+        query: {
+          type: String,
+          value: ''
+        },
+        queryType: {
+          type: String,
+          value: 'article'
+        },
+        searchKey: {
+          type: String,
+          value: ''
+        },
+        searchResults: {
+          type: Array,
+          value: []
+        }
+      },
+
+      observers: [
+        '_check(searchResults.splices)'
+      ],
+
+      _check: function(e) {
+        console.log(this.searchResults)
+      },
+
+      behaviors: [
+        NICEV1.ProjectNiceSearchBehavior
+      ],
+
+      _searchDebounce: function() {
+        // console.log(this.debounce)
+        this.debounce('project-nice-search', this._search, 500)
+      },
+
+      _search: function() {
+        this.query = this.$$('#query').value;
+        if (this.query) {
+          this.searchKey = firebase.database().ref(this.searchPath.request).push({
+            q: this.query,
+            index: 'nicev1',
+            type: this.queryType || 'article'
+          }).key;
+          console.log(this.searchKey)
+        }
+      },
+
+      _checkType: function(p, q) {
+        console.log(p, q, p === q)
+        return p === q;
+      }
+    });
+  </script>
+</dom-module>
