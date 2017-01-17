@@ -3,6 +3,7 @@
 
 // @include hide-on-smalldesktop();
 // @include hide-on-largescreen();
+@include hide-on-desktop-up();
 
 app-header {
   background-color: $light;

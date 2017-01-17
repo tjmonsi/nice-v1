@@ -1,0 +1,76 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../web-components/project-nice-pricewatch/project-nice-pricewatch-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-pricewatch-commodity-picker-style.html">
+
+<dom-module id="project-nice-pricewatch-commodity-picker">
+  <template>
+    <style is="custom-style" include="project-nice-pricewatch-commodity-picker-style iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query path="[[pricewatchPath.commodityGroup]]/[[key]]/groups" data="{{commodities}}"></firebase-query>
+    <template is="dom-if" if="[[commodityId]]">
+      <firebase-query path="[[pricewatchPath.prices]]/[[commodityId]]/[[market]]" data="{{prices}}" limit-to-last="1" order-by-child="date"></firebase-query>
+    </template>
+
+
+      <div class="horizontal layout center">
+        <div class="flex commodity-container">
+          <paper-dropdown-menu id="commodity-selector" label="Select Commodity:" selected="{{item.selected}}">
+            <paper-listbox class="dropdown-content" attr-for-selected="commodity-id">
+              <template is="dom-repeat" items="[[commodities]]">
+                <paper-item  commodity-id="[[item.$key]]" on-tap="_selectCommodity">[[item.name]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+        <div class="flex price-container">
+          <template is="dom-repeat" items="[[prices]]">
+            Php [[item.price]]<br/>
+            <span style="font-size: 10px">As of: [[_renderDate(item.date)]]</span>
+          </template>
+        </div>
+      </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-pricewatch-commodity-picker',
+
+      properties: {
+        marketId: {
+          type: String,
+          value: ''
+        },
+        key: {
+          type: String,
+          value: ''
+        },
+        commodityId: {
+          type: String,
+          value: ''
+        }
+      },
+
+      behaviors: [
+        NICEV1.ProjectNicePricewatchBehavior
+      ],
+
+      _selectCommodity: function(e) {
+        this.commodityId = e.target.commodityId || '';
+        console.log(this.commodityId)
+      }
+    });
+  </script>
+</dom-module>
