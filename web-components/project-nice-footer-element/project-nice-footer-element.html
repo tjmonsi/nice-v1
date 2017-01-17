@@ -1,0 +1,36 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-footer-element-style.html">
+
+<dom-module id="project-nice-footer-element">
+  <template>
+    <style is="custom-style" include="project-nice-footer-element-style iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div class="horizontal layout">
+      <div class="flex"></div>
+      <div class="">
+        <div class="vertical layout copyright">
+          <div class="flex"></div>
+          <div>Copyright 2017</div>
+          <div class="flex">
+          </div>
+        </div>
+      </div>
+      <div class="flex"></div>
+    </div>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-footer-element'
+    });
+  </script>
+</dom-module>

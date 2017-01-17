@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-
+<link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
 <link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 
 <!-- Style dependency -->
@@ -27,12 +27,14 @@
         
         <paper-button class="login-button" raised id="google" on-tap="login">Login via Google</paper-button><br>
         
-        <paper-button class="login-button" raised id="facebook" on-tap="login">Login via Facebook</paper-button>
+        <!--<paper-button class="login-button" raised id="facebook" on-tap="login">Login via Facebook</paper-button>-->
         
 
       </div>
       <div class="flex"></div>
     </div>
+
+    <project-nice-footer-element></project-nice-footer-element>
   </template>
 
   <script>
