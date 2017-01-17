@@ -33,6 +33,7 @@ Wham! It's all awesome now!
   <!-- Lazy loaded dependencies -->
   <!-- LAZY LOADER STARTS HERE -->
   <link rel="lazy-import" href="/pages/home-page/home-page.html" group="home-page">
+  <link rel="lazy-import" href="/pages/search-page/search-page.html" group="search-page">
   <link rel="lazy-import" href="/pages/article-page/article-page.html" group="article-page">
   <link rel="lazy-import" href="/pages/nice-page/nice-page.html" group="nice-page">
   <link rel="lazy-import" href="/pages/dashboard-page/dashboard-page.html" group="dashboard-page">
@@ -89,6 +90,8 @@ Wham! It's all awesome now!
         <!-- ROUTER STARTS HERE -->
         <home-page route="/"></home-page>
         
+        <search-page route="/search" user="{{user}}"></search-page>
+
         <nice-page route="/page/:slug" user="{{user}}"></nice-page>
         
         <article-page route="/article" user="{{user}}"></article-page>
@@ -166,6 +169,13 @@ Wham! It's all awesome now!
                 route: '/profile',
                 role: null,
                 auth: true
+              },
+              {
+                label: 'Search',
+                url: '/search',
+                route: 'search',
+                role: null,
+                auth: false
               }
               // {
               //   label: 'About',

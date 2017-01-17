@@ -45,10 +45,13 @@
           <h3>
             [[_trimText(title)]]
           </h3>
-        </a>        
-        <p>
-          Last Published: [[_renderDate(datePublished)]]
-        </p>
+        </a>
+        <template is="dom-if" if="[[datePublished]]">
+          <p>
+            Last Published: [[_renderDate(datePublished)]]
+          </p>
+        </template>
+        
         
         <div class="horizontal layout wrap">
           <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">

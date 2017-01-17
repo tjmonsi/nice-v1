@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNiceSearchBehavior */
+    NICEV1.ProjectNiceSearchBehaviorImpl = {
+
+      properties: {
+        
+        searchPath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._searchPath; }
+        },
+        searchGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._searchGroup; }
+        },
+      },
+
+      get _searchGroup() {
+        return 'searchGroup';
+      },
+
+      get _searchPath() {
+        return {
+          request: this._version + '/' + this._searchGroup + '/request', // this is where the search objects are saved
+          response: this._version + '/' + this._searchGroup + '/response', // this is where you set the owner of the search
+        };
+      },
+
+      _searchIcon: function(categories, key) {
+        // console.log(categories, key)
+        return categories[key];        
+      },
+
+      _searchName: function(categories, key) {
+        if (categories[key]) {
+          return categories[key].name
+        }
+      },
+    };
+    NICEV1.ProjectNiceSearchBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceSearchBehaviorImpl
+    ];
+  })();
+</script>
