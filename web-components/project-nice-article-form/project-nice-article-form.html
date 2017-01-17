@@ -263,6 +263,7 @@
         promises.push(firebase.database().ref(this.path).remove());
         promises.push(firebase.database().ref(this.publishedPath).remove());
         promises.push(firebase.database().ref(this.draftPath).remove());
+        promises.push(firebase.database().ref(this.ownerPath).remove());
 
         // delete all options
         for (var i in this.categories) {   

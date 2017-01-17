@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../web-components/project-nice-pricewatch-viewer/project-nice-pricewatch-viewer.html">
 <link rel="import" href="../../web-components/project-nice-weather/project-nice-weather.html">
@@ -13,6 +14,7 @@
 <link rel="import" href="../../web-components/project-nice-hero/project-nice-hero.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
 <link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+<link rel="import" href="../../web-components/project-nice-data/project-nice-data-behavior.html">
 <link rel="import" href="../../web-components/project-nice-category-picker/project-nice-category-picker.html">
 
 <!-- Style dependency -->
@@ -25,6 +27,8 @@
         display: block;
       }
     </style>
+
+    
 
     <firebase-query
         path="[[articlePath.listOptions]]/front[[categoryString]]"
@@ -59,6 +63,13 @@
         data="{{pressArticles}}"
         order-by-child="date"
         limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[dataPath.listOptions]]/[[dataString]]"
+        data="{{dataList}}"
+        order-by-child="date"
+        limit-to-last="3">
     </firebase-query>
 
     <iron-ajax
@@ -103,6 +114,15 @@
               
             </template>
           </div>
+        </div>
+        <hr>
+        <h1 class="title">
+          Data Archives
+        </h1>
+        <div class="horizontal wrap">
+          <template is="dom-repeat" items="[[dataList]]">
+            <project-nice-data-item id="[[item.$key]]" date-published="[[item.date]]" class="flex"></project-nice-data-item>          
+          </template>
         </div>
       </div> 
       <div class="flex-2 home-weather">
@@ -167,6 +187,10 @@
           type: String,
           value: ''
         },
+        dataString: {
+          type: String,
+          value: 'published'
+        }
       },
 
       observers: [
@@ -174,7 +198,8 @@
       ],
 
       behaviors: [
-        NICEV1.ProjectNiceArticleBehavior
+        NICEV1.ProjectNiceArticleBehavior,
+        NICEV1.ProjectNiceDataBehavior
       ],
 
       handleResponse: function(res) {
@@ -188,6 +213,7 @@
       _setCategory: function(cat) {
         console.log(cat);
         this.categoryString = cat || ''
+        this.dataString = cat || 'published'
       }
     });
   </script>

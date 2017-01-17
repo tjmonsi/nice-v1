@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 
 <script>
   (function(){
@@ -54,11 +55,19 @@
       },
 
       _addArticle: function() {
-        var el = this.$$('#new-article');
-        var key = firebase.database().ref(this.articlePath.articles).push({
-          title: 'New Article'
-        }).key;
-        el.href = '/article/' + key + '?edit=true';
+        if (this.user && this._checkPermissionWithoutOwner('staff')) {
+          var el = this.$$('#new-article');
+          var key = firebase.database().ref(this.articlePath.articles).push({
+            title: 'New Article'
+          }).key;
+          var updates = {};
+          updates[this.articlePath.owner + '/' + key + '/uid'] = this.user.uid;
+          firebase.database().ref().update(updates);
+          el.href = '/article/' + key + '?edit=true';
+        } else {
+          this._showMessage('You are not currently logged in')
+        }
+        
       },
 
       observers: [
@@ -82,6 +91,7 @@
     };
     NICEV1.ProjectNiceArticleBehavior = [
       NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceUserBehavior,
       NICEV1.ProjectNiceArticleBehaviorImpl
     ];
   })();

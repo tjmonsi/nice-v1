@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
 <link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
@@ -22,16 +23,19 @@
     <!--<firebase-auth id="fauth" user="{{user}}" provider="facebook" on-error="_catchError"></firebase-auth>-->
 
     <div class="layout horizontal">
-      <div class="flex"></div>
-      <div class="flex-4 login-container">
+      <div class="flex-3"></div>
+      <div class="flex-2 login-container">
+        <paper-material style="padding: 20px; padding-bottom: 40px;">
+          <img src="/images/assets/nice-logo.png" style="margin-top: 20px; margin-bottom: 50px;"><br/>
+          <paper-button class="login-button" raised id="google" on-tap="login">Login via Google</paper-button><br>
+        </paper-material>
         
-        <paper-button class="login-button" raised id="google" on-tap="login">Login via Google</paper-button><br>
         
         <!--<paper-button class="login-button" raised id="facebook" on-tap="login">Login via Facebook</paper-button>-->
         
 
       </div>
-      <div class="flex"></div>
+      <div class="flex-3"></div>
     </div>
 
     <project-nice-footer-element></project-nice-footer-element>
