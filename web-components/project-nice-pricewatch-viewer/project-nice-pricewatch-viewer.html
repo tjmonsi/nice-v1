@@ -1,0 +1,66 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../web-components/project-nice-pricewatch-commodity-picker/project-nice-pricewatch-commodity-picker.html">
+<link rel="import" href="../../web-components/project-nice-pricewatch/project-nice-pricewatch-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-pricewatch-viewer-style.html">
+
+<dom-module id="project-nice-pricewatch-viewer">
+  <template>
+    <style is="custom-style" include="project-nice-pricewatch-viewer-style iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query path="[[pricewatchPath.commodityGroup]]" data="{{commodityGroup}}"></firebase-query>
+    <firebase-query path="[[pricewatchPath.markets]]" data="{{markets}}"></firebase-query>
+
+      <h1>Price Watch</h1>
+      <paper-dropdown-menu id="market-selector" label="Select Market:">
+        <paper-listbox class="dropdown-content" attr-for-selected="market-id">
+          <template is="dom-repeat" items="[[markets]]">
+            <paper-item  market-id="[[item.$key]]" on-tap="_selectMarket">[[item.name]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+
+      <hr>
+
+      <template is="dom-repeat" items="[[commodityGroup]]">
+        <h3>[[item.name]]</h3>
+        <project-nice-pricewatch-commodity-picker key="[[item.$key]]" market="[[marketId]]"></project-nice-pricewatch-commodity-picker>
+      </template>
+
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-pricewatch-viewer',
+
+      properties: {
+        marketId: {
+          type: String,
+          value: 'metromanilaprevailingprice'
+        },
+      },
+
+      behaviors: [
+        NICEV1.ProjectNicePricewatchBehavior
+      ],
+
+      _selectMarket: function(e) {
+        this.marketId = e.target.marketId || 'metromanilaprevailingprice';
+        console.log(this.marketId)
+      }
+    });
+  </script>
+</dom-module>
