@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
 
 <!-- Component dependencies -->
 <!-- RC-Layout dependencies -->
@@ -51,9 +52,11 @@
       <p class="by-line">
         Last Published: [[_renderDate(datePublished)]]
       </p>
-      <p class="body">
-        [[_trimText(articleBody, 200)]]
-      </p>
+      
+      <marked-element markdown="[[_trimText(articleBody, 200)]]">
+        <div class="markdown-html body"></div>
+      </marked-element>
+      
     </div>
     
     

@@ -65,16 +65,41 @@
           </template>
         </div>
         <hr>
-        <div class="horizontal layout wrap center">
-          <template is="dom-repeat" items="{{documents}}">
-            <div style="position: relative">
-              <a href="{{item.downloadURL}}" target="_blank">
-                <paper-icon-button id="media-{{item.$key}}" icon="{{_setIcon(item)}}"></paper-icon-button>
-                <paper-tooltip for="media-{{item.$key}}">{{item.name}}</paper-tooltip>
-              </a>
-            </div>
+        
+        <template is="dom-if" if="[[documents.length]]">
+          <h3 class="">Files</h3>
+          <template is="dom-repeat" items="[[documents]]">
+            <a href="[[item.downloadURL]]" target="_blank" class="document-item-anchor">
+              <paper-material class="document-item horizontal layout center">
+                
+                <paper-icon-button icon="default:file-download"></paper-icon-button>
+                <div class="flex">
+                  [[item.name]]
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="{{categoryList}}" as="categoryitem">
+                      <template is="dom-if" if="[[_categoryIcon(item.categories, categoryitem.$key)]]">
+                        <div style="position: relative">
+                          <iron-icon style="margin-left: 10px" id="[[item.$key]]-[[categoryitem.$key]]" src="[[categoryitem.icon]]"></iron-icon>
+                          <paper-tooltip for="[[item.$key]]-[[categoryitem.$key]]">[[categoryitem.name]]</paper-tooltip>
+                        </div>
+                      </template>
+                    </template>
+                  </div>
+                </div>
+              </paper-material>
+            </a>
           </template>
-        </div>
+        </template>
+        <!--<div class="horizontal layout wrap center">-->
+        <!--  <template is="dom-repeat" items="{{documents}}">-->
+        <!--    <div style="position: relative">-->
+        <!--      <a href="{{item.downloadURL}}" target="_blank">-->
+        <!--        <paper-icon-button id="media-{{item.$key}}" icon="{{_setIcon(item)}}"></paper-icon-button>-->
+        <!--        <paper-tooltip for="media-{{item.$key}}">{{item.name}}</paper-tooltip>-->
+        <!--      </a>-->
+        <!--    </div>-->
+        <!--  </template>-->
+        <!--</div>-->
       </div>
     </paper-material>
     <!--</a>-->
