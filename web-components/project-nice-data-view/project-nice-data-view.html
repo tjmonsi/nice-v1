@@ -10,7 +10,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
-
+<link rel="import" href="../../web-components/project-nice-feedback-form/project-nice-feedback-form.html">
 
 <!-- Style dependency -->
 <link rel="import" href="project-nice-data-view-style.html">
@@ -32,6 +32,15 @@
 
         <p class="sub-title">[[subTitle]]</p>
         <!-- byline -->
+        <div class="buttons">
+          <a href="https://www.facebook.com/sharer.php?u=[[_thisUrl()]]" target="_blank">
+            <paper-icon-button src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Ffacebook_circle_color-128.png?alt=media&token=e3b0bb20-d29b-4da3-b6de-80a17f561797"></paper-icon-button>
+          </a>
+          <a href="https://twitter.com/share?text=[[_textToUrl(article.title)]]&url=[[_thisUrl()]]" target="_blank">
+            <paper-icon-button src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Ftwitter_circle_color-256.png?alt=media&token=0a32bc85-8464-4b97-811b-ec1c3aa750bf"></paper-icon-button>
+          </a>
+        </div>
+        <hr>
 
         <marked-element markdown="[[body]]">
           <div class="markdown-html"></div>
@@ -81,9 +90,12 @@
             </a>
           </template>
         </template>
-
+        <hr>
         <!-- feedback -->
         <h1 class="">Feedback</h1>
+        <template is="dom-if" if="[[user]]">
+          <project-nice-feedback-form feedback-type="[[feedbackType]]" feedback-url="[[url]]" user="[[user]]" title="[[title]]" profile-id="[[user.uid]]"></project-nice-feedback-form>
+        </template>
 
         <!-- feedback form -->
       </div>
