@@ -86,31 +86,34 @@
 
       <template is="dom-if" if="[[_forceZero(article)]]">
         <!-- _checkPublished(articlePublished.published, user) -->
-        <template is="dom-if" if="[[user]]">
+        
           <div class="horizontal layout wrap">
-            <template is="dom-if" if="[[edit]]">
+            <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', roles, user)]]">
+              <template is="dom-if" if="[[edit]]">
               <!-- Article-form -->
-              <project-nice-article-form
-                  category
-                  type
-                  article-id="[[id]]"                  
-                  path="[[articlePath.articles]]/[[id]]"
-                  class="flex"
-                  title="{{article.title}}"
-                  sub-title="{{article.subTitle}}"
-                  banner-image="{{article.bannerImage}}"
-                  banner-image-storage-path="[[articlePath.storage.bannerImage]]/[[id]]"
-                  body="{{article.body}}"
-                  images-storage-path="[[articlePath.storage.images]]/[[id]]"
-                  documents-storage-path="[[articlePath.storage.documents]]/[[id]]"
-                  video="{{article.video}}"
-                  list-path="[[articlePath.listOptions]]"
-                  published-path="[[articlePath.list.published]]/[[id]]"
-                  draft-path="[[articlePath.list.draft]]/[[id]]"
-                  categories="[[article.categories]]"
-                  types="[[article.types]]"
-                  owner-path="[[articlePath.owner]]/[[id]]"
-                  url="/article/[[id]]"></project-nice-article-form>
+              
+                <project-nice-article-form
+                    category
+                    type
+                    article-id="[[id]]"                  
+                    path="[[articlePath.articles]]/[[id]]"
+                    class="flex"
+                    title="{{article.title}}"
+                    sub-title="{{article.subTitle}}"
+                    banner-image="{{article.bannerImage}}"
+                    banner-image-storage-path="[[articlePath.storage.bannerImage]]/[[id]]"
+                    body="{{article.body}}"
+                    images-storage-path="[[articlePath.storage.images]]/[[id]]"
+                    documents-storage-path="[[articlePath.storage.documents]]/[[id]]"
+                    video="{{article.video}}"
+                    list-path="[[articlePath.listOptions]]"
+                    published-path="[[articlePath.list.published]]/[[id]]"
+                    draft-path="[[articlePath.list.draft]]/[[id]]"
+                    categories="[[article.categories]]"
+                    types="[[article.types]]"
+                    owner-path="[[articlePath.owner]]/[[id]]"
+                    url="/article/[[id]]"></project-nice-article-form>
+              </template>
             </template>
 
             <!-- Article-view -->

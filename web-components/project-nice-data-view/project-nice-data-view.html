@@ -10,6 +10,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
 <link rel="import" href="../../web-components/project-nice-category/project-nice-category-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 <link rel="import" href="../../web-components/project-nice-feedback-form/project-nice-feedback-form.html">
 
 <!-- Style dependency -->
@@ -78,7 +79,7 @@
           <paper-button raised>Go back</paper-button>
         </a>
 
-        <template is="dom-if" if="[[_checkEdit(url, user)]]">
+        <template is="dom-if" if="[[_checkEdit(url, user, roles)]]">
           <template is="dom-if" if="[[!edit]]">
             <a href="[[url]]?edit=true">
               <paper-button raised>Edit</paper-button>
@@ -109,6 +110,7 @@
       is: 'project-nice-data-view',
 
       behaviors: [
+        NICEV1.ProjectNiceUserBehavior,
         NICEV1.ProjectNiceCategoryBehavior
       ],
 
@@ -158,7 +160,7 @@
       },
 
       _checkEdit: function(url, user) {
-        return url && user
+        return url && user && this._checkPermissionWithoutOwner('staff')
       }
     });
   </script>

@@ -65,9 +65,10 @@
 
       <template is="dom-if" if="[[_forceZero(data)]]">
         <!-- _checkPublished(dataPublished.published, user) -->
-        <template is="dom-if" if="[[user]]">
-          <div class="horizontal layout wrap">
-          <template is="dom-if" if="[[edit]]">
+        
+        <div class="horizontal layout wrap">
+          <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', roles, user)]]">
+            <template is="dom-if" if="[[edit]]">
               <!-- data-form -->
               <project-nice-data-form
                   data-id="[[id]]"
@@ -84,23 +85,24 @@
                   categories="{{data.categories}}"
                   url="/page/[[slug]]"></project-nice-data-form>
             </template>
+          </template>
 
             <!-- data-form -->
-            <project-nice-data-view
-                class="flex"
-                feedback-type="data"
-                title="[[data.title]]"
-                sub-title="[[data.subTitle]]"
-                body="[[data.body]]"
-                documents="[[documents]]"
-                categories="[[data.categories]]"
-                types="[[data.types]]"
-                user="[[user]]"
-                url="/data/[[id]]"
-                edit="[[edit]]"></project-nice-data-view>
+          <project-nice-data-view
+              class="flex"
+              feedback-type="data"
+              title="[[data.title]]"
+              sub-title="[[data.subTitle]]"
+              body="[[data.body]]"
+              documents="[[documents]]"
+              categories="[[data.categories]]"
+              types="[[data.types]]"
+              user="[[user]]"
+              url="/data/[[id]]"
+            edit="[[edit]]"></project-nice-data-view>
             
-          </div>
-        </template>
+        </div>
+        
         
         
       </template>
