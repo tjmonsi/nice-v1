@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 
 <script>
   (function(){
@@ -53,6 +54,22 @@
         };
       },
 
+      _addData: function() {
+        if (this.user && this._checkPermissionWithoutOwner('staff')) {
+          var el = this.$$('#new-data');
+          var key = firebase.database().ref(this.dataPath.data).push({
+            title: 'New Data'
+          }).key;
+          var updates = {};
+          updates[this.dataPath.owner + '/' + key + '/uid'] = this.user.uid;
+          firebase.database().ref().update(updates);
+          el.href = '/data/' + key + '?edit=true';
+        } else {
+          this._showMessage('You are not currently logged in')
+        }
+        
+      },
+
       // observers: [
       //   '_changeDataTitle(data.title)'
       // ],
@@ -63,6 +80,7 @@
     };
     NICEV1.ProjectNiceDataBehavior = [
       NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceUserBehavior,
       NICEV1.ProjectNiceDataBehaviorImpl
     ];
   })();

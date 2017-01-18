@@ -60,9 +60,11 @@
         </div>   
       </div>
       
+      <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', user, roles)]]">
       <a href="#" id="new-article" class="new-button" on-tap="_addArticle">
         <paper-fab icon="default:add"></paper-fab>
       </a>
+      </template>
     </template>
     
     <template is="dom-if" if="[[id]]">
@@ -149,7 +151,7 @@
       is: 'article-page',
 
       behaviors: [
-        NICEV1.ProjectNiceArticleBehavior
+        NICEV1.ProjectNiceArticleBehavior        
       ],
 
       properties: {

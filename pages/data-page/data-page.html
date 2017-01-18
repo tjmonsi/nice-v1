@@ -43,6 +43,11 @@
         
       </div>
       
+      <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', user, roles)]]">
+        <a href="#" id="new-data" class="new-button" on-tap="_addData">
+          <paper-fab icon="default:add"></paper-fab>
+        </a>
+      </template>
     </template>
 
     <template is="dom-if" if="[[id]]">
