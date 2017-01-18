@@ -1,0 +1,137 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../web-components/project-nice-utils/project-nice-utils-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
+
+<script>
+  (function(){
+    'use strict';
+    /** @polymerBehavior NICEV1.ProjectNiceFeedbackBehavior */
+    NICEV1.ProjectNiceFeedbackBehaviorImpl = {
+
+      properties: {
+        feedbackId: {
+          type: String
+        },
+        feedbackPath: {
+          type: Object,
+          readOnly: true,
+          value: function() { return this._feedbackPath; }
+        },
+        feedbackGroup: {
+          type: String,
+          readOnly: true,
+          value: function() { return this._feedbackGroup; }
+        },
+
+        feedback: {
+          type: Object
+        },
+
+        feedbacks: {
+          type: Array,
+          value: function() { return []; }
+        },
+        
+        feedbackType: {
+          type: String,
+          value: ''
+        },
+
+        feedbackUrl: {
+          type: String,
+          value: ''
+        }
+      },
+
+      get _feedbackGroup() {
+        return 'feedbackGroup';
+      },
+
+      get _feedbackPath() {
+        var storage = this._version + '/' + this._feedbackGroup + '/storage';
+        var list = this._version + '/' + this._feedbackGroup + '/list';
+        return {
+          articles: this._version + '/' + this._feedbackGroup + '/articles',
+          data: this._version + '/' + this._feedbackGroup + '/data',
+          pages: this._version + '/' + this._feedbackGroup + '/pages',
+          members: this._version + '/' + this._feedbackGroup + '/members',
+          // listOptions: list,
+          list: {
+            articles: list + '/articles',
+            data: list + '/data',
+            pages: list + '/pages',
+            members: list + '/members'
+          },
+          // storage: {
+          //   bannerImage: storage + '/bannerImage',
+          //   images: storage + '/images',
+          //   documents: storage + '/documents'
+          // }
+        };
+      },
+
+      _sendFeedback: function() {
+        if (this.feedbackType && this.feedbackUrl && this.user && this.title) {
+          var feedback = this.$$('#feedback').value;
+          var uid = this.user.uid;
+          var updates = {};
+          var key = firebase.database().ref(this.feedbackPath[this.feedbackType]).push().key;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/uid'] = uid;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/email'] = this.user.email;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/timestamp'] = firebase.database.ServerValue.TIMESTAMP;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/title'] = this.title;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/feedback'] = feedback;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/feedbackUrl'] = this.feedbackUrl;
+          updates[this.feedbackPath.list[this.feedbackType] + '/' + key + '/date'] = firebase.database.ServerValue.TIMESTAMP;
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage('Feedback has been sent. Thank you for your feedback')
+          }).catch(this._catchError.bind(this));
+        } else {
+          console.log(this.feedbackTYpe)
+        }
+      },
+
+      // observers: [
+      //   '_getFeedbackId(feedbackProfileId, user.uid)'
+      // ],
+
+      // _getFeedbackId: function(feedbackProfileId, uid) {
+      //   this.feedbackId = '';
+      //   if (feedbackProfileId && uid) {
+      //     var path = this.feedbackPath.list.users + '/' + uid + '/' + feedbackProfileId;
+      //     firebase.database().ref(path).once('value', (snapshot) => {
+      //       if (snapshot.val() && snapshot.val().feedbackId) {
+      //         this.feedbackId = snapshot.val().feedbackId;
+      //       } else {
+      //         var updates = {};
+      //         var obj = {
+      //           date: firebase.database.ServerValue.TIMESTAMP,
+      //           members: {}
+      //         };
+      //         obj.members[uid] = {value: true};
+      //         obj.members[feedbackProfileId] = {value: true}; 
+      //         var key = firebase.database().ref(this.feedbackPath.threads).push().key;
+      //         updates[this.feedbackPath.threads + '/' + key] = obj;
+      //         updates[path] = {
+      //           feedbackId: key
+      //         };
+      //         updates[this.feedbackPath.list.users + '/' + feedbackProfileId + '/' + uid] = {
+      //           feedbackId: key
+      //         }
+      //         firebase.database().ref().update(updates).then(() => {
+      //           this.feedbackId = key;
+      //         }).catch(this._catchError.bind(this));
+      //       }
+      //     })
+      //   }
+        
+      // }
+
+    };
+    NICEV1.ProjectNiceFeedbackBehavior = [
+      NICEV1.ProjectNiceUtilsBehavior,
+      NICEV1.ProjectNiceUserBehavior,
+      NICEV1.ProjectNiceFeedbackBehaviorImpl
+    ];
+  })();
+</script>

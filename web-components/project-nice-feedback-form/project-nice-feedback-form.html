@@ -1,0 +1,57 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-feedback-form-style.html">
+
+<dom-module id="project-nice-feedback-form">
+  <template>
+    <style is="custom-style" include="project-nice-feedback-form-style iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document path="[[userPath.profiles]]/[[profileId]]/image" data="{{image}}"></firebase-document>
+    
+    <paper-material elevation="1">
+      <div class="horizontal layout center">
+        <iron-image
+          class="profile-picture"
+          sizing="cover"
+          src$="{{image}}"
+          preload
+          fade
+        >
+        </iron-image>
+        <div class="flex feedback-box">
+          <paper-textarea label="Type feedback here" id="feedback"></paper-textarea>
+          <paper-button on-tap="_sendFeedback">
+            Send Feedback
+          </paper-button>
+        </div>
+      </div>
+    </paper-material>
+    
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-feedback-form',
+
+      behaviors: [
+        NICEV1.ProjectNiceUserBehavior,
+        NICEV1.ProjectNiceFeedbackBehavior
+      ],
+    });
+  </script>
+</dom-module>
