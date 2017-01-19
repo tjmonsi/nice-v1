@@ -55,7 +55,7 @@
           data: this._version + '/' + this._feedbackGroup + '/data',
           pages: this._version + '/' + this._feedbackGroup + '/pages',
           members: this._version + '/' + this._feedbackGroup + '/members',
-          // listOptions: list,
+          listOptions: list,
           list: {
             articles: list + '/articles',
             data: list + '/data',
@@ -78,6 +78,7 @@
           var key = firebase.database().ref(this.feedbackPath[this.feedbackType]).push().key;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/uid'] = uid;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/email'] = this.user.email;
+          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/image'] = this.user.image;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/timestamp'] = firebase.database.ServerValue.TIMESTAMP;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/title'] = this.title;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/feedback'] = feedback;

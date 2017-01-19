@@ -2,8 +2,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
+<link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
 <link rel="import" href="../../web-components/project-nice-pricewatch-form/project-nice-pricewatch-form.html">
 
 <!-- Style dependency -->
@@ -41,7 +45,7 @@
           <a href="/dashboard/price-watch">
             <paper-item>Price Watch</paper-item>
           </a>
-          <a href="/dashboard/feebdack">
+          <a href="/dashboard/feedback">
             <paper-item>Feedback</paper-item>
           </a>
         </paper-menu>
@@ -50,6 +54,41 @@
         <template is="dom-if" if="[[_checkPage(page, 'price-watch')]]">
           <h1>Price Watch</h1>
           <project-nice-pricewatch-form ></project-nice-pricewatch-form>
+        </template>
+        <template is="dom-if" if="[[_checkPage(page, 'feedback')]]">
+          <h1>Feedback</h1>
+          <iron-selector class="horizontal layout" attr-for-selected="feedback-type" selected="[[type]]">
+            <a feedback-type="articles" href="/dashboard/feedback?type=articles" class="flex">
+              <paper-button raised>
+                Articles
+              </paper-button>  
+            </a>
+            <a feedback-type="data" href="/dashboard/feedback?type=data" class="flex">
+              <paper-button raised>
+                Data
+              </paper-button>  
+            </a>
+            <a feedback-type="pages" href="/dashboard/feedback?type=pages" class="flex">
+              <paper-button raised>
+                Pages
+              </paper-button>  
+            </a>
+            <a feedback-type="members" href="/dashboard/feedback?type=members" class="flex">
+              <paper-button raised>
+                Members
+              </paper-button>  
+            </a>
+            
+          </iron-selector>
+          <hr>
+          <template is="dom-if" if="[[type]]">
+            <firebase-query
+                path="[[feedbackPath.list]]/[[type]]" data="[[feedbacks]]"></firebase-query>
+                
+            <template is="dom-repeat" items="[[feedbacks]]">
+              
+            </template>
+          </template>
         </template>
       </div>
     </div>
@@ -65,11 +104,16 @@
         page: {
           type: String,
           value: ''
+        },
+        type: {
+          type: String,
+          value: ''
         }
       },
 
       observers: [
-        '_setPage(params.page)'
+        '_setPage(params.page)',
+        '_setType(queryParams.type)'
       ],
 
       _checkPage: function(p, q) {
@@ -78,6 +122,10 @@
 
       _setPage: function(page) {
         this.page = page || '';
+      },
+      
+      _setType: function(type) {
+        this.type = type || '';
       }
     });
   </script>

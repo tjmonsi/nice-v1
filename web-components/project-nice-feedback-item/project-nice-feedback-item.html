@@ -1,0 +1,46 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
+<!-- Style dependency -->
+<link rel="import" href="project-nice-feedback-item-style.html">
+
+<dom-module id="project-nice-feedback-item">
+  <template>
+    <style is="custom-style" include="project-nice-feedback-item-style">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document
+        path="[[feedbackPath.list]]/[[feedbackType]]" data="{{feedback}}"></firebase-document>
+    
+    <template is="dom-if" if="[[feedback]]">
+      
+    </template>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-feedback-item',
+      
+      properties: {
+        feedbackId: {
+          type: String,
+          value: ''
+        },
+        
+        feedbackType: {
+          type: String
+        }
+      },
+      
+      behaviors: [
+        NICEV1.ProjectNiceFeedbackBehavior  
+      ]
+    });
+  </script>
+</dom-module>
