@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
 <link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
+<link rel="import" href="../../web-components/project-nice-feedback-item/project-nice-feedback-item.html">
 <link rel="import" href="../../web-components/project-nice-pricewatch-form/project-nice-pricewatch-form.html">
 
 <!-- Style dependency -->
@@ -83,10 +84,9 @@
           <hr>
           <template is="dom-if" if="[[type]]">
             <firebase-query
-                path="[[feedbackPath.list]]/[[type]]" data="[[feedbacks]]"></firebase-query>
-                
+                path="[[feedbackPath.listOptions]]/[[type]]" data="{{feedbacks}}"></firebase-query>
             <template is="dom-repeat" items="[[feedbacks]]">
-              
+              <project-nice-feedback-item feedback-id="[[item.$key]]" feedback-type="[[type]]"></project-nice-feedback-item>
             </template>
           </template>
         </template>
@@ -99,6 +99,10 @@
   <script>
     Polymer({
       is: 'dashboard-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceFeedbackBehavior
+      ],
 
       properties: {
         page: {
@@ -113,8 +117,13 @@
 
       observers: [
         '_setPage(params.page)',
-        '_setType(queryParams.type)'
+        '_setType(queryParams.type)',
+        '_check(feedbacks.splices)'
       ],
+
+      _check(e) {
+        console.log(this.feedbacks)
+      },
 
       _checkPage: function(p, q) {
         return p === q
