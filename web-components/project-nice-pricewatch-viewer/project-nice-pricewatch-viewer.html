@@ -34,12 +34,13 @@
 
       <hr>
 
-      <template is="dom-repeat" items="[[commodityGroup]]">
+      <template is="dom-repeat" items="[[commodityGroup]]" sort="_priceSorter">
         <h3>[[item.name]]</h3>
         <project-nice-pricewatch-commodity-picker key="[[item.$key]]" market="[[marketId]]"></project-nice-pricewatch-commodity-picker>
       </template>
 
-    
+      <hr>
+      Prices comes from <a href="http://dapricewatch.da.gov.ph/">DA Price Watch</a>
   </template>
 
   <script>
@@ -60,6 +61,10 @@
       _selectMarket: function(e) {
         this.marketId = e.target.marketId || 'metromanilaprevailingprice';
         console.log(this.marketId)
+      },
+
+      _priceSorter: function(a, b) {
+        return a.order - b.order;
       }
     });
   </script>

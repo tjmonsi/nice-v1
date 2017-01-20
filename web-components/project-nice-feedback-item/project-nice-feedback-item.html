@@ -2,22 +2,44 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
 <!-- Style dependency -->
 <link rel="import" href="project-nice-feedback-item-style.html">
 
 <dom-module id="project-nice-feedback-item">
   <template>
-    <style is="custom-style" include="project-nice-feedback-item-style">
+    <style is="custom-style" include="project-nice-feedback-item-style iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
     </style>
 
     <firebase-document
-        path="[[feedbackPath.list]]/[[feedbackType]]" data="{{feedback}}"></firebase-document>
-    
+        path="[[feedbackPath.root]]/[[feedbackType]]/[[feedbackId]]" data="{{feedback}}"></firebase-document> 
     <template is="dom-if" if="[[feedback]]">
+      <paper-material elevation="1" class="horizontal layout feedback-item">
+        <iron-image
+          class="profile-picture"
+          sizing="cover"
+          src="{{feedback.image}}"
+          preload
+          fade
+        ></iron-image>
+        <div class="flex">
+          <a class="feedback-title" href="[[feedback.feedbackUrl]]"><h3>Feedback on: {{feedback.title}}</h3></a>
+          <div class="by-line">
+            Feedback created: [[_renderDate(feedback.timestamp)]] from: [[feedback.email]]
+          </div>
+          <hr>
+          <marked-element markdown="[[feedback.feedback]]">
+            <div class="markdown-html"></div>
+          </marked-element>
+          
+        </div>
+      </paper-material>
       
     </template>
     
@@ -37,10 +59,18 @@
           type: String
         }
       },
+
+      observers: [
+        '_check(feedback.*)'
+      ],
       
       behaviors: [
         NICEV1.ProjectNiceFeedbackBehavior  
-      ]
+      ],
+
+      _check: function () {
+        console.log(this.feedback) 
+      }
     });
   </script>
 </dom-module>
