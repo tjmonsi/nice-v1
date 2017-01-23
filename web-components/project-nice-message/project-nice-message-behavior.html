@@ -41,7 +41,8 @@
         var list = this._version + '/' + this._messageGroup + '/list';
         return {
           threads: this._version + '/' + this._messageGroup + '/threads', // this is where the message objects are saved
-          owner: this._version + '/' + this._messageGroup + '/owner', // this is where you set the owner of the message
+          messages: this._version + '/' + this._messageGroup + '/messages',
+          // owner: this._version + '/' + this._messageGroup + '/owner', // this is where you set the owner of the message
           // listOptions: list,
           list: {
             threads: list + '/threads',
@@ -66,6 +67,7 @@
           firebase.database().ref(path).once('value', (snapshot) => {
             if (snapshot.val() && snapshot.val().messageId) {
               this.messageId = snapshot.val().messageId;
+              console.log(this.messageId)
             } else {
               var updates = {};
               var obj = {
@@ -73,7 +75,7 @@
                 members: {}
               };
               obj.members[uid] = {value: true};
-              obj.members[messageProfileId] = {value: true}; 
+              obj.members[messageProfileId] = {value: true};
               var key = firebase.database().ref(this.messagePath.threads).push().key;
               updates[this.messagePath.threads + '/' + key] = obj;
               updates[path] = {
@@ -84,12 +86,37 @@
               }
               firebase.database().ref().update(updates).then(() => {
                 this.messageId = key;
+                console.log(this.messageId)
               }).catch(this._catchError.bind(this));
             }
           })
         }
-        
-      }
+
+      },
+
+      _sendMessage: function() {
+        var message = this.$$('#message').value;
+        if (message && this.user && this.messageId) {
+          // console.log('sending');
+          var uid = this.user.uid;
+          var updates = {};
+          var key = firebase.database().ref(this.messagePath.messages + '/' + this.messageId).push().key;
+          updates[this.messagePath.messages + '/' + this.messageId + '/' + key + '/message'] = message;
+          updates[this.messagePath.messages + '/' + this.messageId + '/' + key + '/timestamp'] = firebase.database.ServerValue.TIMESTAMP;
+          updates[this.messagePath.messages + '/' + this.messageId + '/' + key + '/uid'] = uid;
+          // console.log(this.user)
+          if (this.user.photoURL) updates[this.messagePath.messages + '/' + this.messageId + '/' + key + '/image'] = this.user.photoURL;
+
+          firebase.database().ref().update(updates).then(() => {
+            this._showMessage('Message has been sent. Thank you for your message')
+          }).catch(this._catchError.bind(this));
+        } else if (!message) {
+          this._showMessage('Please put a message before hitting send.')
+          console.log('no message')
+        } else {
+          console.log(message, this.user, this.messageId)
+        }
+      },
       // attached: function() {
 
       // },
