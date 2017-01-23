@@ -31,8 +31,8 @@
       }
     </style>
 
-    <firebase-query 
-        path="[[categoryPath.user]]" 
+    <firebase-query
+        path="[[categoryPath.user]]"
         data="{{categoryList}}"></firebase-query>
 
     <firebase-document path="[[userPath.profiles]]/[[profileId]]/image" data="{{image}}"></firebase-document>
@@ -70,46 +70,45 @@
               <hr>
 
               <div class="horizontal layout center">
+                <template is="dom-if" if="[[!forMessaging]]">
+                  <div class="form-container">
+                    <template is="dom-if" if="[[_checkProfileMemberWithRole(profileRole, user, roles)]]">
+                      <paper-dropdown-menu id="role-selector" label="Select Special Membership Status:">
+                        <paper-listbox class="dropdown-content" attr-for-selected="role-id">
+                          <template is="dom-if" if="[[_checkPermissionWithoutOwner('admin', user, roles)]]">
+                            <paper-item  role-id="admin" on-tap="_selectRole">Admin</paper-item>
+                          </template>
+                          <paper-item  role-id="editor" on-tap="_selectRole">Editor</paper-item>
+                          <paper-item role-id="staff" on-tap="_selectRole">Contributor</paper-item>
+                          <paper-item role-id="member" on-tap="_selectRole">Member</paper-item>
+                        </paper-listbox>
+                      </paper-dropdown-menu>
+                    </template>
+                    <template is="dom-if" if="[[_checkProfilePendingMemberWithRole(pendingProfileRole, user, roles)]]">
+                      <paper-button on-tap="_acceptMembership" uid="[[profileId]]" raised>Accept Membership</paper-button>
+                    </template>
+                  </div>
 
-                <div class="form-container">
-                  <template is="dom-if" if="[[_checkProfileMemberWithRole(profileRole, user, roles)]]">
-                    <paper-dropdown-menu id="role-selector" label="Select Special Membership Status:">
-                      <paper-listbox class="dropdown-content" attr-for-selected="role-id">
-                        <template is="dom-if" if="[[_checkPermissionWithoutOwner('admin', user, roles)]]">
-                          <paper-item  role-id="admin" on-tap="_selectRole">Admin</paper-item>
-                        </template>
-                        <paper-item  role-id="editor" on-tap="_selectRole">Editor</paper-item>
-                        <paper-item role-id="staff" on-tap="_selectRole">Contributor</paper-item>
-                        <paper-item role-id="member" on-tap="_selectRole">Member</paper-item>
-                      </paper-listbox>
-                    </paper-dropdown-menu>
-                  </template>     
-                  <template is="dom-if" if="[[_checkProfilePendingMemberWithRole(pendingProfileRole, user, roles)]]">
-                    <paper-button on-tap="_acceptMembership" uid="[[profileId]]">Accept Membership</paper-button>
+                  <template is="dom-if" if="[[_checkPermission('admin', _owner, 0, user, roles)]]">
+                    <paper-button raised on-tap="_retractMembership">Remove Membership</paper-button>
                   </template>
-                </div>
 
-                <template is="dom-if" if="[[_checkPermission('admin', _owner, 0, user, roles)]]">
-                  <paper-button raised on-tap="_retractMembership">Remove Membership</paper-button>
-                </template>
-
-                <template is="dom-if" if="[[_checkEdit(1, roles, user, _owner)]]">
-                  <a href="/member/[[profileId]]?edit=true">
-                    <paper-button raised>Edit</paper-button>
-                  </a>
+                  <template is="dom-if" if="[[_checkEdit(1, roles, user, _owner)]]">
+                    <a href="/member/[[profileId]]?edit=true">
+                      <paper-button raised>Edit</paper-button>
+                    </a>
+                  </template>
                 </template>
 
                 <a href="/member/[[profileId]]">
                   <paper-button raised>View Profile</paper-button>
                 </a>
 
-                
                 <template is="dom-if" if="[[!_checkOwner(owner, user)]]">
                   <a href="/message/[[profileId]]">
                     <paper-button raised>Send Message</paper-button>
                   </a>
                 </template>
-                
 
               </div>
 
@@ -131,6 +130,10 @@
       ],
 
       properties: {
+        forMessaging: {
+          type: Boolean,
+          value: false
+        },
         image: {
           type: String
         },
@@ -208,9 +211,9 @@
           var e1 = m.editor;
           var s1 = m.staff;
           var m1 = m.member;
-          
+
           if (this.$$('#role-selector')) {
-            if (a1) {            
+            if (a1) {
               this.$$('#role-selector').contentElement.select('admin');
             } else if (e1) {
               this.$$('#role-selector').contentElement.select('editor');
@@ -220,9 +223,9 @@
               this.$$('#role-selector').contentElement.select('member');
             }
           }
-          
+
         })
-        
+
       },
 
       _computeOwner: function(id) {
@@ -242,14 +245,14 @@
       },
 
       _checkEdit: function(url) {
-        
+
         // console.log(this._owner.uid, this.user.uid)
         return url && this._checkPermission('admin', this._owner)
       },
 
       _selectRole: function(e) {
         var roleId = e.target.getAttribute('role-id');
-        
+
         var updates = {};
         if (roleId === 'member') {
           updates[this.userPath.options.members + '/' + this.profileId + '/admin'] = null;
@@ -266,7 +269,7 @@
         firebase.database().ref().update(updates).then(() => {
           this._showMessage('Roles Changed')
         }).catch(this._catchError.bind(this));
-        
+
       },
 
       _checkProfileMemberWithRole: function(profileRole) {
@@ -276,7 +279,7 @@
       _checkProfilePendingMemberWithRole: function(pendingRole) {
         return pendingRole.value && this._checkPermissionWithoutOwner('admin')
       }
-      
+
     });
   </script>
 </dom-module>

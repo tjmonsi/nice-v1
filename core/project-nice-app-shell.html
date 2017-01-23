@@ -43,7 +43,7 @@ Wham! It's all awesome now!
   <link rel="lazy-import" href="/pages/login-page/login-page.html" group="login-page">
   <link rel="lazy-import" href="/pages/not-authorized-page/not-authorized-page.html" group="not-authorized-page">
   <link rel="lazy-import" href="/pages/not-found-page/not-found-page.html" group="not-found-page">
-  
+
   <!-- LAZY LOADER ENDS HERE -->
 
   <template>
@@ -56,29 +56,29 @@ Wham! It's all awesome now!
         query-matches="{{app.isPhoneSize}}"></iron-media-query>
 
     <!-- DATABASE APP AUTH HERE -->
-    <firebase-app 
+    <firebase-app
         auth-domain="nice-v1.firebaseapp.com"
         database-url="https://nice-v1.firebaseio.com"
         api-key="AIzaSyDi-X0Jsl7-Lx1p4-aACSULeuw349PhAnI"
         storage-bucket="nice-v1.appspot.com"></firebase-app>
 
     <!--<template is="dom-if" if="{{user.uid}}">
-      <firebase-document 
+      <firebase-document
           ></firebase-document>
     </template>-->
 
     <qairoe-app-layout scroll-progress="{{scrollProgress}}">
 
-      <project-nice-header 
+      <project-nice-header
           main-header
           navigation-list="[[navigationList]]"
-          scroll-progress="{{scrollProgress}}" 
+          scroll-progress="{{scrollProgress}}"
           route="[[currentRoute]]"
           user="{{user}}"></project-nice-header>
-      <project-nice-drawer 
-          main-drawer 
-          navigation-list="[[navigationList]]" 
-          scroll-progress="{{scrollProgress}}" 
+      <project-nice-drawer
+          main-drawer
+          navigation-list="[[navigationList]]"
+          scroll-progress="{{scrollProgress}}"
           user="{{user}}"></project-nice-drawer>
 
       <qairoe-app-router
@@ -89,11 +89,11 @@ Wham! It's all awesome now!
 
         <!-- ROUTER STARTS HERE -->
         <home-page route="/"></home-page>
-        
+
         <search-page route="/search" user="{{user}}"></search-page>
 
         <nice-page route="/page/:slug" user="{{user}}"></nice-page>
-        
+
         <article-page route="/article" user="{{user}}"></article-page>
         <article-page route="/article/:id" user="{{user}}"></article-page>
 
@@ -102,16 +102,16 @@ Wham! It's all awesome now!
 
         <dashboard-page route="/dashboard" user="{{user}}"></dashboard-page>
         <dashboard-page route="/dashboard/:page" user="{{user}}"></dashboard-page>
-        
+
         <!-- ADD member -->
         <member-page route="/member" user="{{user}}" current-route="[[currentRoute]]"></member-page>
         <member-page route="/member/:id" user="{{user}}" current-route="[[currentRoute]]"></member-page>
         <member-page route="/profile" user="{{user}}" id="[[user.uid]]" current-route="[[currentRoute]]"></member-page>
-        
+
         <!-- Message here -->
         <message-page route="/message" user="{{user}}"></message-page>
         <message-page route="/message/:id" user="{{user}}"></message-page>
-        
+
         <!-- LOGIN PAGE -->
         <login-page route="/login" user="{{user}}"></login-page>
         <not-authorized-page route="not-authorized"></not-authorized-page>
@@ -164,6 +164,13 @@ Wham! It's all awesome now!
                 auth: true
               },
               {
+                label: 'Messages',
+                url: '/message',
+                route: '/message',
+                role: 'member',
+                auth: true
+              },
+              {
                 label: 'Profile',
                 url: '/profile',
                 route: '/profile',
@@ -208,10 +215,10 @@ Wham! It's all awesome now!
         Polymer.RenderStatus.afterNextRender(this, function () {
           if (NICEV1 && NICEV1.ServiceWorkerRegistration) {
             NICEV1.ServiceWorkerRegistration.register();
-          }     
-          this.fire('project-nice-app-shell-ready');         
+          }
+          this.fire('project-nice-app-shell-ready');
         }.bind(this));
-        
+
 
       },
 
@@ -219,7 +226,7 @@ Wham! It's all awesome now!
         console.log('loaded')
         if (NICEV1 && NICEV1.Elements && NICEV1.Elements.Loader) {
           NICEV1.Elements.Loader.style.cssText = "display: none";
-          
+
         }
 
         if (NICEV1.LoaderTimerShort) {

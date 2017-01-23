@@ -2,9 +2,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/marked-element/marked-element.html">
 <link rel="import" href="../../web-components/project-nice-message-form/project-nice-message-form.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
-
+<link rel="import" href="../../web-components/project-nice-member-item/project-nice-member-item.html">
 <link rel="import" href="../../web-components/project-nice-message/project-nice-message-behavior.html">
 
 
@@ -18,7 +20,21 @@
         display: block;
       }
     </style>
+    <template is="dom-if" if="[[!messageProfileId]]">
+      <firebase-query
+          path="[[messagePath.list.users]]/[[user.uid]]" data="{{members}}"></firebase-query>
+      <div class="padder">
+        <div class="horizontal layout wrap">
+          <div class="flex main-content">
+            <h1 class="">Recent Messages</h1>
 
+            <template is="dom-repeat" items="[[members]]">
+              <project-nice-member-item profile-id="[[item.$key]]" user="[[user]]" for-messaging></project-nice-member-item>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
     <template is="dom-if" if="[[messageProfileId]]">
       <template is="dom-if" if="[[messageId]]">
         <firebase-query
@@ -27,7 +43,49 @@
         <div class="horizontal layout">
           <div class="flex"></div>
           <div class="flex-4">
-            <template is="dom-repeat" items="[[messages]]">
+            <template is="dom-repeat" items="[[messages]]" sort="_messageSorter" as="message">
+              <div class="horizontal layout">
+                <template is="dom-if" if="[[_isMessageOwner(message.uid, user.uid)]]">
+                  <div class="flex"></div>
+                </template>
+                <paper-material elevation="1" class="message-item flex-5">
+                  <div class="horizontal layout">
+                    <template is="dom-if" if="[[!_isMessageOwner(message.uid, user.uid)]]">
+                      <iron-image
+                        class="profile-picture"
+                        sizing="cover"
+                        src$="{{message.image}}"
+                        preload
+                        fade
+                      ></iron-image>
+                    </template>
+
+                    <div class="flex">
+                      <div class="by-line">
+                        Message created: [[_renderDate(message.timestamp)]]
+                      </div>
+                      <hr>
+                      <marked-element markdown="[[message.message]]">
+                        <div class="markdown-html"></div>
+                      </marked-element>
+                    </div>
+
+                    <template is="dom-if" if="[[_isMessageOwner(message.uid, user.uid)]]">
+                      <iron-image
+                        class="profile-picture"
+                        sizing="cover"
+                        src$="{{message.image}}"
+                        preload
+                        fade
+                      ></iron-image>
+                    </template>
+                  </div>
+                </paper-material>
+                <template is="dom-if" if="[[!_isMessageOwner(message.uid, user.uid)]]">
+                  <div class="flex"></div>
+                </template>
+              </div>
+
             </template>
             <project-nice-message-form profile-id="[[user.uid]]" user="[[user]]" message-id="[[messageId]]"></project-nice-message-form>
           </div>
@@ -63,8 +121,17 @@
       },
 
       observers: [
+        '_changeMessageId(messageId, messages.splices)',
         '_changeParamsId(params.id)',
       ],
+
+      _changeMessageId: function() {
+        console.log(this._windowSize().height)
+        setTimeout(() => {
+          window.scrollTo(0, this._windowSize().height)
+        }, 100)
+
+      },
 
       _changeParamsId: function(e) {
         this.messageProfileId = e || ''
@@ -73,6 +140,10 @@
       _sorter: function(a, b) {
         return new Date(b.date) - new Date(a.date)
       },
+
+      _isMessageOwner: function(a, b) {
+        return a === b
+      }
     });
   </script>
 </dom-module>
