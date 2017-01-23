@@ -21,25 +21,23 @@
 
     <template is="dom-if" if="[[messageProfileId]]">
       <template is="dom-if" if="[[messageId]]">
-        <firebase-query 
-            path="[[messagePath.threads]]/[[messageId]]/messages"
+        <firebase-query
+            path="[[messagePath.messages]]/[[messageId]]"
             data="{{messages}}"></firebase-query>
         <div class="horizontal layout">
           <div class="flex"></div>
           <div class="flex-4">
             <template is="dom-repeat" items="[[messages]]">
-
             </template>
-
-            <project-nice-message-form profile-id="[[user.uid]]"></project-nice-message-form>
+            <project-nice-message-form profile-id="[[user.uid]]" user="[[user]]" message-id="[[messageId]]"></project-nice-message-form>
           </div>
           <div class="flex"></div>
         </div>
-        
+
       </template>
 
     </template>
-    
+
     <project-nice-footer-element></project-nice-footer-element>
   </template>
 

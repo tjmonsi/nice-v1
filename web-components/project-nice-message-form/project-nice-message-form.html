@@ -21,7 +21,7 @@
     </style>
 
     <firebase-document path="[[userPath.profiles]]/[[profileId]]/image" data="{{image}}"></firebase-document>
-    
+
     <paper-material elevation="1">
       <div class="horizontal layout center">
         <iron-image
@@ -40,8 +40,8 @@
         </div>
       </div>
     </paper-material>
-    
-    
+
+
   </template>
 
   <script>
@@ -53,10 +53,11 @@
         NICEV1.ProjectNiceMessageBehavior
       ],
 
-      _sendMessage: function() {
-        var message = this.$$('#message').value;
-        // firebase.database().
-      }
+      // _sendMessage: function() {
+      //   var message = this.$$('#message').value;
+
+      //   // firebase.database().
+      // }
     });
   </script>
 </dom-module>

@@ -31,7 +31,7 @@
           type: Array,
           value: function() { return []; }
         },
-        
+
         feedbackType: {
           type: String,
           value: ''
@@ -72,14 +72,14 @@
       },
 
       _sendFeedback: function() {
-        if (this.feedbackType && this.feedbackUrl && this.user && this.title) {
-          var feedback = this.$$('#feedback').value;
+        var feedback = this.$$('#feedback').value;
+        if (this.feedbackType && this.feedbackUrl && this.user && this.title && feedback) {
           var uid = this.user.uid;
           var updates = {};
           var key = firebase.database().ref(this.feedbackPath[this.feedbackType]).push().key;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/uid'] = uid;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/email'] = this.user.email;
-          updates[this.feedbackPath[this.feedbackType] + '/' + key + '/image'] = this.user.image;
+          if (this.user.photoURL) updates[this.feedbackPath[this.feedbackType] + '/' + key + '/image'] = this.user.photoURL;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/timestamp'] = firebase.database.ServerValue.TIMESTAMP;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/title'] = this.title;
           updates[this.feedbackPath[this.feedbackType] + '/' + key + '/feedback'] = feedback;
@@ -111,7 +111,7 @@
       //           members: {}
       //         };
       //         obj.members[uid] = {value: true};
-      //         obj.members[feedbackProfileId] = {value: true}; 
+      //         obj.members[feedbackProfileId] = {value: true};
       //         var key = firebase.database().ref(this.feedbackPath.threads).push().key;
       //         updates[this.feedbackPath.threads + '/' + key] = obj;
       //         updates[path] = {
@@ -126,7 +126,7 @@
       //       }
       //     })
       //   }
-        
+
       // }
 
     };
