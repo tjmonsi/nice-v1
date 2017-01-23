@@ -17,10 +17,10 @@
       }
     </style>
 
-    
+
     <paper-input label="Upload Price Watch Data in CSV here" type="file" multiple accept=".csv" on-change="_processFile"></paper-input>
-    
-    
+
+
   </template>
 
   <script>
@@ -32,13 +32,14 @@
       ],
 
       _processFile: function(e) {
+        this._showMessage('Uploading Files')
         var files = e.target.inputElement.files;
         this._parseFile(files, 0);
       },
 
       _parseFile: function(files, i) {
         if (i < files.length) {
-          var file = files[i];          
+          var file = files[i];
           var data = [];
           Papa.parse(file, {
             header: true,
@@ -58,6 +59,7 @@
       },
 
       _processData: function(data) {
+
         // check meta
         var updates = {};
         var fields = data[0].meta.fields;
@@ -70,7 +72,7 @@
           if (j == 0) {
             trueCommodityGroup = fields[j];
             commodityGroup = sluggedName;
-            updates[this.pricewatchPath.commodityGroup + '/' + sluggedName + '/name'] =  this._capitalizeFirstLetter(name);            
+            updates[this.pricewatchPath.commodityGroup + '/' + sluggedName + '/name'] =  this._capitalizeFirstLetter(name);
           } else if (fields[j]) {
             markets[sluggedName] = fields[j];
             updates[this.pricewatchPath.markets + '/' + sluggedName + '/name'] =  this._capitalizeFirstLetter(name);
@@ -81,38 +83,40 @@
         for (var i in data) {
           var d = data[i].data;
           // console.log(d)
-          
+
           for (var k in d) {
             // check if subgroup
             var subGroupFlag = true;
             var row = d[k];
-            var commodity = row[trueCommodityGroup];  
+            var commodity = row[trueCommodityGroup];
             var sluggedCommodity = slug(commodity.toLowerCase().trim());
             var path = subGroup ? subGroup + '-' + sluggedCommodity : sluggedCommodity
-            
-            for (var m in markets) {            
-              if (row[markets[m]] !== '' && row[markets[m]] !== undefined) { 
+
+            for (var m in markets) {
+              if (row[markets[m]] !== '' && row[markets[m]] !== undefined) {
                 subGroupFlag = false;
                 var pricePath = this.pricewatchPath.prices + '/' + path + '/' + m;
                 var priceKey = firebase.database().ref(pricePath).push().key
                 // console.log(markets[m], row[markets[m]])
                 updates[pricePath + '/' + priceKey + '/price'] = row[markets[m]];
-                updates[pricePath + '/' + priceKey + '/date'] = firebase.database.ServerValue.TIMESTAMP;      
+                updates[pricePath + '/' + priceKey + '/date'] = firebase.database.ServerValue.TIMESTAMP;
               }
-            }            
+            }
 
             if (subGroupFlag) {
-              subGroup = sluggedCommodity;  
-                
+              subGroup = sluggedCommodity;
+
             } else {
-              // console.log(subGroup) 
+              // console.log(subGroup)
               updates[this.pricewatchPath.commodityGroup + '/' + commodityGroup + '/groups/' + path + '/name'] = subGroup ? commodity + ' (' + subGroup + ')' : commodity;;
               updates[this.pricewatchPath.commodities + '/' + path + '/name'] = subGroup ? commodity + ' (' + subGroup + ')' : commodity;
             }
-          } 
+          }
         }
-        firebase.database().ref().update(updates);
-      } 
+        firebase.database().ref().update(updates).then(() => {
+          this._showMessage('File Uploaded and Processed')
+        }).catch(this._catchError.bind(this));
+      }
     });
   </script>
 </dom-module>

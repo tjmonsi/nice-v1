@@ -7,9 +7,17 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
+<link rel="import" href="../../web-components/project-nice-page/project-nice-page-behavior.html">
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+<link rel="import" href="../../web-components/project-nice-data/project-nice-data-behavior.html">
+<link rel="import" href="../../web-components/project-nice-user/project-nice-user-behavior.html">
 <link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
 <link rel="import" href="../../web-components/project-nice-feedback-item/project-nice-feedback-item.html">
 <link rel="import" href="../../web-components/project-nice-pricewatch-form/project-nice-pricewatch-form.html">
+<link rel="import" href="../../web-components/project-nice-page-item/project-nice-page-item.html">
+<link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
+<link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">
+<link rel="import" href="../../web-components/project-nice-member-item/project-nice-member-item.html">
 
 <!-- Style dependency -->
 <link rel="import" href="dashboard-page-style.html">
@@ -27,9 +35,12 @@
         <paper-menu>
           <a href="/dashboard">
             <paper-item>Dashboard</paper-item>
-          </a>          
+          </a>
           <a href="/dashboard/pages">
             <paper-item>Pages</paper-item>
+          </a>
+          <a href="/dashboard/pending-pages">
+            <paper-item>Pending Pages</paper-item>
           </a>
           <a href="/dashboard/articles">
             <paper-item>Articles</paper-item>
@@ -37,7 +48,14 @@
           <a href="/dashboard/pending-articles">
             <paper-item>Submitted Pending Articles</paper-item>
           </a>
-          <a href="/member">
+
+          <a href="/dashboard/data">
+            <paper-item>Open Data</paper-item>
+          </a>
+          <a href="/dashboard/pending-data">
+            <paper-item>Submitted Pending Open Data</paper-item>
+          </a>
+          <a href="/dashboard/members">
             <paper-item>Members</paper-item>
           </a>
           <a href="/dashboard/pending-members">
@@ -52,6 +70,85 @@
         </paper-menu>
       </div>
       <div class="flex-5">
+        <template is="dom-if" if="[[!page]]">
+          <h1>Dashboard</h1>
+
+          <p>It is currently being populated</p>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'pages')]]">
+          <firebase-query
+                path="[[pagePath.list.published]]" data="{{pages}}"></firebase-query>
+          <h1>Pages</h1>
+          <template is="dom-repeat" items="[[pages]]">
+            <project-nice-page-item id="[[item.$key]]"></project-nice-page-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'pending-pages')]]">
+          <firebase-query
+                path="[[pagePath.list.draft]]" data="{{pendingPages}}"></firebase-query>
+          <h1>Pending Pages</h1>
+          <template is="dom-repeat" items="[[pendingPages]]">
+            <project-nice-page-item id="[[item.$key]]"></project-nice-page-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'articles')]]">
+          <firebase-query
+                path="[[articlePath.list.published]]" data="{{articles}}"></firebase-query>
+          <h1>Articles</h1>
+          <template is="dom-repeat" items="[[articles]]">
+            <project-nice-article-item id="[[item.$key]]"></project-nice-article-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'pending-articles')]]">
+          <firebase-query
+                path="[[articlePath.list.draft]]" data="{{pendingArticles}}"></firebase-query>
+          <h1>Submitted Pending Articles</h1>
+          <template is="dom-repeat" items="[[pendingArticles]]">
+            <project-nice-article-item id="[[item.$key]]"></project-nice-article-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'data')]]">
+          <firebase-query
+                path="[[dataPath.list.published]]" data="{{data}}"></firebase-query>
+          <h1>Data</h1>
+          <template is="dom-repeat" items="[[data]]">
+            <project-nice-data-item id="[[item.$key]]"></project-nice-data-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'pending-data')]]">
+          <firebase-query
+                path="[[dataPath.list.draft]]" data="{{pendingData}}"></firebase-query>
+          <h1>Submitted Pending Data</h1>
+          <template is="dom-repeat" items="[[pendingData]]">
+            <project-nice-data-item id="[[item.$key]]"></project-nice-data-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'members')]]">
+          <firebase-query
+                path="[[userPath.options.members]]" data="{{members}}"></firebase-query>
+          <h1>Members</h1>
+          <template is="dom-repeat" items="[[members]]">
+            <project-nice-member-item profile-id="[[item.$key]]" user="[[user]]"></project-nice-member-item>
+          </template>
+        </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'pending-members')]]">
+          <firebase-query
+                path="[[userPath.options.pending]]" data="{{pendingmembers}}"></firebase-query>
+          <h1>Pending Members</h1>
+          <template is="dom-repeat" items="[[pendingmember]]">
+            <project-nice-member-item profile-id="[[item.$key]]" user="[[user]]"></project-nice-member-item>
+          </template>
+        </template>
+
+
         <template is="dom-if" if="[[_checkPage(page, 'price-watch')]]">
           <h1>Price Watch</h1>
           <project-nice-pricewatch-form ></project-nice-pricewatch-form>
@@ -62,24 +159,24 @@
             <a feedback-type="articles" href="/dashboard/feedback?type=articles" class="flex">
               <paper-button raised>
                 Articles
-              </paper-button>  
+              </paper-button>
             </a>
             <a feedback-type="data" href="/dashboard/feedback?type=data" class="flex">
               <paper-button raised>
                 Data
-              </paper-button>  
+              </paper-button>
             </a>
             <a feedback-type="pages" href="/dashboard/feedback?type=pages" class="flex">
               <paper-button raised>
                 Pages
-              </paper-button>  
+              </paper-button>
             </a>
             <a feedback-type="members" href="/dashboard/feedback?type=members" class="flex">
               <paper-button raised>
                 Members
-              </paper-button>  
+              </paper-button>
             </a>
-            
+
           </iron-selector>
           <hr>
           <template is="dom-if" if="[[type]]">
@@ -92,7 +189,7 @@
         </template>
       </div>
     </div>
-    
+
     <project-nice-footer-element></project-nice-footer-element>
   </template>
 
@@ -101,7 +198,11 @@
       is: 'dashboard-page',
 
       behaviors: [
-        NICEV1.ProjectNiceFeedbackBehavior
+        NICEV1.ProjectNiceFeedbackBehavior,
+        NICEV1.ProjectNicePageBehavior,
+        NICEV1.ProjectNiceArticleBehavior,
+        NICEV1.ProjectNiceDataBehavior,
+        NICEV1.ProjectNiceUserBehavior
       ],
 
       properties: {
@@ -132,7 +233,7 @@
       _setPage: function(page) {
         this.page = page || '';
       },
-      
+
       _setType: function(type) {
         this.type = type || '';
       }

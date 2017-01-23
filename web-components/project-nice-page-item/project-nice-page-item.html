@@ -1,0 +1,61 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
+<link rel="import" href="../../web-components/project-nice-page/project-nice-page-behavior.html">
+
+<!-- Style dependency -->
+<link rel="import" href="project-nice-page-item-style.html">
+
+<dom-module id="project-nice-page-item">
+  <template>
+    <style is="custom-style" include="project-nice-page-item-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-document
+        path="[[pagePath.pages]]/[[id]]/title"
+        data="{{title}}"></firebase-document>
+    <firebase-document
+        path="[[pagePath.pages]]/[[id]]/bannerImage"
+        data="{{bannerImage}}"></firebase-document>
+
+    <a href="/page/[[id]]">
+      <paper-material class="horizontal layout wrap">
+        <iron-image class="flex-2" src$="[[bannerImage]]" sizing="cover" fade preload></iron-image>
+        <div class="flex-5 main-content">
+          <h4>
+            [[title]]
+          </h4>
+          <template is="dom-if" if="[[datePublished]]">
+            <p>
+              Last Published: [[_renderDate(datePublished)]]
+            </p>
+          </template>
+        </div>
+      </paper-material>
+    </a>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'project-nice-page-item',
+
+      behaviors: [
+        NICEV1.ProjectNicePageBehavior
+      ],
+
+      properties: {
+        id: {
+          type: String
+        }
+      }
+    });
+  </script>
+</dom-module>
