@@ -42,7 +42,7 @@
             data="{{messages}}"></firebase-query>
         <div class="horizontal layout">
           <div class="flex"></div>
-          <div class="flex-4">
+          <div class="flex-4 message-list">
             <template is="dom-repeat" items="[[messages]]" sort="_messageSorter" as="message">
               <div class="horizontal layout">
                 <template is="dom-if" if="[[_isMessageOwner(message.uid, user.uid)]]">

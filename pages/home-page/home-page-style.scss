@@ -2,12 +2,15 @@
 
 .home-video-features-weather {
   background-color: #82bce0;
-  
+
   .home-video-features {
     margin: 20px;
     margin-right: 10px;
     background-color: #ffffff;
     min-width: 250px;
+    height: 1020px;
+    overflow: auto;
+
     .title {
       padding: 10px;
       padding-left: 20px;
@@ -18,9 +21,9 @@
     .home-video-features-highlight {
       padding: 20px;
       padding-top: 0px;
-      
+
     }
-    
+
 
     .home-video-features-list {
       padding-right: 20px;
@@ -35,8 +38,9 @@
     margin-left: 10px;
     background-color: #ffffff;
     min-width: 250px;
-    height: calc(100% - 40px);
-    
+    // height: calc(100% - 40px);
+    height: 1020px;
+    overflow: auto;
     // @include phone {
     //   margin-top: 10px;
     //   margin-left: 20px;
@@ -49,3 +53,9 @@
   margin: 10px;
   min-width: 300px;
 }
+
+project-nice-article-headline {
+  height: 480px;
+  overflow: auto;
+}
+

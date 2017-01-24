@@ -13,6 +13,11 @@
 .padder {
   padding: 20px;
   padding-top: 0px;
+  // min-height: calc()
+}
+
+.message-list {
+  min-height: calc(100vh - 300px);
 }
 
 .main-content {
@@ -20,3 +25,5 @@
   min-width: 300px;
   padding-top: 0px;
 }
+
+
