@@ -3,13 +3,17 @@
 @import 'styles/mixins';
 @include hide-on-phone-only();
 
+:host {
+  font-size: 16px;
+}
+
 .nice-navigation-header {
   .nice-navigation-item {
     color: $gray-dark;
     text-decoration: none;
     margin-left: 10px;
     margin-right: 10px;
-    
+
     @include small-screens {
       font-size: 0.7em;
       margin-left: 5px;

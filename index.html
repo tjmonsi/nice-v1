@@ -59,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.NICEV1 = window.NICEV1 || {};
       // window.ENV = 'dev';
       window.PREFIX = '/';
-      
+
       window.NICEV1.LoaderMessagesIndex = 2;
       window.NICEV1.LoaderMessages = [
         'Might be the network...',
@@ -157,16 +157,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (window.ga) {
             ga('send', 'event', 'error', file + ':' + lineNumber, message);
           }
-          
+
           if (window.Raven && error) {
             Raven.captureException(error);
             Raven.showReportDialog();
           } else {
             console.log(message)
           }
-          
-          
-          
+
+
+
         } catch (e) {
           console.error(e);
           // no-op
@@ -176,15 +176,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </script>
 
 
-    
+    <link rel="stylesheet" href="/fonts/stylesheet.css">
 
     <style>
       /* INDEX STYLE STARTS */
       body {
         margin: 0;
-        font-family: 'Roboto', 'Noto', sans-serif;
+        /*font-family: 'Roboto', 'Noto', sans-serif;*/
         line-height: 1.5;
         min-height: 100vh;
+      }
+
+      * {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        /*font-weight: 300;*/
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
       }
       /* INDEX STYLE ENDS */
 

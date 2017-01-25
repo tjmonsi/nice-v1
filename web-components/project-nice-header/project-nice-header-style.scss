@@ -9,33 +9,34 @@ app-header {
   background-color: $light;
   color: $gray-dark;
   z-index: 100;
-  
+
   app-toolbar {
     height: $navigation-header-height;
     z-index: 100;
-    
+
     span[main-title] {
       margin-left: $navigation-header-margin-left;
 
       img {
+        padding-top: 5px;
         height: 70px;
       }
 
       @include small-screens {
         margin-left: 10px;
       }
-      
+
       // @include smalldesktop {
       //   margin-left: 10px;
       // }
-      
+
       // @include phone-only {
       //   margin-left: 10px;
       // }
-      
+
       // @include tablet {
       //   margin-left: 10px;
       // }
     }
-  }  
+  }
 }
