@@ -35,11 +35,11 @@
         }
         return JSON.stringify(obj) === JSON.stringify({});
       },
-      
+
       _trimText: function(text, length) {
         var l = length ? length : 35;
         if (typeof text === 'string') {
-          return text.length >= l ? text.substring(0, l).trim() + '...' : text;  
+          return text.length >= l ? text.substring(0, l).trim() + '...' : text;
         }
       },
 
@@ -55,15 +55,15 @@
         var nd = new Date(date);
         return nd.toLocaleDateString() + ' - ' + nd.toLocaleTimeString();
       },
-      
+
       _returnArrayElement: function(array, index) {
         return array ? array[index] : null;
       },
-      
+
       _returnArrayElementAttribute: function(array, index, key) {
         return array[index] ? array[index][key] : null;
       },
-      
+
       _showMessage: function(message, err) {
         // if (this.$$('#toaster')) {
         //   this.$$('#toaster').show(message);
@@ -72,14 +72,14 @@
         // }
 
         NICEV1.Elements.Template.$.toast.showMessage(message);
-        
+
         if (err) {
           if (console.error) {
             console.error(message);
           } else {
             console.log(message);
           }
-        } 
+        }
       },
 
       _catchError: function(err) {
@@ -90,11 +90,11 @@
             Raven.captureException(err);
           }
         }
-        
+
         var error = err.detail ? err.detail : err;
         this._showMessage('Error: ' +  error.message, true);
       },
-      
+
       _textToUrl: function(text) {
         return encodeURI(text);
       },
@@ -126,21 +126,21 @@
 
         return {width: width, height: height};
       },
-      
+
       _heightNodeChanged: function(e, node) {
         var height;
         if (e.indexOf('vh')) {
           if (Modernizr && Modernizr.cssvhunit) {
             height = e;
           } else {
-            height = (parseFloat(e.replace(/vh/g, '')) * this.windowSize().height) + 'px';
+            height = (parseFloat(e.replace(/vh/g, '')) * this._windowSize().height) + 'px';
           }
         } else if (e.indexOf('px')) {
           height = e;
         } else {
           height = e + 'px';
         }
-        
+
         node.style.height = height;
       },
     }
