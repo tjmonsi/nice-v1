@@ -12,6 +12,7 @@
 <link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
 <link rel="import" href="../../web-components/project-nice-article-form/project-nice-article-form.html">
 <link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+<link rel="import" href="../../web-components/project-nice-category-picker/project-nice-category-picker.html">
 
 <!-- Style dependency -->
 <link rel="import" href="article-page-style.html">
@@ -25,50 +26,82 @@
     </style>
 
     <template is="dom-if" if="[[!id]]">
-      <firebase-query
-          path="[[articlePath.list.published]]"
-          data="{{articles}}" order-by-child="date" limit-to-last="50"></firebase-query>
 
-      <firebase-query
-          path="[[articlePath.listOptions]]/media"
-          data="{{mediaArticles}}" order-by-child="date" limit-to-last="1"></firebase-query>
+      <template is="dom-if" if="[[!categoryString]]">
+        <firebase-query
+            path="[[articlePath.list.published]]"
+            data="{{articles}}" order-by-child="date" limit-to-last="50"></firebase-query>
 
-      <firebase-query
-          path="[[articlePath.listOptions]]/press"
-          data="{{pressArticles}}" order-by-child="date" limit-to-last="1"></firebase-query>
+        <firebase-query
+            path="[[articlePath.listOptions]]/media"
+            data="{{mediaArticles}}" order-by-child="date" limit-to-last="1"></firebase-query>
 
-      <div class="padder">
-        <div class="horizontal layout wrap">
-          <div class="flex-5 main-content">
-            <h1 class="">Photoblog</h1>
-            <template is="dom-repeat" items="[[mediaArticles]]">
-              <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
-            </template>
-            <h1 class="">News</h1>
-            <template is="dom-repeat" items="[[pressArticles]]">
-              <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
-            </template>
-            <h1 class="">Articles</h1>
+        <firebase-query
+            path="[[articlePath.listOptions]]/press"
+            data="{{pressArticles}}" order-by-child="date" limit-to-last="1"></firebase-query>
 
-            <template is="dom-repeat" items="[[articles]]" id="article-repeater" sort="_sorter">
-              <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
-            </template>
+        <div class="padder">
+          <div class="horizontal layout wrap">
+            <div class="flex-5 main-content">
+              <h1 class="">Photoblog</h1>
+              <template is="dom-repeat" items="[[mediaArticles]]">
+                <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+              </template>
+              <h1 class="">News</h1>
+              <template is="dom-repeat" items="[[pressArticles]]">
+                <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+              </template>
+              <h1 class="">Articles</h1>
+              <project-nice-category-picker url="/article" category-string="[[categoryString]]"></project-nice-category-picker>
+
+              <template is="dom-repeat" items="[[articles]]" id="article-repeater" sort="_sorter">
+                <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+              </template>
+            </div>
+            <div class="flex-2">
+              <h1 class="">Trending</h1>
+            </div>
           </div>
-          <div class="flex-2">
-            <h1 class="">Trending</h1>
+        </div>
+      </template>
+
+      <template is="dom-if" if="[[categoryString]]">
+        <firebase-query
+            path="[[articlePath.listOptions]]/[[categoryString]]"
+            data="{{articlesCategory}}" order-by-child="date" limit-to-last="50"></firebase-query>
+
+        <div class="padder">
+          <div class="horizontal layout wrap">
+            <div class="flex-5 main-content">
+              <h1 class="">Articles</h1>
+              <project-nice-category-picker url="/article" category-string="[[categoryString]]"></project-nice-category-picker>
+              <template is="dom-repeat" items="[[articlesCategory]]" id="article-repeater" sort="_sorter">
+                <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+              </template>
+
+              <template is="dom-if" if="[[!articlesCategory.length]]">
+                <p>
+                  No articles under this category: [[categoryString]]
+                </p>
+              </template>
+            </div>
+            <div class="flex-2">
+              <!--<h1 class="">Trending</h1>-->
+            </div>
           </div>
-        </div>   
-      </div>
-      
+        </div>
+      </template>
+
+
       <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', user, roles)]]">
       <a href="#" id="new-article" class="new-button" on-tap="_addArticle">
         <paper-fab icon="default:add"></paper-fab>
       </a>
       </template>
     </template>
-    
+
     <template is="dom-if" if="[[id]]">
-      <firebase-document 
+      <firebase-document
           path="[[articlePath.articles]]/[[id]]"
           data="{{article}}"></firebase-document>
 
@@ -86,16 +119,16 @@
 
       <template is="dom-if" if="[[_forceZero(article)]]">
         <!-- _checkPublished(articlePublished.published, user) -->
-        
+
           <div class="horizontal layout wrap">
             <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', roles, user)]]">
               <template is="dom-if" if="[[edit]]">
               <!-- Article-form -->
-              
+
                 <project-nice-article-form
                     category
                     type
-                    article-id="[[id]]"                  
+                    article-id="[[id]]"
                     path="[[articlePath.articles]]/[[id]]"
                     class="flex"
                     title="{{article.title}}"
@@ -134,11 +167,11 @@
                 user="[[user]]"
                 url="/article/[[id]]"
                 edit="[[edit]]"></project-nice-article-view>
-            
+
           </div>
         </template>
-        
-        
+
+
       </template>
 
       <template is="dom-if" if="[[!_forceZero(article)]]">
@@ -154,10 +187,14 @@
       is: 'article-page',
 
       behaviors: [
-        NICEV1.ProjectNiceArticleBehavior        
+        NICEV1.ProjectNiceArticleBehavior
       ],
 
       properties: {
+        categoryString: {
+          type: String,
+          value: ''
+        },
         params: {
           type: Object
         },
@@ -173,6 +210,7 @@
       observers: [
         '_changeParamsId(params.id)',
         '_changeQuaryParamsEdit(queryParams.edit)',
+        '_setCategory(queryParams.cat)'
         // '_deferArticles(articles.splices)'
       ],
 
@@ -192,6 +230,12 @@
         return new Date(b.date) - new Date(a.date)
       },
 
+      _setCategory: function(cat) {
+        // console.log(cat);
+        this.categoryString = cat || ''
+        // this.dataString = cat || 'published'
+      }
+
       // _deferArticles: function() {
       //   this.debounce('defer-articles', () => {
       //     console.log('defer')
@@ -204,7 +248,7 @@
       //       console.log('render')
       //       this.$$('#article-repeater').render();
       //     }, 1000)
-          
+
       //   }, 500)
       // }
     });

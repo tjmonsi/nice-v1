@@ -23,48 +23,48 @@
         display: block;
       }
     </style>
-    
+
     <firebase-query
         path="[[categoryPath.article]]"
         data="{{categories}}">
     </firebase-query>
-    
+
     <div class="horizontal layout wrap">
       <a href="[[url]]" class$="flex category [[_checkCategory(categoryString, '')]]">
         <div style="position: relative">
-          
+
           <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Freload.png?alt=media&token=6ad05e47-c94b-4fb9-8b9b-65721b54175b"><br/>
           All
           <paper-ripple></paper-ripple>
         </div>
-        
+
       </a>
-      
+
       <template is="dom-repeat" items="[[categories]]">
         <a href="[[url]]?cat=[[item.$key]]" class$="flex category [[_checkCategory(categoryString, item.$key)]]">
           <div style="position: relative">
             <img src="{{item.icon}}"><br/>
             {{item.name}}
-            <paper-ripple></paper-ripple>  
+            <paper-ripple></paper-ripple>
           </div>
-          
+
         </a>
       </template>
-      
+
       <a target="_blank" href="https://docs.google.com/spreadsheets/d/1W-lKUVVRXCQJQYwG2uEfao2af0GRhtn38MFZ1ExQS0w/edit?usp=sharing" class="flex category">
         <div style="position: relative">
           <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fresearch-with-books.png?alt=media&token=fb4b8974-c43b-4dea-a6a8-0b326f5f4974"><br/>
-          Consolidated Research  
+          Consolidated Research
         </div>
-        
+
       </a>
     </div>
-    
+
   </template>
   <script>
     Polymer({
       is: 'project-nice-category-picker',
-      
+
       properties: {
         url: {
           type: String,
@@ -73,9 +73,13 @@
         categoryString: {
           type: String,
           value: ''
+        },
+        prefixWeb: {
+          type: String,
+          value: 'articles/'
         }
       },
-      
+
       behaviors: [
         NICEV1.ProjectNiceCategoryBehavior
       ],
@@ -87,7 +91,7 @@
           return ''
         }
       }
-      
+
     })
   </script>
 </dom-module>

@@ -5,7 +5,9 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
@@ -28,12 +30,12 @@
     </style>
 
     <template is="dom-if" if="[[category]]">
-      <firebase-query 
-          path="[[categoryPath.article]]" 
+      <firebase-query
+          path="[[categoryPath.article]]"
           data="{{categoryList}}"></firebase-query>
     </template>
 
-    <project-nice-hero 
+    <project-nice-hero
         title="[[title]]"
         sub-title="[[subTitle]]"
         banner-image="[[bannerImage]]"></project-nice-hero>
@@ -62,6 +64,9 @@
           <a href="https://twitter.com/share?text=[[_textToUrl(article.title)]]&url=[[_thisUrl()]]" target="_blank">
             <paper-icon-button src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Ftwitter_circle_color-256.png?alt=media&token=0a32bc85-8464-4b97-811b-ec1c3aa750bf"></paper-icon-button>
           </a>
+          <!--<a href="#">-->
+          <paper-icon-button icon="default:email" on-tap="_sendEmail"></paper-icon-button>
+          <!--</a>-->
         </div>
         <hr>
 
@@ -73,7 +78,7 @@
         <template is="dom-if" if="[[images.length]]">
           <h3 class="">Photos</h3>
           <div class="horizontal layout wrap">
-            <template is="dom-repeat" items="[[images]]">        
+            <template is="dom-repeat" items="[[images]]">
               <paper-material class="photoblog-item flex">
                 <iron-image
                   src="[[item.downloadURL]]"
@@ -87,13 +92,13 @@
             </template>
           </div>
         </template>
-        
+
         <template is="dom-if" if="[[documents.length]]">
           <h3 class="">Files</h3>
           <template is="dom-repeat" items="[[documents]]">
             <a href="[[item.downloadURL]]" target="_blank" class="document-item-anchor">
               <paper-material class="document-item horizontal layout center">
-                
+
                 <paper-icon-button icon="default:file-download"></paper-icon-button>
                 <div class="flex">
                   [[item.name]]<br/>
@@ -132,9 +137,9 @@
       </div>
       <div class="flex"></div>
     </div>
-    
+
     <!-- photoblog dialog -->
-    <paper-dialog 
+    <paper-dialog
         id="photoblog-dialog"
         entry-animation="scale-up-animation"
         exit-animation="fade-out-animation">
@@ -157,6 +162,21 @@
     </paper-dialog>
 
     <!-- video dialog -->
+
+    <!-- send email -->
+    <paper-dialog
+        id="email-dialog"
+        entry-animation="scale-up-animation"
+        exit-animation="fade-out-animation">
+      <h3>Send Email</h3>
+      <paper-input id="email" label="email" type="email" auto-validate required>
+        <iron-icon icon="default:email" prefix></iron-icon>
+      </paper-input>
+      <a href="mailto:[[emailAddress]]?Subject=[[emailSubject]]" id="emailLink">
+        <paper-button on-tap="_tapSendEmail">Send Email</paper-button>
+      </a>
+      <paper-button on-tap="_closeSendEmail">Close</paper-button>
+    </paper-dialog>
   </template>
 
   <script>
@@ -169,6 +189,14 @@
       ],
 
       properties: {
+        emailAddress: {
+          type: String,
+          value: ''
+        },
+        emailSubject: {
+          type: String,
+          value: ''
+        },
         feedbackType: {
           type: String
         },
@@ -240,6 +268,33 @@
       _checkEdit: function(url, user) {
         console.log(this._checkPermissionWithoutOwner('staff'))
         return url && user && this._checkPermissionWithoutOwner('staff')
+      },
+
+      _sendEmail: function() {
+        this.$$('#email-dialog').open();
+      },
+
+      _tapSendEmail: function(e) {
+        this.emailAddress = this.$$('#email').value;
+
+        if (!this.emailAddress) {
+          this.$$('#email').errorMessage = 'Please put the email you want to send to';
+          this.$$('#email').inputElement.focus();
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          return this.$$('#email').invalid = true;
+        }
+
+        this.emailSubject = encodeURI('Project NICE Article: ' + this.title);
+        console.log(this.emailSubject)
+
+        this._closeSendEmail();
+      },
+
+      _closeSendEmail: function() {
+        this.$$('#email-dialog').close();
       }
     });
   </script>

@@ -28,7 +28,7 @@
       }
     </style>
 
-    
+
 
     <firebase-query
         path="[[articlePath.listOptions]]/front[[categoryString]]"
@@ -81,7 +81,7 @@
 
     <project-nice-carousel height="65vh" carousel-interval="10000">
       <template is="dom-repeat" items="[[frontArticles]]">
-        
+
         <project-nice-hero title="[[item.title]]" sub-title="[[item.subTitle]]" banner-image="[[item.bannerImage]]" data-index$="[[index]]" url="/article/[[item.$key]]">
           <firebase-document path="[[articlePath.articles]]/[[item.$key]]/title" data="{{item.title}}"></firebase-document>
           <firebase-document path="[[articlePath.articles]]/[[item.$key]]/subTitle" data="{{item.subTitle}}"></firebase-document>
@@ -90,7 +90,7 @@
       </template>
     </project-nice-carousel>
 
-    <project-nice-category-picker url="/" category-string="[[categoryString]]"></project-nice-category-picker>
+    <project-nice-category-picker url="/article" category-string="[[categoryString]]"></project-nice-category-picker>
 
     <!-- Add category list-->
     <div class="horizontal layout wrap home-video-features-weather">
@@ -111,7 +111,7 @@
               <template is="dom-if" if="[[index]]">
                 <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
               </template>
-              
+
             </template>
           </div>
         </div>
@@ -121,10 +121,10 @@
         </h1>
         <div class="horizontal wrap">
           <template is="dom-repeat" items="[[dataList]]">
-            <project-nice-data-item id="[[item.$key]]" date-published="[[item.date]]" class="flex"></project-nice-data-item>          
+            <project-nice-data-item id="[[item.$key]]" date-published="[[item.date]]" class="flex"></project-nice-data-item>
           </template>
         </div>
-      </div> 
+      </div>
       <div class="flex-2 home-weather">
         <project-nice-weather id="weather-component"></project-nice-weather>
         <project-nice-pricewatch-viewer ></project-nice-pricewatch-viewer>
@@ -135,41 +135,41 @@
       <div class="flex"></div>
       <div class="flex-2 article-list-section">
         <h1>People</h1>
-        <template is="dom-repeat" items="[[peopleArticles]]" sort="_sorter">           
+        <template is="dom-repeat" items="[[peopleArticles]]" sort="_sorter">
           <template is="dom-if" if="[[!index]]">
             <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
           </template>
         </template>
         <template is="dom-repeat" items="[[peopleArticles]]" sort="_sorter">
           <template is="dom-if" if="[[index]]">
-            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
-          </template>          
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
         </template>
       </div>
       <div class="flex-2 article-list-section">
         <h1>SAP</h1>
-        <template is="dom-repeat" items="[[sapArticles]]" sort="_sorter">           
+        <template is="dom-repeat" items="[[sapArticles]]" sort="_sorter">
           <template is="dom-if" if="[[!index]]">
             <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
           </template>
         </template>
         <template is="dom-repeat" items="[[sapArticles]]" sort="_sorter">
           <template is="dom-if" if="[[index]]">
-            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
-          </template>          
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
         </template>
       </div>
       <div class="flex-2 article-list-section">
         <h1>News</h1>
-        <template is="dom-repeat" items="[[pressArticles]]" sort="_sorter">           
+        <template is="dom-repeat" items="[[pressArticles]]" sort="_sorter">
           <template is="dom-if" if="[[!index]]">
             <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
           </template>
         </template>
         <template is="dom-repeat" items="[[pressArticles]]" sort="_sorter">
           <template is="dom-if" if="[[index]]">
-            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>          
-          </template>          
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
         </template>
       </div>
       <div class="flex"></div>
@@ -193,9 +193,7 @@
         }
       },
 
-      observers: [
-        '_setCategory(queryParams.cat)'
-      ],
+
 
       behaviors: [
         NICEV1.ProjectNiceArticleBehavior,
@@ -210,11 +208,7 @@
         return new Date(b.date) - new Date(a.date);
       },
 
-      _setCategory: function(cat) {
-        console.log(cat);
-        this.categoryString = cat || ''
-        this.dataString = cat || 'published'
-      }
+
     });
   </script>
 </dom-module>
