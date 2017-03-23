@@ -6,6 +6,8 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin.html">
+<link rel="import" href="../../bower_components/google-analytics/google-analytics.html">
 <link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
 <link rel="import" href="../../web-components/project-nice-page/project-nice-page-behavior.html">
 <link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
@@ -73,7 +75,52 @@
         <template is="dom-if" if="[[!page]]">
           <h1>Dashboard</h1>
 
-          <p>It is currently being populated</p>
+          <google-signin
+              client-id="726156351220-l156nqglpds39l7un3s0qt3e6tr15eo8.apps.googleusercontent.com"
+              scopes="https://www.googleapis.com/auth/analytics.readonly"
+              signed-in="{{_dashboardSignIn}}"></google-signin>
+
+          <!--<template is="dom-if" if="{{_dashboardSignIn}}">-->
+            <google-analytics-dashboard id="google-dashboard">
+
+
+              <google-analytics-date-selector></google-analytics-date-selector>
+
+              <google-analytics-chart
+                ids="ga:123286159"
+                type="area"
+                metrics="ga:sessions"
+                dimensions="ga:date">
+                <h3>Site Traffic</h3>
+              </google-analytics-chart>
+
+              <google-analytics-chart
+                ids="ga:123286159"
+                type="column"
+                metrics="ga:avgPageLoadTime"
+                dimensions="ga:date">
+                <h3>Average Page Load Times</h3>
+              </google-analytics-chart>
+
+              <google-analytics-chart
+                ids="ga:123286159"
+                type="geo"
+                metrics="ga:users"
+                dimensions="ga:country">
+                <h3>Users by Country</h3>
+              </google-analytics-chart>
+
+              <google-analytics-chart
+                ids="ga:123286159"
+                type="pie"
+                metrics="ga:pageviews"
+                dimensions="ga:browser"
+                sort="-ga:pageviews"
+                max-results="6">
+                <h3>Pageviews by Browser</h3>
+              </google-analytics-chart>
+            </google-analytics-dashboard>
+          <!--</template>-->
         </template>
 
         <template is="dom-if" if="[[_checkPage(page, 'pages')]]">
@@ -143,7 +190,7 @@
           <firebase-query
                 path="[[userPath.options.pending]]" data="{{pendingmembers}}"></firebase-query>
           <h1>Pending Members</h1>
-          <template is="dom-repeat" items="[[pendingmember]]">
+          <template is="dom-repeat" items="[[pendingmembers]]">
             <project-nice-member-item profile-id="[[item.$key]]" user="[[user]]"></project-nice-member-item>
           </template>
         </template>
@@ -219,11 +266,22 @@
       observers: [
         '_setPage(params.page)',
         '_setType(queryParams.type)',
-        '_check(feedbacks.splices)'
+        '_check(feedbacks.splices)',
+        '_updateDashboard(_dashboardSignIn)'
       ],
 
       _check(e) {
         console.log(this.feedbacks)
+      },
+
+      _updateDashboard: function(flag) {
+        this.async(function() {
+          console.log('update')
+          if (flag) {
+            this.$$('#google-dashboard').updateChildren();
+          }
+        }.bind(this), 500)
+
       },
 
       _checkPage: function(p, q) {
