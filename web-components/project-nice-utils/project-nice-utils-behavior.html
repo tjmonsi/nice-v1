@@ -133,13 +133,15 @@
           if (Modernizr && Modernizr.cssvhunit) {
             height = e;
           } else {
-            height = (parseFloat(e.replace(/vh/g, '')) * this._windowSize().height) + 'px';
+            height = ((parseFloat(e.replace(/vh/g, ''))/100) * this._windowSize().height) + 'px';
           }
         } else if (e.indexOf('px')) {
           height = e;
         } else {
           height = e + 'px';
         }
+
+        console.log(height)
 
         node.style.height = height;
       },

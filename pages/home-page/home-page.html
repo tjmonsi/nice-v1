@@ -65,6 +65,50 @@
         limit-to-last="5">
     </firebase-query>
 
+    <!-- LEVEL 1 a -->
+    <firebase-query
+        path="[[articlePath.listOptions]]/farmer[[categoryString]]"
+        data="{{farmerArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[articlePath.listOptions]]/trainingsupport[[categoryString]]"
+        data="{{trainingsupportArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[articlePath.listOptions]]/sustainabletech[[categoryString]]"
+        data="{{sustainabletechArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <!-- LEVEL 1 b -->
+    <firebase-query
+        path="[[articlePath.listOptions]]/agroprocessing[[categoryString]]"
+        data="{{agroprocessingArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[articlePath.listOptions]]/bayanihan[[categoryString]]"
+        data="{{bayanihanArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
+    <firebase-query
+        path="[[articlePath.listOptions]]/socialagripreneurs[[categoryString]]"
+        data="{{socialagripreneursArticles}}"
+        order-by-child="date"
+        limit-to-last="5">
+    </firebase-query>
+
     <firebase-query
         path="[[dataPath.listOptions]]/[[dataString]]"
         data="{{dataList}}"
@@ -129,6 +173,94 @@
         <project-nice-weather id="weather-component"></project-nice-weather>
         <project-nice-pricewatch-viewer ></project-nice-pricewatch-viewer>
       </div>
+    </div>
+
+    <div class="horizontal layout wrap">
+      <div class="flex"></div>
+      <div class="flex-2 article-list-section">
+        <h1>Farmers</h1>
+        <template is="dom-repeat" items="[[farmerArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[farmerArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
+        </template>
+      </div>
+      <div class="flex-2 article-list-section">
+        <h1>Training and Support Services</h1>
+        <template is="dom-repeat" items="[[trainingsupportArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[trainingsupportArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
+        </template>
+      </div>
+      <div class="flex-2 article-list-section">
+        <h1>Sustainable Agricultural Technology</h1>
+        <template is="dom-repeat" items="[[sustainabletechArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[sustainabletechArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
+        </template>
+      </div>
+      <div class="flex"></div>
+    </div>
+
+    <div class="horizontal layout wrap">
+      <div class="flex"></div>
+      <div class="flex-2 article-list-section">
+        <h1>Social Agripreneurs</h1>
+        <template is="dom-repeat" items="[[socialagripreneursArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[socialagripreneursArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
+        </template>
+      </div>
+      <div class="flex-2 article-list-section">
+        <h1>Agro-processing</h1>
+        <template is="dom-repeat" items="[[agroprocessingArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[agroprocessingArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
+        </template>
+      </div>
+      <div class="flex-2 article-list-section">
+        <h1>Bayanihan Economic Entrepreneurs</h1>
+        <template is="dom-repeat" items="[[bayanihanArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[!index]]">
+            <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
+          </template>
+        </template>
+        <template is="dom-repeat" items="[[bayanihanArticles]]" sort="_sorter">
+          <template is="dom-if" if="[[index]]">
+            <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+          </template>
+        </template>
+      </div>
+      <div class="flex"></div>
     </div>
 
     <div class="horizontal layout wrap">
