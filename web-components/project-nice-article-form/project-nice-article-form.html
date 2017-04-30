@@ -35,27 +35,46 @@
     <h4>Title and Short Description</h4>
     <paper-input id="title" value="{{title}}" label="Title"></paper-input>
     <paper-textarea id="sub-title" value="{{subTitle}}" label="Description"></paper-textarea>
-    
+
     <hr>
-    
+
     <h4>Banner Image and Video</h4>
     <paper-input id="banner-image" value="{{bannerImage}}" label="Banner Image"></paper-input>
     <paper-input id="banner-image-file" label="Upload Banner Image" type="file" on-change="_uploadBannerImage" accept="image/*"></paper-input>
-    
+
     <template is="dom-if" if="[[bannerImageProgress]]">
       <paper-progress value="[[bannerImageProgress]]" max="100" min="0" class="transiting"></paper-progress>
     </template>
-    
-    <paper-input id="banner-video" value="{{video}}" label="Youtube Video URL"></paper-input> 
+
+    <paper-input id="banner-video" value="{{video}}" label="Youtube Video URL"></paper-input>
     <hr>
+    <h4>Article Body</h4>
+    <paper-textarea id="body" value="{{body}}" label="Article Body"></paper-textarea>
+    <hr>
+
+    <h4>Publishing and other options</h4>
+
+
+    <template is="dom-if" if="[[type]]">
+
+      <h5>Level 1 Category</h5>
+      Farmer Article: <paper-toggle-button type-id="farmer" on-change="_changeType" checked="[[_checkType(types, 'farmer')]]"></paper-toggle-button><br/>
+      Training and Support Services Article: <paper-toggle-button type-id="trainingsupport" on-change="_changeType" checked="[[_checkType(types, 'trainingsupport')]]"></paper-toggle-button><br/>
+      Sustainable Agricultural Technology Article: <paper-toggle-button type-id="socialagripreneurs" on-change="_changeType" checked="[[_checkType(types, 'socialagripreneurs')]]"></paper-toggle-button><br/>
+      Social Agripreneurs Article: <paper-toggle-button type-id="agroprocessing" on-change="_changeType" checked="[[_checkType(types, 'agroprocessing')]]"></paper-toggle-button><br/>
+      Agro-processing Article: <paper-toggle-button type-id="bayanihan" on-change="_changeType" checked="[[_checkType(types, 'bayanihan')]]"></paper-toggle-button><br/>
+      Bayanihan economic Entrepreneurs Article: <paper-toggle-button type-id="sap" on-change="_changeType" checked="[[_checkType(types, 'sap')]]"></paper-toggle-button><br/>
+
+    </template>
+
     <template is="dom-if" if="[[category]]">
-      <h4>Category</h4>
+      <h5>Level 2 Category</h5>
       <div class="horizontal layout wrap">
         <template is="dom-repeat" items="[[categoryList]]" as="categoryitem">
-          <paper-icon-button 
-              toggles 
-              active$="[[_checkCategories(categories, categoryitem.$key)]]" 
-              on-tap="_tapCategory" 
+          <paper-icon-button
+              toggles
+              active$="[[_checkCategories(categories, categoryitem.$key)]]"
+              on-tap="_tapCategory"
               id="[[item.$key]]-[[categoryitem.$key]]"
               category-id="[[categoryitem.$key]]"
               file-id="[[item.$key]]"
@@ -65,38 +84,30 @@
         </template>
       </div>
     </template>
-    <hr>
-    <h4>Article Body</h4>
-    <paper-textarea id="body" value="{{body}}" label="Article Body"></paper-textarea>
-    <hr>
-    
-    <h4>Publishing and other options</h4>
-    Publish: <paper-toggle-button id="publish-toggle" on-change="_changePublishToggle"></paper-toggle-button><br/>
 
-    
-    <template is="dom-if" if="[[type]]">
-      Above the Fold Article: <paper-toggle-button type-id="front" on-change="_changeType" checked="[[_checkType(types, 'front')]]"></paper-toggle-button><br/>
-      SAP Article: <paper-toggle-button type-id="sap" on-change="_changeType" checked="[[_checkType(types, 'sap')]]"></paper-toggle-button><br/>
-      Press Article: <paper-toggle-button type-id="press" on-change="_changeType" checked="[[_checkType(types, 'press')]]"></paper-toggle-button><br/>
-      People Article: <paper-toggle-button type-id="people" on-change="_changeType" checked="[[_checkType(types, 'people')]]"></paper-toggle-button><br/>
-      Videos/Photoblog Article: <paper-toggle-button type-id="media" on-change="_changeType" checked="[[_checkType(types, 'media')]]"></paper-toggle-button><br/>
-    </template>
-    
+    <h5>Level 3</h5>
+    Publish: <paper-toggle-button id="publish-toggle" on-change="_changePublishToggle"></paper-toggle-button><br/>
+    Above the Fold Article: <paper-toggle-button type-id="front" on-change="_changeType" checked="[[_checkType(types, 'front')]]"></paper-toggle-button><br/>
+    SAP Article: <paper-toggle-button type-id="sap" on-change="_changeType" checked="[[_checkType(types, 'sap')]]"></paper-toggle-button><br/>
+    Press Article: <paper-toggle-button type-id="press" on-change="_changeType" checked="[[_checkType(types, 'press')]]"></paper-toggle-button><br/>
+    People Article: <paper-toggle-button type-id="people" on-change="_changeType" checked="[[_checkType(types, 'people')]]"></paper-toggle-button><br/>
+    Videos/Photoblog Article: <paper-toggle-button type-id="media" on-change="_changeType" checked="[[_checkType(types, 'media')]]"></paper-toggle-button><br/>
+
     <hr>
 
     <h4>Photo Album</h4>
-    <project-nice-multiple-files-form 
+    <project-nice-multiple-files-form
         label="Upload Photos"
         file-storage-path="[[imagesStoragePath]]"
         accept="image/*"></project-nice-multiple-files-form>
     <hr>
 
     <h4>Documents</h4>
-    <project-nice-multiple-files-form 
+    <project-nice-multiple-files-form
         label="Upload Additional Documents"
         file-storage-path="[[documentsStoragePath]]"></project-nice-multiple-files-form>
     <hr>
-    
+
     <paper-button raised on-tap="_openDeleteItemDialog">Delete</paper-button>
 
     <a href="[[url]]">
@@ -210,7 +221,7 @@
           var updates = {};
           updates[this.publishedPath] = checked ? timestamp : null;
           updates[this.draftPath] = checked ? null : timestamp;
-          
+
           for (var i in this.categories) {
             updates[this.listPath + '/' + i + '/' + this.articleId] = checked ? {date: timestamp} : null;
           }
@@ -221,7 +232,7 @@
               updates[this.listPath + '/' + j + k + '/' + this.articleId] = checked ? {date: timestamp} : null;
             }
           }
-          
+
           firebase.database().ref().update(updates).then(() => {
             this._showMessage((checked ? 'Published' : 'Drafted'))
           }).catch(this._catchError.bind(this));
@@ -235,7 +246,7 @@
           if (firebase) {
             this._bannerImageTask = firebase.storage().ref(this.bannerImageStoragePath).child(file.name).put(file);
             this._bannerImageTask.on(
-              firebase.storage.TaskEvent.STATE_CHANGED, 
+              firebase.storage.TaskEvent.STATE_CHANGED,
               this._uploadTask.bind(this, 'bannerImageProgress'),
               this._catchError.bind(this),
               () => {
@@ -244,7 +255,7 @@
                 setTimeout(() => {
                   this.set('bannerImageProgress', 0)
                 }, 100);
-              } 
+              }
             )
           }
         }
@@ -259,14 +270,14 @@
       },
 
       _deleteItem: function() {
-        var promises = [];        
+        var promises = [];
         promises.push(firebase.database().ref(this.path).remove());
         promises.push(firebase.database().ref(this.publishedPath).remove());
         promises.push(firebase.database().ref(this.draftPath).remove());
         promises.push(firebase.database().ref(this.ownerPath).remove());
 
         // delete all options
-        for (var i in this.categories) {   
+        for (var i in this.categories) {
           promises.push(firebase.database().ref(this.listPath + '/' + i + '/' + this.articleId).remove());
         }
 
@@ -286,7 +297,7 @@
           setTimeout(() => {
             window.location.href = "/"
           }, 1000)
-          // 
+          //
         }).catch(this._catchError.bind(this));
       },
 
@@ -314,7 +325,7 @@
       _tapCategory: function(e) {
         var id = e.target.categoryId;
         var active = e.target.active;
-        
+
         var updates = {};
         updates[this.path + '/categories/' + id] = active ? {value: true} : null;
         updates[this.listPath + '/' + id + '/' + this.articleId] = active && this._forceZero(this.published) ? {date: firebase.database.ServerValue.TIMESTAMP} : null;
