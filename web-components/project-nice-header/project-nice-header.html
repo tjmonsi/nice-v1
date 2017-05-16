@@ -19,6 +19,73 @@
       :host {
         display: block;
       }
+
+      .desktop {
+        height: inherit !important;
+      }
+
+      .logo-toolbar {
+        height: 160px;
+      }
+
+      span[main-title] {
+        height: 160px;
+      }
+
+      .tablet {
+        display: none;
+      }
+
+      .mobile {
+        display: none;
+      }
+
+      @media (max-width: 970px) {
+        .desktop {
+          display: none;
+        }
+
+        .tablet {
+          display: block;
+        }
+
+        .logo-toolbar {
+          height: 90px;
+        }
+
+        span[main-title] {
+          height: 90px;
+        }
+      }
+
+      @media (max-width: 425px) {
+        .desktop {
+          display: none;
+        }
+
+        .tablet {
+          display: none;
+        }
+
+        .mobile {
+          display: block;
+          margin: 0 auto;
+          width: 250px;
+          height: 160px !important;
+        }
+
+        .logo-toolbar {
+          height: 160px;
+        }
+
+        span[main-title] {
+          height: 160px;
+        }
+      }
+
+      app-toolbar[sticky] {
+        height: 60px;
+      }
     </style>
 
     <!-- then the app-header -->
@@ -35,11 +102,13 @@
         threshold="[[treshold]]"
         threshold-triggered="[[tresholdTriggered]]">
 
-      <app-toolbar>
+      <app-toolbar class="logo-toolbar">
 
         <!-- Logo here -->
         <span main-title>
-          <img src="/images/assets/nice-logo.png" >
+          <img src="/images/assets/desktop.jpg" class="desktop">
+          <img src="/images/assets/tablet.jpg" class="tablet">
+          <img src="/images/assets/mobile.png" class="mobile">
         </span>
 
       </app-toolbar>
