@@ -16,6 +16,7 @@
 <link rel="import" href="../../web-components/project-nice-feedback/project-nice-feedback-behavior.html">
 <link rel="import" href="../../web-components/project-nice-feedback-item/project-nice-feedback-item.html">
 <link rel="import" href="../../web-components/project-nice-pricewatch-form/project-nice-pricewatch-form.html">
+<link rel="import" href="../../web-components/project-nice-sep-pricewatch-form/project-nice-sep-pricewatch-form.html">
 <link rel="import" href="../../web-components/project-nice-page-item/project-nice-page-item.html">
 <link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
 <link rel="import" href="../../web-components/project-nice-data-item/project-nice-data-item.html">
@@ -65,6 +66,9 @@
           </a>
           <a href="/dashboard/price-watch">
             <paper-item>Price Watch</paper-item>
+          </a>
+          <a href="/dashboard/sep-price-watch">
+            <paper-item>SEP Price Watch</paper-item>
           </a>
           <a href="/dashboard/feedback">
             <paper-item>Feedback</paper-item>
@@ -200,6 +204,12 @@
           <h1>Price Watch</h1>
           <project-nice-pricewatch-form ></project-nice-pricewatch-form>
         </template>
+
+        <template is="dom-if" if="[[_checkPage(page, 'sep-price-watch')]]">
+          <h1>Price Watch</h1>
+          <project-nice-sep-pricewatch-form ></project-nice-sep-pricewatch-form>
+        </template>
+
         <template is="dom-if" if="[[_checkPage(page, 'feedback')]]">
           <h1>Feedback</h1>
           <iron-selector class="horizontal layout" attr-for-selected="feedback-type" selected="[[type]]">

@@ -26,6 +26,32 @@
       :host {
         display: block;
       }
+
+      .row-articles {
+        margin: 0 auto;
+        max-width: 1200px;
+      }
+
+      .article-list-section h1 {
+        height: 144px;
+        border-bottom: 1px solid black
+      }
+
+      @media (max-width: 958px) {
+        .article-list-section h1 {
+          height: 96px;
+        }
+      }
+
+      @media (max-width: 638px) {
+        .article-list-section h1 {
+          height: inherit;
+        }
+      }
+
+      .home-video-features-highlight {
+        min-width: 300px;
+      }
     </style>
 
 
@@ -175,8 +201,7 @@
       </div>
     </div>
 
-    <div class="horizontal layout wrap">
-      <div class="flex"></div>
+    <div class="horizontal layout wrap row-articles">
       <div class="flex-2 article-list-section">
         <h1>Farmers</h1>
         <template is="dom-repeat" items="[[farmerArticles]]" sort="_sorter">
@@ -216,11 +241,9 @@
           </template>
         </template>
       </div>
-      <div class="flex"></div>
     </div>
 
-    <div class="horizontal layout wrap">
-      <div class="flex"></div>
+    <div class="horizontal layout wrap row-articles">
       <div class="flex-2 article-list-section">
         <h1>Social Agripreneurs</h1>
         <template is="dom-repeat" items="[[socialagripreneursArticles]]" sort="_sorter">
@@ -260,10 +283,9 @@
           </template>
         </template>
       </div>
-      <div class="flex"></div>
     </div>
 
-    <div class="horizontal layout wrap">
+    <!--<div class="horizontal layout wrap">
       <div class="flex"></div>
       <div class="flex-2 article-list-section">
         <h1>People</h1>
@@ -305,7 +327,7 @@
         </template>
       </div>
       <div class="flex"></div>
-    </div>
+    </div>-->
 
     <project-nice-footer-element></project-nice-footer-element>
   </template>
