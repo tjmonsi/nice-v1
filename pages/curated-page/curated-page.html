@@ -1,0 +1,211 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../web-components/project-nice-footer-element/project-nice-footer-element.html">
+<link rel="import" href="../../web-components/project-nice-icons/project-nice-icons.html">
+<link rel="import" href="../../web-components/project-nice-article-headline/project-nice-article-headline.html">
+<link rel="import" href="../../web-components/project-nice-article-item/project-nice-article-item.html">
+<link rel="import" href="../../web-components/project-nice-article-view/project-nice-article-view.html">
+<link rel="import" href="../../web-components/project-nice-article-form/project-nice-article-form.html">
+<link rel="import" href="../../web-components/project-nice-article/project-nice-article-behavior.html">
+<link rel="import" href="../../web-components/project-nice-category-picker/project-nice-category-picker.html">
+
+<!-- Style dependency -->
+<link rel="import" href="curated-page-style.html">
+
+<dom-module id="curated-page">
+  <template>
+    <style is="custom-style" include="curated-page-style iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display: block;
+      }
+    </style>
+    <template is="dom-if" if="[[!id]]">
+      <template is="dom-if" if="[[categoryString]]">
+        <firebase-query
+            path="[[articlePath.listOptions]]/[[categoryString]]"
+            data="{{articlesCategory}}" order-by-child="date" limit-to-last="50"></firebase-query>
+
+        <div class="padder">
+
+          <div class="flex-5 main-content">
+            <h1 class="">Curated Articles</h1>
+            <template is="dom-repeat" items="[[articlesCategory]]" id="article-repeater" sort="_sorter">
+              <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+            </template>
+
+            <template is="dom-if" if="[[!articlesCategory.length]]">
+              <p>
+                No articles under this category: [[categoryString]]
+              </p>
+            </template>
+          </div>
+        </div>
+      </template>
+
+
+      <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', user, roles)]]">
+      <a href="#" id="new-article" class="new-button" on-tap="_addArticle">
+        <paper-fab icon="default:add"></paper-fab>
+      </a>
+      </template>
+    </template>
+
+    <template is="dom-if" if="[[id]]">
+      <firebase-document
+          path="[[articlePath.articles]]/[[id]]"
+          data="{{article}}"></firebase-document>
+
+      <firebase-document
+          path="[[articlePath.list.published]]/[[id]]"
+          data="{{articlePublished}}"></firebase-document>
+
+      <firebase-query
+          path="[[articlePath.storage.images]]/[[id]]"
+          data="{{images}}"></firebase-query>
+
+      <firebase-query
+          path="[[articlePath.storage.documents]]/[[id]]"
+          data="{{documents}}"></firebase-query>
+
+      <template is="dom-if" if="[[_forceZero(article)]]">
+        <!-- _checkPublished(articlePublished.published, user) -->
+
+          <div class="horizontal layout wrap">
+            <template is="dom-if" if="[[_checkPermissionWithoutOwner('staff', roles, user)]]">
+              <template is="dom-if" if="[[edit]]">
+              <!-- Article-form -->
+
+                <project-nice-article-form
+                    category
+                    type
+                    article-id="[[id]]"
+                    path="[[articlePath.articles]]/[[id]]"
+                    class="flex"
+                    title="{{article.title}}"
+                    sub-title="{{article.subTitle}}"
+                    banner-image="{{article.bannerImage}}"
+                    banner-image-storage-path="[[articlePath.storage.bannerImage]]/[[id]]"
+                    body="{{article.body}}"
+                    images-storage-path="[[articlePath.storage.images]]/[[id]]"
+                    documents-storage-path="[[articlePath.storage.documents]]/[[id]]"
+                    video="{{article.video}}"
+                    list-path="[[articlePath.listOptions]]"
+                    published-path="[[articlePath.list.published]]/[[id]]"
+                    draft-path="[[articlePath.list.draft]]/[[id]]"
+                    categories="[[article.categories]]"
+                    types="[[article.types]]"
+                    owner-path="[[articlePath.owner]]/[[id]]"
+                    url="/article/[[id]]"></project-nice-article-form>
+              </template>
+            </template>
+
+            <!-- Article-view -->
+            <project-nice-article-view
+                category
+                type
+                feedback-type="articles"
+                class="flex"
+                title="[[article.title]]"
+                sub-title="[[article.subTitle]]"
+                banner-image="[[article.bannerImage]]"
+                body="[[article.body]]"
+                images="[[images]]"
+                documents="[[documents]]"
+                video="[[article.video]]"
+                categories="[[article.categories]]"
+                types="[[article.types]]"
+                user="[[user]]"
+                url="/article/[[id]]"
+                edit="[[edit]]"></project-nice-article-view>
+
+          </div>
+        </template>
+
+
+      </template>
+
+      <template is="dom-if" if="[[!_forceZero(article)]]">
+        Loading
+      </template>
+    </template>
+
+    <project-nice-footer-element></project-nice-footer-element>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'curated-page',
+
+      behaviors: [
+        NICEV1.ProjectNiceArticleBehavior
+      ],
+
+      properties: {
+        categoryString: {
+          type: String,
+          value: 'curated'
+        },
+        params: {
+          type: Object
+        },
+        id: {
+          type: String,
+          value: ''
+        },
+        edit: {
+          type: Boolean
+        }
+      },
+
+      observers: [
+        '_changeParamsId(params.id)',
+        '_changeQuaryParamsEdit(queryParams.edit)',
+        // '_setCategory(queryParams.cat)'
+        // '_deferArticles(articles.splices)'
+      ],
+
+      _changeParamsId: function(e) {
+        this.id = e || ''
+      },
+
+      _changeQuaryParamsEdit: function(e) {
+        this.edit = e === 'true';
+      },
+
+      _checkPublished: function(published, user) {
+        return published || user;
+      },
+
+      _sorter: function(a, b) {
+        return new Date(b.date) - new Date(a.date)
+      },
+
+      _setCategory: function(cat) {
+        // console.log(cat);
+        this.categoryString = cat || ''
+        // this.dataString = cat || 'published'
+      }
+
+      // _deferArticles: function() {
+      //   this.debounce('defer-articles', () => {
+      //     console.log('defer')
+      //     this.articles.sort((a, b) => {
+      //       // console.log(a.date, b.date, a.date - b.date, a.date < b.date)
+      //       return new Date(b.date) - new Date(a.date)
+      //     });
+      //     console.log(this.articles);
+      //     setTimeout(() => {
+      //       console.log('render')
+      //       this.$$('#article-repeater').render();
+      //     }, 1000)
+
+      //   }, 500)
+      // }
+    });
+  </script>
+</dom-module>

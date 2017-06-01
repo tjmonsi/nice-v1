@@ -36,6 +36,7 @@ Wham! It's all awesome now!
   <link rel="lazy-import" href="/pages/home-page/home-page.html" group="home-page">
   <link rel="lazy-import" href="/pages/search-page/search-page.html" group="search-page">
   <link rel="lazy-import" href="/pages/article-page/article-page.html" group="article-page">
+  <link rel="lazy-import" href="/pages/curated-page/curated-page.html" group="curated-page">
   <link rel="lazy-import" href="/pages/nice-page/nice-page.html" group="nice-page">
   <link rel="lazy-import" href="/pages/dashboard-page/dashboard-page.html" group="dashboard-page">
   <link rel="lazy-import" href="/pages/data-page/data-page.html" group="data-page">
@@ -101,6 +102,8 @@ Wham! It's all awesome now!
         <article-page route="/article" user="{{user}}"></article-page>
         <article-page route="/article/:id" user="{{user}}"></article-page>
 
+        <curated-page route="/curated" user="{{user}}"></curated-page>
+
         <data-page route="/data" user="{{user}}"></data-page>
         <data-page route="/data/:id" user="{{user}}"></data-page>
 
@@ -143,6 +146,13 @@ Wham! It's all awesome now!
                 label: 'Features',
                 url: '/article',
                 route: '/article',
+                role: null,
+                auth: false
+              },
+              {
+                label: 'Curated',
+                url: '/curated',
+                route: '/curated',
                 role: null,
                 auth: false
               },
