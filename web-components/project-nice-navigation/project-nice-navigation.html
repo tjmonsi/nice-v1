@@ -20,7 +20,7 @@
       }
     </style>
 
-    <firebase-query 
+    <firebase-query
         path="[[pagePath.list.published]]"
         data="{{pages}}"></firebase-query>
 
@@ -29,7 +29,7 @@
         <iron-selector class="horizontal layout" attr-for-selected="route" selected$="[[route]]">
           <a route="home" href="/" class="nice-navigation-item" on-tap="_clickNavigationItem">
             Home
-          </a>  
+          </a>
           <paper-menu-button route$="page" id="about-button" no-overlap horizontal-align="right" dynamic-align>
             <a href="#" class="nice-navigation-item dropdown-trigger">
               About
@@ -37,29 +37,43 @@
             <paper-menu class="dropdown-content" id="about-button-menu">
               <template is="dom-repeat" items="[[pages]]" as="pageitems">
                 <firebase-document path="[[pagePath.pages]]/[[pageitems.$key]]/title" data="{{pageitems.title}}"></firebase-document>
-                
+
                   <a href$="/page/[[pageitems.$key]]">
                     <paper-item >[[pageitems.title]]</paper-item>
                   </a>
 
               </template>
-              
+
             </paper-menu>
           </paper-menu-button>
           <template is="dom-repeat" items="[[navigationList]]">
             <template is="dom-if" if="[[_checkAuthRole(user, item.auth, roles, item.role)]]">
               <a route$="[[item.route]]" href$="[[item.url]]" class="nice-navigation-item" on-tap="_clickNavigationItem">
                 [[item.label]]
-              </a>  
+              </a>
             </template>
           </template>
-        </iron-selector>  
+        </iron-selector>
       </div>
     </template>
-    
+
     <template is="dom-if" if="[[drawer]]">
       <div class="nice-navigation-drawer">
         <paper-listbox class="nice-navigation-drawer-container" attr-for-selected="route" selected$="[[route]]">
+          <a href="/" class="nice-navigation-item">
+            <paper-item route="home" on-tap="_toggleDrawer">
+              Home
+            </paper-item>
+          </a>
+
+          <template is="dom-repeat" items="[[pages]]" as="pageitems">
+            <firebase-document path="[[pagePath.pages]]/[[pageitems.$key]]/title" data="{{pageitems.title}}"></firebase-document>
+
+            <a href$="/page/[[pageitems.$key]]" class="nice-navigation-item">
+              <paper-item route="about" on-tap="_toggleDrawer">[[pageitems.title]]</paper-item>
+            </a>
+
+          </template>
           <template is="dom-repeat" items="[[navigationList]]">
             <a href$="[[item.url]]" class="nice-navigation-item">
               <paper-item route$="[[item.route]]" on-tap="_toggleDrawer">
@@ -69,14 +83,14 @@
           </template>
         </paper-listbox>
       </div>
-      
+
     </template>
-    
+
   </template>
 
   <script>
     Polymer({
-      
+
       is: 'project-nice-navigation',
 
       behaviors: [
@@ -94,7 +108,7 @@
           notify: true
         },
         route: {
-          type: String             
+          type: String
         },
         page: {
           type: String,
@@ -126,7 +140,7 @@
             this.$$('#about-button').toggle();
             this.$$('#about-button').toggle();
           }
-          
+
         }
       },
 

@@ -58,6 +58,11 @@
     <template is="dom-if" if="[[type]]">
 
       <h5>Level 1 Category</h5>
+      Products and Services <paper-toggle-button type-id="productsandservices" on-change="_changeType" checked="[[_checkType(types, 'productsandservices')]]"></paper-toggle-button><br/>
+      Research: CBE <paper-toggle-button type-id="researchcbe" on-change="_changeType" checked="[[_checkType(types, 'researchcbe')]]"></paper-toggle-button><br/>
+      Research: State Universities <paper-toggle-button type-id="researchsu" on-change="_changeType" checked="[[_checkType(types, 'researchsu')]]"></paper-toggle-button><br/>
+      Research: Other Partners <paper-toggle-button type-id="researchpartners" on-change="_changeType" checked="[[_checkType(types, 'researchpartners')]]"></paper-toggle-button><br/>
+      CBE Recommends <paper-toggle-button type-id="cberecommends" on-change="_changeType" checked="[[_checkType(types, 'cberecommends')]]"></paper-toggle-button><br/>
       Farmer Article: <paper-toggle-button type-id="farmer" on-change="_changeType" checked="[[_checkType(types, 'farmer')]]"></paper-toggle-button><br/>
       Training and Support Services Article: <paper-toggle-button type-id="trainingsupport" on-change="_changeType" checked="[[_checkType(types, 'trainingsupport')]]"></paper-toggle-button><br/>
       Sustainable Agricultural Technology Article: <paper-toggle-button type-id="sustainabletech" on-change="_changeType" checked="[[_checkType(types, 'sustainabletech')]]"></paper-toggle-button><br/>
