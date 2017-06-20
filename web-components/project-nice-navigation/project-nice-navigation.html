@@ -18,6 +18,11 @@
       :host {
         display: block;
       }
+
+      .sublink {
+        text-decoration: none;
+        color: inherit
+      }
     </style>
 
     <firebase-query
@@ -35,10 +40,10 @@
               About
             </a>
             <paper-menu class="dropdown-content" id="about-button-menu">
-              <template is="dom-repeat" items="[[pages]]" as="pageitems">
+              <template is="dom-repeat" items="[[pages]]" as="pageitems" sort="_sorter">
                 <firebase-document path="[[pagePath.pages]]/[[pageitems.$key]]/title" data="{{pageitems.title}}"></firebase-document>
 
-                  <a href$="/page/[[pageitems.$key]]">
+                  <a href$="/page/[[pageitems.$key]]" class="sublink">
                     <paper-item >[[pageitems.title]]</paper-item>
                   </a>
 
@@ -53,6 +58,43 @@
               </a>
             </template>
           </template>
+
+            <paper-menu-button route="members" id="community-button" no-overlap horizontal-align="right" dynamic-align>
+              <a href="#" class="nice-navigation-item dropdown-trigger">
+                Community
+              </a>
+              <paper-menu class="dropdown-content" id="community-button-menu">
+
+                <template is="dom-if" if="[[_checkAuthRole(user, true, roles, 'member')]]">
+                  <a href="/member" class="sublink">
+                    <paper-item>
+                      Members
+                    </paper-item>
+                  </a>
+
+                  <a href="/message" class="sublink">
+                    <paper-item>
+                      Messages
+                    </paper-item>
+                  </a>
+                </template>
+
+                <a href="/profile" class="sublink">
+                  <paper-item>
+                    Profile
+                  </paper-item>
+                </a>
+                <!--<template is="dom-repeat" items="[[pages]]" as="pageitems" sort="_sorter">
+                  <firebase-document path="[[pagePath.pages]]/[[pageitems.$key]]/title" data="{{pageitems.title}}"></firebase-document>
+
+                    <a href$="/page/[[pageitems.$key]]" class="sublink">
+                      <paper-item >[[pageitems.title]]</paper-item>
+                    </a>
+
+                </template>-->
+
+              </paper-menu>
+            </paper-menu-button>
         </iron-selector>
       </div>
     </template>
@@ -81,6 +123,30 @@
               </paper-item>
             </a>
           </template>
+
+          <a href="/member">
+            <paper-item route="/member" on-tap="_toggleDrawer">
+              Members
+            </paper-item>
+          </a>
+
+          <a href="/message">
+            <paper-item route="/message" on-tap="_toggleDrawer">
+              Messages
+            </paper-item>
+          </a>
+
+          <a href="/profile">
+            <paper-item route="/profile" on-tap="_toggleDrawer">
+              Profile
+            </paper-item>
+          </a>
+
+          <a href="/search">
+            <paper-item route="/search" on-tap="_toggleDrawer">
+              Search
+            </paper-item>
+          </a>
         </paper-listbox>
       </div>
 
@@ -146,7 +212,11 @@
 
       _clickNavigationItem: function() {
         this.$$('#about-button-menu').selectIndex(-1);
-      }
+      },
+
+      _sorter: function(a, b) {
+        return new Date(a.date) - new Date(b.date);
+      },
     });
   </script>
 </dom-module>

@@ -37,6 +37,9 @@ Wham! It's all awesome now!
   <link rel="lazy-import" href="/pages/search-page/search-page.html" group="search-page">
   <link rel="lazy-import" href="/pages/article-page/article-page.html" group="article-page">
   <link rel="lazy-import" href="/pages/curated-page/curated-page.html" group="curated-page">
+  <link rel="lazy-import" href="/pages/product-services-page/product-services-page.html" group="product-services-page">
+  <link rel="lazy-import" href="/pages/research-page/research-page.html" group="research-page">
+  <link rel="lazy-import" href="/pages/recommends-page/recommends-page.html" group="recommends-page">
   <link rel="lazy-import" href="/pages/nice-page/nice-page.html" group="nice-page">
   <link rel="lazy-import" href="/pages/dashboard-page/dashboard-page.html" group="dashboard-page">
   <link rel="lazy-import" href="/pages/data-page/data-page.html" group="data-page">
@@ -104,6 +107,12 @@ Wham! It's all awesome now!
 
         <curated-page route="/curated" user="{{user}}"></curated-page>
 
+        <product-services-page route="/products-services" user="{{user}}"></product-services-page>
+
+        <recommends-page route="/recommends" user="{{user}}"></recommends-page>
+
+        <research-page route="/research" user="{{user}}"></research-page>
+
         <data-page route="/data" user="{{user}}"></data-page>
         <data-page route="/data/:id" user="{{user}}"></data-page>
 
@@ -143,23 +152,44 @@ Wham! It's all awesome now!
           value: function() {
             return [
               {
-                label: 'Features',
-                url: '/article',
-                route: '/article',
+                label: 'Products & Services',
+                url: '/products-services',
+                route: '/products-services',
                 role: null,
                 auth: false
               },
               {
-                label: 'Curated',
-                url: '/curated',
-                route: '/curated',
+                label: 'Research',
+                url: '/research',
+                route: '/research',
                 role: null,
                 auth: false
               },
               {
-                label: 'Data',
+                label: 'CBE Recommends',
+                url: '/recommends',
+                route: '/recommends',
+                role: null,
+                auth: false
+              },
+              // {
+              //   label: 'Curated',
+              //   url: '/curated',
+              //   route: '/curated',
+              //   role: null,
+              //   auth: false
+              // },
+              {
+                label: 'Resources',
                 url: '/data',
                 route: '/data',
+                role: null,
+                auth: false
+              },
+              {
+                label: 'Stories',
+                url: '/article',
+                route: '/article',
                 role: null,
                 auth: false
               },
@@ -170,34 +200,35 @@ Wham! It's all awesome now!
                 role: 'staff',
                 auth: true
               },
-              {
-                label: 'Members',
-                url: '/member',
-                route: '/member',
-                role: 'member',
-                auth: true
-              },
-              {
-                label: 'Messages',
-                url: '/message',
-                route: '/message',
-                role: 'member',
-                auth: true
-              },
-              {
-                label: 'Profile',
-                url: '/profile',
-                route: '/profile',
-                role: null,
-                auth: true
-              },
-              {
-                label: 'Search',
-                url: '/search',
-                route: 'search',
-                role: null,
-                auth: false
-              }
+
+              // {
+              //   label: 'Members',
+              //   url: '/member',
+              //   route: '/member',
+              //   role: 'member',
+              //   auth: true
+              // },
+              // {
+              //   label: 'Messages',
+              //   url: '/message',
+              //   route: '/message',
+              //   role: 'member',
+              //   auth: true
+              // },
+              // {
+              //   label: 'Profile',
+              //   url: '/profile',
+              //   route: '/profile',
+              //   role: null,
+              //   auth: true
+              // },
+              // {
+              //   label: 'Search',
+              //   url: '/search',
+              //   route: 'search',
+              //   role: null,
+              //   auth: false
+              // }
               // {
               //   label: 'About',
               //   url: '/page/about-us',

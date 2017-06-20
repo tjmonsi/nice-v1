@@ -94,42 +94,42 @@
           //member
           this._memberListener = firebase.database().ref(this._userPath.options.members + '/' + uid).on('value', (dataSnapshot) => {
             var m = dataSnapshot.val();
-            var roles = {};            
+            var roles = {};
             if (m) {
               var a1 = m.admin;
               var e1 = m.editor;
               var s1 = m.staff;
               var m1 = m.member;
 
-              
+
               roles.admin = a1;
               roles.editor = e1 || a1;
               roles.staff = s1 || e1 || a1;
-              roles.member = m1 || s1 || e1 || a1;              
+              roles.member = m1 || s1 || e1 || a1;
             }
 
             this.roles = roles;
-            
+
           }, this._catchError.bind(this));
 
           //pending
           this._pendingListener = firebase.database().ref(this._userPath.options.pending + '/' + uid + '/value').on('value', (dataSnapshot) => {
-            var roles = {}            
+            var roles = {}
             if (dataSnapshot.val()) {
               roles = {};
               roles.pending = dataSnapshot.val();
               this.roles = roles;
             } else if (!this.roles.member) {
               this.roles = roles;
-            }            
+            }
           }, this._catchError.bind(this));
         } else if (!firebase) {
           console.error(new Error('Firebase has not been set'))
         }
       },
-      
+
       _checkAuthRole: function(user, auth, roles, role, owner, flag) {
-        
+        console.log(!!user, auth, roles, role)
         if (auth) {
           if (role) {
             if (flag) {
@@ -141,7 +141,7 @@
         }
         return true;
       },
-      
+
       _checkPermission: function(role, owner, flag) {
         return this._checkAuthRole(this.user, true, this.roles, role, owner, flag);
       },
@@ -161,7 +161,7 @@
       _checkOwner: function(owner, user) {
         if (owner && user) {
           return owner.uid === user.uid
-        } 
+        }
       },
 
       _checkProfileMember: function(m) {
@@ -176,7 +176,7 @@
       _checkProfilePendingMember: function(m) {
         return m.pending;
       },
-      
+
       _checkProfile: function(user, ref, profile) {
         if (!profile.val()) {
           var obj = {
@@ -194,7 +194,7 @@
           var updates = {};
           updates[ref] = obj;
           // updates[this.userPath.options.pending + '/' + user.uid] = {value: firebase.database.ServerValue.TIMESTAMP}
-          
+
           return firebase.database().ref().update(updates).then(function(){
             window.location.assign('/profile?edit=true');
           });
@@ -202,14 +202,14 @@
           window.location.assign('/');
         }
       },
-      
+
       _displayName: function(user) {
         if (user) return user.displayName ? user.displayName : user.email;
       },
 
       _requestMembership: function() {
         if (this.user) {
-          var updates = {};        
+          var updates = {};
           updates[this.userPath.options.pending + '/' + this.user.uid] = {value: firebase.database.ServerValue.TIMESTAMP}
           firebase.database().ref().update(updates).then(() => {
             this._showMessage('Request for Membership Sent');
@@ -219,7 +219,7 @@
 
       _retractRequestMembership: function() {
         if (this.user) {
-          var updates = {};        
+          var updates = {};
           updates[this.userPath.options.pending + '/' + this.user.uid] = null;
           firebase.database().ref().update(updates).then(() => {
             this._showMessage('Membership Request Deleted');
@@ -229,7 +229,7 @@
 
       _retractMembership: function() {
         if (this.user) {
-          var updates = {};        
+          var updates = {};
           updates[this.userPath.options.member + '/' + this.user.uid] = null;
           firebase.database().ref().update(updates).then(() => {
             this._showMessage('Membership Request Deleted');
@@ -246,24 +246,24 @@
           this._showMessage('Membership Accepted');
         }).catch(this._catchError.bind(this))
       },
-      
+
       _loginSuccess: function(result) {
         var ref = this.userPath.profiles + '/' +  result.user.uid;
         this._showMessage('Welcome ' + result.user.displayName + '!');
-      
+
         if (firebase) {
           firebase.database().ref(ref).once('value', this._checkProfile.bind(this, result.user, ref));
         } else {
           throw new Error('No firebase app connected');
         }
       },
-      
+
       _logoutSuccess: function(result) {
         // console.log('logout', result);
-        this._showMessage('Goodbye!');    
+        this._showMessage('Goodbye!');
         setTimeout(() => {
           window.location.href="/"
-        }, 1000)    
+        }, 1000)
       },
 
       login: function(e) {

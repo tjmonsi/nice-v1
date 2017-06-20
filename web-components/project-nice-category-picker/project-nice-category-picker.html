@@ -26,39 +26,106 @@
 
     <firebase-query
         path="[[categoryPath.article]]"
-        data="{{categories}}">
+        data="{{categories}}"
+        order-by-child="type">
     </firebase-query>
 
     <div class="horizontal layout wrap">
-      <a href="[[url]]" class$="flex category [[_checkCategory(categoryString, '')]]">
+      <!--<a href="[[url]]" class="flex category">
         <div style="position: relative">
-
           <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Freload.png?alt=media&token=6ad05e47-c94b-4fb9-8b9b-65721b54175b"><br/>
           All
           <paper-ripple></paper-ripple>
         </div>
-
-      </a>
-
-      <template is="dom-repeat" items="[[categories]]">
-        <a href="[[url]]?cat=[[item.$key]]" class$="flex category [[_checkCategory(categoryString, item.$key)]]">
-          <div style="position: relative">
-            <img src="{{item.icon}}"><br/>
-            {{item.name}}
-            <paper-ripple></paper-ripple>
-          </div>
-
-        </a>
-      </template>
-
-      <a target="_blank" href="https://docs.google.com/spreadsheets/d/1W-lKUVVRXCQJQYwG2uEfao2af0GRhtn38MFZ1ExQS0w/edit?usp=sharing" class="flex category">
+      </a>-->
+      <div class="flex category" style="position: relative; cursor: pointer" on-tap="pickGeneralCategory" type="crops">
+        <img type="crops" src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fpotatoes.png?alt=media&token=ad94a650-c0db-49d2-8b40-27000f65b722">
+        <br/>Crops
+        <paper-ripple></paper-ripple>
+      </div>
+      <div class="flex category" style="position: relative; cursor: pointer" on-tap="pickGeneralCategory" type="technology">
+        <img type="technology" src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fscythe.png?alt=media&token=84313622-2da3-40d3-9c36-1539e5bb36ab">
+        <br/>Technology
+        <paper-ripple></paper-ripple>
+      </div>
+      <div class="flex category" style="position: relative; cursor: pointer" on-tap="pickGeneralCategory" type="training">
+        <img type="training" src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fseo-training.png?alt=media&token=9ae7e039-96c5-4f5a-93a8-26e93311964e">
+        <br/>Training
+        <paper-ripple></paper-ripple>
+      </div>
+      <a href="[[url]]?cat=credit" class$="flex category [[_checkCategory(categoryString, 'credit')]]">
         <div style="position: relative">
-          <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fresearch-with-books.png?alt=media&token=fb4b8974-c43b-4dea-a6a8-0b326f5f4974"><br/>
-          Consolidated Research
+          <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Ffield.png?alt=media&token=a2ee6bc3-5aee-48ba-80fa-c933125c9c17"><br/>
+          Credit
+          <paper-ripple></paper-ripple>
         </div>
-
       </a>
     </div>
+
+    <hr>
+    <template is="dom-if" if="[[_checkType(type, 'crops')]]">
+      <div class="horizontal layout wrap">
+        <!--<a href="[[url]]" class$="flex category [[_checkCategory(categoryString, '')]]">
+          <div style="position: relative">
+            <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Freload.png?alt=media&token=6ad05e47-c94b-4fb9-8b9b-65721b54175b"><br/>
+            All
+            <paper-ripple></paper-ripple>
+          </div>
+        </a>-->
+
+        <template is="dom-repeat" items="[[categories]]">
+          <template is="dom-if" if="[[_checkType(item.type, 'crops')]]">
+            <a href="[[url]]?cat=[[item.$key]]" class$="flex category [[_checkCategory(categoryString, item.$key)]]">
+              <div style="position: relative">
+                <img src="{{item.icon}}"><br/>
+                {{item.name}}
+                <paper-ripple></paper-ripple>
+              </div>
+            </a>
+          </template>
+        </template>
+
+        <!--<a target="_blank" href="https://docs.google.com/spreadsheets/d/1W-lKUVVRXCQJQYwG2uEfao2af0GRhtn38MFZ1ExQS0w/edit?usp=sharing" class="flex category">
+          <div style="position: relative">
+            <img src="https://firebasestorage.googleapis.com/v0/b/project-nice-polymer.appspot.com/o/icons%2Fresearch-with-books.png?alt=media&token=fb4b8974-c43b-4dea-a6a8-0b326f5f4974"><br/>
+            Consolidated Research
+          </div>
+
+        </a>-->
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_checkType(type, 'technology')]]">
+      <div class="horizontal layout wrap">
+        <template is="dom-repeat" items="[[categories]]">
+          <template is="dom-if" if="[[_checkType(item.type, 'technology')]]">
+            <a href="[[url]]?cat=[[item.$key]]" class$="flex category [[_checkCategory(categoryString, item.$key)]]">
+              <div style="position: relative">
+                <img src="{{item.icon}}"><br/>
+                {{item.name}}
+                <paper-ripple></paper-ripple>
+              </div>
+            </a>
+          </template>
+        </template>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_checkType(type, 'training')]]">
+      <div class="horizontal layout wrap">
+        <template is="dom-repeat" items="[[categories]]">
+          <template is="dom-if" if="[[_checkType(item.type, 'training')]]">
+            <a href="[[url]]?cat=[[item.$key]]" class$="flex category [[_checkCategory(categoryString, item.$key)]]">
+              <div style="position: relative">
+                <img src="{{item.icon}}"><br/>
+                {{item.name}}
+                <paper-ripple></paper-ripple>
+              </div>
+            </a>
+          </template>
+        </template>
+      </div>
+    </template>
 
   </template>
   <script>
@@ -83,6 +150,15 @@
       behaviors: [
         NICEV1.ProjectNiceCategoryBehavior
       ],
+
+      pickGeneralCategory: function(e) {
+        var el = e.target;
+        this.type = el.getAttribute('type')
+      },
+
+      _checkType: function(t, t2) {
+        return t === t2
+      },
 
       _checkCategory: function(cat, cat2) {
         if (cat === cat2) {

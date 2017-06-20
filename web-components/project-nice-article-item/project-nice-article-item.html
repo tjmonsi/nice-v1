@@ -30,17 +30,18 @@
         <iron-image class="flex-2" src$="[[bannerImage]]" sizing="cover" fade preload></iron-image>
         <div class="flex-5 main-content">
           <h4>
-            [[title]]
+            [[_trimText(title, 50)]]
+            <!--[[title]]-->
           </h4>
           <template is="dom-if" if="[[datePublished]]">
             <p>
               Last Published: [[_renderDate(datePublished)]]
             </p>
           </template>
-        </div>  
+        </div>
       </paper-material>
     </a>
-    
+
   </template>
 
   <script>

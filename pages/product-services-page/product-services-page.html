@@ -15,79 +15,34 @@
 <link rel="import" href="../../web-components/project-nice-category-picker/project-nice-category-picker.html">
 
 <!-- Style dependency -->
-<link rel="import" href="article-page-style.html">
+<link rel="import" href="product-services-page-style.html">
 
-<dom-module id="article-page">
+<dom-module id="product-services-page">
   <template>
-    <style is="custom-style" include="article-page-style iron-flex iron-flex-alignment iron-flex-factors">
+    <style is="custom-style" include="product-services-page-style iron-flex iron-flex-alignment iron-flex-factors">
       :host {
         display: block;
       }
     </style>
-
     <template is="dom-if" if="[[!id]]">
-
-      <template is="dom-if" if="[[!categoryString]]">
-        <firebase-query
-            path="[[articlePath.list.published]]"
-            data="{{articles}}" order-by-child="date" limit-to-last="50"></firebase-query>
-
-        <firebase-query
-            path="[[articlePath.listOptions]]/media"
-            data="{{mediaArticles}}" order-by-child="date" limit-to-last="1"></firebase-query>
-
-        <firebase-query
-            path="[[articlePath.listOptions]]/press"
-            data="{{pressArticles}}" order-by-child="date" limit-to-last="1"></firebase-query>
-
-        <div class="padder">
-          <div class="horizontal layout wrap">
-            <div class="flex-5 main-content">
-              <h1 class="">Photoblog</h1>
-              <template is="dom-repeat" items="[[mediaArticles]]">
-                <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
-              </template>
-              <h1 class="">News</h1>
-              <template is="dom-repeat" items="[[pressArticles]]">
-                <project-nice-article-headline id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-headline>
-              </template>
-              <h1 class="">Articles</h1>
-              <project-nice-category-picker url="/article" category-string="[[categoryString]]"></project-nice-category-picker>
-
-              <template is="dom-repeat" items="[[articles]]" id="article-repeater" sort="_sorter">
-                <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
-              </template>
-            </div>
-            <div class="flex-2">
-              <h1 class="">Trending</h1>
-            </div>
-          </div>
-        </div>
-      </template>
-
       <template is="dom-if" if="[[categoryString]]">
         <firebase-query
             path="[[articlePath.listOptions]]/[[categoryString]]"
             data="{{articlesCategory}}" order-by-child="date" limit-to-last="50"></firebase-query>
 
         <div class="padder">
-          <div class="horizontal layout wrap">
-            <div class="flex-5 main-content">
-              <h1 class="">Stories</h1>
-              <project-nice-category-picker url="/article" category-string="[[categoryString]]"></project-nice-category-picker>
-              <template is="dom-repeat" items="[[articlesCategory]]" id="article-repeater" sort="_sorter">
-                <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
-              </template>
 
-              <template is="dom-if" if="[[!articlesCategory.length]]">
-                <p>
-                  No articles under this category: [[categoryString]]
-                </p>
-              </template>
-            </div>
-            <div class="flex-2">
-              <!--<h1 class="">Trending</h1>-->
-            </div>
+          <div class="flex-5 main-content">
+            <h1 class="">Product and Services</h1>
+            <template is="dom-repeat" items="[[articlesCategory]]" id="article-repeater" sort="_sorter">
+              <project-nice-article-item id="[[item.$key]]" date-published="[[item.date]]"></project-nice-article-item>
+            </template>
+
+            <template is="dom-if" if="[[!articlesCategory.length]]">
+              <p>
+                No articles under this category: [[categoryString]]
+              </p>
+            </template>
           </div>
         </div>
       </template>
@@ -184,7 +139,7 @@
 
   <script>
     Polymer({
-      is: 'article-page',
+      is: 'product-services-page',
 
       behaviors: [
         NICEV1.ProjectNiceArticleBehavior
@@ -193,7 +148,7 @@
       properties: {
         categoryString: {
           type: String,
-          value: ''
+          value: 'productsandservices'
         },
         params: {
           type: Object
@@ -210,7 +165,7 @@
       observers: [
         '_changeParamsId(params.id)',
         '_changeQuaryParamsEdit(queryParams.edit)',
-        '_setCategory(queryParams.cat)'
+        // '_setCategory(queryParams.cat)'
         // '_deferArticles(articles.splices)'
       ],
 
