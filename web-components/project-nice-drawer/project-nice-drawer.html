@@ -23,11 +23,53 @@
     <app-drawer>
       <app-toolbar>Menu</app-toolbar>
       <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-        <template is="dom-repeat" items="[[navigationList]]">
-          <a name$="[[item.page]]" href$="[[item.url]]" on-tap="toggleDrawer">
-            [[item.label]]
+        <a href="/" class="nice-navigation-item">
+            <paper-item route="home" on-tap="_toggleDrawer">
+              Home
+            </paper-item>
           </a>
-        </template>
+
+          <template is="dom-repeat" items="[[pages]]" as="pageitems">
+            <firebase-document path="[[pagePath.pages]]/[[pageitems.$key]]/title" data="{{pageitems.title}}"></firebase-document>
+
+            <a href$="/page/[[pageitems.$key]]" class="nice-navigation-item">
+              <paper-item route="about" on-tap="_toggleDrawer">[[pageitems.title]]</paper-item>
+            </a>
+
+          </template>
+          <template is="dom-repeat" items="[[navigationList]]">
+            <a href$="[[item.url]]" class="nice-navigation-item">
+              <paper-item route$="[[item.route]]" on-tap="_toggleDrawer">
+                [[item.label]]
+              </paper-item>
+            </a>
+          </template>
+
+          <template is="dom-if" if="[[user]]">
+            <a href="/member">
+              <paper-item route="/member" on-tap="_toggleDrawer">
+                Members
+              </paper-item>
+            </a>
+
+            <a href="/message">
+              <paper-item route="/message" on-tap="_toggleDrawer">
+                Messages
+              </paper-item>
+            </a>
+
+            <a href="/profile">
+              <paper-item route="/profile" on-tap="_toggleDrawer">
+                Profile
+              </paper-item>
+            </a>
+          </template>
+          <a href="/search">
+            <paper-item route="/search" on-tap="_toggleDrawer">
+              Search
+            </paper-item>
+          </a>
+
 
       </iron-selector>
     </app-drawer>

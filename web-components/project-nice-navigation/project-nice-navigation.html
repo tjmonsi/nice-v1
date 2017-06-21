@@ -51,6 +51,7 @@
 
             </paper-menu>
           </paper-menu-button>
+
           <template is="dom-repeat" items="[[navigationList]]">
             <template is="dom-if" if="[[_checkAuthRole(user, item.auth, roles, item.role)]]">
               <a route$="[[item.route]]" href$="[[item.url]]" class="nice-navigation-item" on-tap="_clickNavigationItem">
@@ -59,13 +60,14 @@
             </template>
           </template>
 
+          <template is="dom-if" if="[[user]]">
             <paper-menu-button route="members" id="community-button" no-overlap horizontal-align="right" dynamic-align>
               <a href="#" class="nice-navigation-item dropdown-trigger">
                 Community
               </a>
               <paper-menu class="dropdown-content" id="community-button-menu">
 
-                <template is="dom-if" if="[[_checkAuthRole(user, true, roles, 'member')]]">
+                <template is="dom-if" if="[[_checkAuthRole(user, _defaultAuth, roles, _defaultMember)]]">
                   <a href="/member" class="sublink">
                     <paper-item>
                       Members
@@ -95,6 +97,11 @@
 
               </paper-menu>
             </paper-menu-button>
+          </template>
+
+          <a route="/search" href$="/search" class="nice-navigation-item" on-tap="_clickNavigationItem">
+            Search
+          </a>
         </iron-selector>
       </div>
     </template>
@@ -123,7 +130,7 @@
               </paper-item>
             </a>
           </template>
-
+          hr
           <a href="/member">
             <paper-item route="/member" on-tap="_toggleDrawer">
               Members
@@ -187,6 +194,16 @@
         pageNavListLength: {
           type: Number,
           value: 0
+        },
+        _defaultAuth: {
+          type: Boolean,
+          value: true,
+          readonly: true
+        },
+        _defaultMember: {
+          type: String,
+          value: 'member',
+          readonly: true
         }
       },
 

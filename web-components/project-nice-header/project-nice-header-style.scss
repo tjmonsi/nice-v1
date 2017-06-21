@@ -3,6 +3,7 @@
 
 // @include hide-on-smalldesktop();
 // @include hide-on-largescreen();
+@include hide-on-phone-only();
 @include hide-on-desktop-up();
 
 app-header {
@@ -40,3 +41,18 @@ app-header {
     }
   }
 }
+
+
+.nice-navigation-item {
+  color: $gray-dark;
+  text-decoration: none;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  @include small-screens {
+    font-size: 0.7em;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+}
+

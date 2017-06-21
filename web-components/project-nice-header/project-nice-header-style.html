@@ -2,6 +2,10 @@
 <dom-module id="project-nice-header-style">
 <template>
 <style>
+@media (max-width: 599px) {
+  .hide-on-phone-only {
+    display: none; } }
+
 @media (min-width: 1200px) {
   .hide-on-desktop-up {
     display: none; } }
@@ -21,6 +25,17 @@ app-header {
       @media (max-width: 1199px) {
         app-header app-toolbar span[main-title] {
           margin-left: 10px; } }
+
+.nice-navigation-item {
+  color: #373a3c;
+  text-decoration: none;
+  margin-left: 10px;
+  margin-right: 10px; }
+  @media (max-width: 1199px) {
+    .nice-navigation-item {
+      font-size: 0.7em;
+      margin-left: 5px;
+      margin-right: 5px; } }
 
 </style>
 </template>
